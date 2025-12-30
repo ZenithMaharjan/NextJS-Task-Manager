@@ -1,7 +1,7 @@
 "use client";
 
 import { NavLink } from "../Header/types";
-import NavItem from "../NavItem/page";
+import NavItem from "../NavItem";
 
 interface NavLinksProps {
   links: NavLink[];

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Logo from "../Logo/page";
-import HamburgerButton from "../HamburgerButton/page";
-import Drawer from "../Drawer/page";
+import Logo from "../Logo";
+import HamburgerButton from "../HamburgerButton";
+import Drawer from "../Drawer";
 import { HeaderProps } from "../Header/types";
 
 const DEFAULT_LINKS = [

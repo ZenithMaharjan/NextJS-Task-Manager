@@ -1,7 +1,7 @@
 "use client";
 
-import Logo from "../Logo/page";
-import NavLinks from "../NavLinks/page";
+import Logo from "../Logo";
+import NavLinks from "../NavLinks";
 import { HeaderProps } from "../Header/types";
 
 const DEFAULT_LINKS = [

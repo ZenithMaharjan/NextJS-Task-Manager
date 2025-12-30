@@ -1,7 +1,7 @@
 "use client";
 
-import DesktopHeader from "../DesktopHeader/page";
-import MobileHeader from "../MobileHeader/page";
+import DesktopHeader from "../DesktopHeader";
+import MobileHeader from "../MobileHeader";
 import { HeaderProps, NavLink } from "./types";
 
 const DEFAULT_LINKS: NavLink[] = [
