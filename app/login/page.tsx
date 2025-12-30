@@ -2,7 +2,8 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import Form from "../components/Form";
+import { Form } from "../components";
+
 
 type FormSubmitCallback = (formData: FormData) => void;
 
@@ -16,20 +17,55 @@ const STATUS_COLORS: Record<StatusType, string> = {
 
 export default function LoginPage() {
   const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
+  const [error, setError] = useState<Record<string, string>>({});
 
   const handleSubmit: FormSubmitCallback = useCallback((formData) => {
     const username = String(formData.get("username") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "").trim();
 
-    if (!username || !email || !password) {
-      setStatus({ type: "error", message: "Please fill all required fields" });
+    setError({});
+
+    const newErrors: Record<string, string> = {};
+
+    if (!username) {
+      newErrors.username = "Username is required";
+    } else if (username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    } else if (/^\d+$/.test(username)) {
+      newErrors.username = "Username cannot be only numbers";
+    } else if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(username)) {
+      newErrors.username = "Username must start with a letter and contain only letters, numbers, and underscores";
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setError(newErrors);
+      setStatus({ type: "error", message: "Please fix the errors below" });
       return;
     }
 
     const data = Object.fromEntries(formData);
     console.log("Login Data:", data);
-    setStatus({ type: "success", message: "Sign in submitted (check console for payload)" });
+    setStatus({ type: "success", message: "Sign in submitted successfully!" });
+
+    setTimeout(() => {
+      setStatus(null);
+    }, 3000);
   }, []);
 
   const handleInvalidSubmit = useCallback(() => {
@@ -40,7 +76,10 @@ export default function LoginPage() {
     if (status) {
       setStatus(null);
     }
-  }, []);
+    if (Object.keys(error).length > 0) {
+      setError({});
+    }
+  }, [status, error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -55,8 +94,9 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           onInvalidSubmit={handleInvalidSubmit}
           onChange={handleFormChange}
+          error={error}
         >
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="space-y-4">
             <Form.Input
               name="username"
               label="Username"
@@ -80,7 +120,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center justify-between">
-             <div className="text-sm">
+            <div className="text-sm">
               <Link
                 href="/signup"
                 className="font-medium text-blue-600 hover:text-blue-500"
@@ -109,7 +149,7 @@ export default function LoginPage() {
 
           {status && (
             <div
-              className="text-sm text-center"
+              className="text-sm text-center font-medium"
               aria-live="polite"
               style={{ color: STATUS_COLORS[status.type] }}
             >

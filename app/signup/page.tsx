@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import Form from "../components/Form";
+import { Form } from "../components";
 
 type FormSubmitCallback = (formData: FormData) => void;
 
@@ -16,6 +16,7 @@ const STATUS_COLORS: Record<StatusType, string> = {
 
 export default function SignUpPage() {
   const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
+  const [error, setError] = useState<Record<string, string>>({});
 
   const handleSubmit: FormSubmitCallback = useCallback((formData) => {
     const username = String(formData.get("username") ?? "").trim();
@@ -23,19 +24,58 @@ export default function SignUpPage() {
     const password = String(formData.get("password") ?? "").trim();
     const confirmPassword = String(formData.get("confirmPassword") ?? "").trim();
 
-    if (!username || !email || !password || !confirmPassword) {
-      setStatus({ type: "error", message: "Please fill all required fields" });
-      return;
+    setError({});
+
+    const newErrors: Record<string, string> = {};
+
+    // Username validation
+    if (!username) {
+      newErrors.username = "Username is required";
+    } else if (username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    } else if (/^\d+$/.test(username)) {
+      newErrors.username = "Username cannot be only numbers";
+    } else if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(username)) {
+      newErrors.username = "Username must start with a letter and contain only letters, numbers, and underscores";
     }
 
-    if (password !== confirmPassword) {
-      setStatus({ type: "error", message: "Passwords do not match" });
+    // Email validation
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    // Confirm password validation
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setError(newErrors);
+      setStatus({ type: "error", message: "Please fix the errors below" });
       return;
     }
 
     const data = Object.fromEntries(formData);
     console.log("SignUp Data:", data);
     setStatus({ type: "success", message: "Sign up submitted (check console for payload)" });
+
+    setTimeout(() => {
+      setStatus(null);
+    }, 3000);
   }, []);
 
   const handleInvalidSubmit = useCallback(() => {
@@ -46,7 +86,10 @@ export default function SignUpPage() {
     if (status) {
       setStatus(null);
     }
-  }, []);
+    if (Object.keys(error).length > 0) {
+      setError({});
+    }
+  }, [status, error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -61,6 +104,7 @@ export default function SignUpPage() {
           onSubmit={handleSubmit}
           onInvalidSubmit={handleInvalidSubmit}
           onChange={handleFormChange}
+          error={error}
         >
           <Form.Input
             name="username"

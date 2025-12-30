@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import Form from "../components/Form";
+import { Form } from "../components";
 
 type FormSubmitCallback = (formData: FormData) => void;
 
@@ -20,8 +20,20 @@ export default function ResetPasswordPage() {
   const handleSubmit: FormSubmitCallback = useCallback((formData) => {
     const email = String(formData.get("email") ?? "").trim();
 
+    const newErrors: Record<string, string> = {};
+
+    // Email validation
     if (!email) {
-      setStatus({ type: "error", message: "Please fill all required fields" });
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setStatus({ type: "error", message: newErrors.email || "Please fix the errors below" });
       return;
     }
 

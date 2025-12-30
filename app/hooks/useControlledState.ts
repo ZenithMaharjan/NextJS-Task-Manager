@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 
 export interface UseControlledStateOptions<T> {
   value?: T;
-  onChange?: (value: T, ...args: any[]) => void;
+  onChange?: (value: T, ...args: unknown[]) => void;
 }
 
 export default function useControlledState<T>(
