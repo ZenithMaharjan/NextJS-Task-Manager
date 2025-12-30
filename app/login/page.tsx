@@ -64,7 +64,7 @@ export default function LoginPage() {
     }
 
     const data = Object.fromEntries(formData);
-// console.log("Login Data:", data);
+    console.log("Login Data:", data);
     setStatus({ type: "success", message: "Sign in submitted successfully!" });
 
     setTimeout(() => {

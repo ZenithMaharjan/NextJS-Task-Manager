@@ -8,6 +8,7 @@ const DEFAULT_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/example", label: "Example" }
 ];
 
 export default function Header({
