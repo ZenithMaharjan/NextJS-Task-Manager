@@ -19,7 +19,7 @@ export default function NavLinks({
   isMobile = false,
 }: NavLinksProps) {
   const renderNavItems = () => {
-    return links.map((link) => (
+    return links.map(link => (
       <NavItem
         key={link.href}
         href={link.href}

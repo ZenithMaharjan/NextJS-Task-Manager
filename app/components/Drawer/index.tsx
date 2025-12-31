@@ -1,18 +1,19 @@
 "use client";
 
-import * as React from "react";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import IconButton from "@mui/material/IconButton";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { X } from "lucide-react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Logo from "../Logo";
+import { usePathname } from "next/navigation";
+import * as React from "react";
+
 import { NavLink } from "../Header/types";
+import Logo from "../Logo";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ export default function Drawer({
       if (href === "/") return pathname === "/";
       return pathname.startsWith(href);
     },
-    [pathname]
+    [pathname],
   );
 
   const handleLinkClick = React.useCallback(() => {
@@ -87,14 +88,10 @@ export default function Drawer({
         </Box>
 
         <List sx={{ padding: "16px" }}>
-          {links.map((link) => {
+          {links.map(link => {
             const active = isActiveLink(link.href);
             return (
-              <ListItem
-                key={link.href}
-                disablePadding
-                sx={{ marginBottom: "8px" }}
-              >
+              <ListItem key={link.href} disablePadding sx={{ marginBottom: "8px" }}>
                 <Link
                   href={link.href}
                   onClick={handleLinkClick}
@@ -104,9 +101,7 @@ export default function Drawer({
                     sx={{
                       borderRadius: "8px",
                       color: "white",
-                      backgroundColor: active
-                        ? "rgba(255, 255, 255, 0.2)"
-                        : "transparent",
+                      backgroundColor: active ? "rgba(255, 255, 255, 0.2)" : "transparent",
                       fontWeight: active ? 600 : 400,
                       "&:hover": {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -122,7 +117,7 @@ export default function Drawer({
         </List>
       </Box>
     ),
-    [boxBgColor, title, logoHref, links, handleLinkClick, isActiveLink, onClose]
+    [boxBgColor, title, logoHref, links, handleLinkClick, isActiveLink, onClose],
   );
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { ChevronRight } from "lucide-react";
+import * as React from "react";
 
 interface FAQItemProps {
   question: string;
@@ -22,9 +22,7 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
         {question}
         <ChevronRight
           size={20}
-          className={`transition-transform duration-200 ${
-            isOpen ? "rotate-90" : "rotate-0"
-          }`}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-90" : "rotate-0"}`}
         />
       </button>
       {isOpen && (

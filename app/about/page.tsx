@@ -38,9 +38,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-3xl mx-auto">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Frequently Asked Questions
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
           <p className="text-lg text-gray-600">
             Find answers to common questions about our platform
           </p>
@@ -48,11 +46,7 @@ export default function AboutPage() {
 
         <section className="space-y-4" aria-label="FAQ List">
           {FAQ_DATA.map((faq, index) => (
-            <FAQItem
-              key={`faq-${index}`}
-              question={faq.question}
-              answer={faq.answer}
-            />
+            <FAQItem key={`faq-${index}`} question={faq.question} answer={faq.answer} />
           ))}
         </section>
 

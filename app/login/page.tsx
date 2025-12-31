@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import Link from "next/link";
-import { Form } from "../components";
+import { useCallback, useState } from "react";
 
+import { Form } from "../components";
 
 type FormSubmitCallback = (formData: FormData) => void;
 
@@ -16,10 +16,13 @@ const STATUS_COLORS: Record<StatusType, string> = {
 };
 
 export default function LoginPage() {
-  const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
+  const [status, setStatus] = useState<{
+    type: StatusType;
+    message: string;
+  } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
-  const handleSubmit: FormSubmitCallback = useCallback((formData) => {
+  const handleSubmit: FormSubmitCallback = useCallback(formData => {
     const username = String(formData.get("username") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "").trim();
@@ -35,7 +38,8 @@ export default function LoginPage() {
     } else if (/^\d+$/.test(username)) {
       newErrors.username = "Username cannot be only numbers";
     } else if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(username)) {
-      newErrors.username = "Username must start with a letter and contain only letters, numbers, and underscores";
+      newErrors.username =
+        "Username must start with a letter and contain only letters, numbers, and underscores";
     }
 
     if (!email) {
@@ -60,7 +64,7 @@ export default function LoginPage() {
     }
 
     const data = Object.fromEntries(formData);
-    console.log("Login Data:", data);
+// console.log("Login Data:", data);
     setStatus({ type: "success", message: "Sign in submitted successfully!" });
 
     setTimeout(() => {
@@ -121,11 +125,8 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <Link
-                href="/signup"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Don't have an account?
+              <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                Don&apos;t have an account?
               </Link>
             </div>
             <div className="text-sm">

@@ -1,3 +1,9 @@
+"use client";
+
 export default function Home() {
-  return <h2>Home Page</h2>;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <h2 className="text-4xl font-bold text-white">Home Page</h2>
+    </div>
+  );
 }

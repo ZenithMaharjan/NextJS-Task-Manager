@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import Link from "next/link";
+import { useCallback, useState } from "react";
+
 import { Form } from "../components";
 
 type FormSubmitCallback = (formData: FormData) => void;
@@ -15,9 +16,12 @@ const STATUS_COLORS: Record<StatusType, string> = {
 };
 
 export default function ResetPasswordPage() {
-  const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
+  const [status, setStatus] = useState<{
+    type: StatusType;
+    message: string;
+  } | null>(null);
 
-  const handleSubmit: FormSubmitCallback = useCallback((formData) => {
+  const handleSubmit: FormSubmitCallback = useCallback(formData => {
     const email = String(formData.get("email") ?? "").trim();
 
     const newErrors: Record<string, string> = {};
@@ -33,13 +37,19 @@ export default function ResetPasswordPage() {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setStatus({ type: "error", message: newErrors.email || "Please fix the errors below" });
+      setStatus({
+        type: "error",
+        message: newErrors.email || "Please fix the errors below",
+      });
       return;
     }
 
     const data = Object.fromEntries(formData);
     console.log("Reset Password Data:", data);
-    setStatus({ type: "success", message: "Reset request submitted (check console for payload)" });
+    setStatus({
+      type: "success",
+      message: "Reset request submitted (check console for payload)",
+    });
   }, []);
 
   const handleInvalidSubmit = useCallback(() => {
@@ -60,7 +70,7 @@ export default function ResetPasswordPage() {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Enter your email and we'll send you a link to get back into your account.
+            Enter your email and we&apos;ll send you a link to get back into your account.
           </p>
         </div>
         <Form
@@ -79,10 +89,7 @@ export default function ResetPasswordPage() {
 
           <div className="flex items-center justify-end">
             <div className="text-sm">
-              <Link
-                href="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
+              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
                 Back to Sign in
               </Link>
             </div>

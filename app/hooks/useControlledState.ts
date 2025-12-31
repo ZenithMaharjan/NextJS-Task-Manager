@@ -7,7 +7,7 @@ export interface UseControlledStateOptions<T> {
 
 export default function useControlledState<T>(
   defaultState: T | (() => T),
-  { value, onChange }: UseControlledStateOptions<T> = {}
+  { value, onChange }: UseControlledStateOptions<T> = {},
 ): [T, (newValue: T) => void] {
   const [localState, setLocalState] = useState<T>(defaultState);
   const isControlled = value !== undefined;
@@ -21,7 +21,7 @@ export default function useControlledState<T>(
       }
       onChange?.(newValue);
     },
-    [isControlled, onChange]
+    [isControlled, onChange],
   );
 
   return [state, updateState];
