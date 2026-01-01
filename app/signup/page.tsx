@@ -71,7 +71,7 @@ export default function SignUpPage() {
     }
 
     const data = Object.fromEntries(formData);
-// console.log("SignUp Data:", data);
+    console.log("SignUp Data:", data);
     setStatus({
       type: "success",
       message: "Sign up submitted (check console for payload)",
