@@ -22,22 +22,25 @@ export interface InputGroupContextType {
 }
 
 export const FormContext = React.createContext<FormContextType | null>(null);
-export const InputGroupContext = React.createContext<InputGroupContextType | null>(
-  null
-);
+export const InputGroupContext = React.createContext<InputGroupContextType | null>(null);
 
-export function useFormContext<T extends Record<string, unknown>>(props: T): T & Partial<FormContextType> {
+export function useFormContext<T extends Record<string, unknown>>(
+  props: T,
+): T & Partial<FormContextType> {
   const context = useContext(FormContext);
   return { ...props, ...context };
 }
 
-export function useInputGroupContext<T extends { name?: string }>(props: T): T & Partial<FormContextType> & {
-  standaloneName?: string;
-  defaultValue?: string;
-} {
+export function useInputGroupContext<T extends { name?: string }>(
+  props: T,
+): T &
+  Partial<FormContextType> & {
+    standaloneName?: string;
+    defaultValue?: string;
+  } {
   const formContext = useFormContext(props);
   const groupContext = useContext(InputGroupContext);
-  
+
   const defaultValueExtractor = (inputName: string): string => {
     if (formContext?.formData?.get) {
       const value = formContext.formData.get(inputName);
@@ -57,10 +60,7 @@ export function useInputGroupContext<T extends { name?: string }>(props: T): T &
 
   const { name: groupName } = groupContext;
   const { name: inputName, ...otherProps } = props;
-  const resolvedName = groupName.concat(
-    groupName.endsWith("]") ? "" : ".",
-    inputName || ""
-  );
+  const resolvedName = groupName.concat(groupName.endsWith("]") ? "" : ".", inputName || "");
   return {
     ...otherProps,
     ...formContext,

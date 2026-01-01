@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Logo from "../Logo";
-import HamburgerButton from "../HamburgerButton";
+
 import Drawer from "../Drawer";
+import HamburgerButton from "../HamburgerButton";
 import { HeaderProps } from "../Header/types";
+import Logo from "../Logo";
 
 const DEFAULT_LINKS = [
   { href: "/", label: "Home" },

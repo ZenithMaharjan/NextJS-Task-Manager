@@ -1,8 +1,8 @@
 "use client";
 
+import { HeaderProps } from "../Header/types";
 import Logo from "../Logo";
 import NavLinks from "../NavLinks";
-import { HeaderProps } from "../Header/types";
 
 const DEFAULT_LINKS = [
   { href: "/", label: "Home" },
@@ -23,11 +23,7 @@ export default function DesktopHeader({
     <header className={`${className} hidden md:block`}>
       <nav className={containerClassName}>
         <Logo title={title} href={logoHref} />
-        <NavLinks
-          links={links}
-          linkClassName={linkClassName}
-          activeClassName={activeClassName}
-        />
+        <NavLinks links={links} linkClassName={linkClassName} activeClassName={activeClassName} />
       </nav>
     </header>
   );

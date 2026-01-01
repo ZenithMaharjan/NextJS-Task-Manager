@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import Link from "next/link";
+import { useCallback, useState } from "react";
+
 import { Form } from "../components";
 
 type FormSubmitCallback = (formData: FormData) => void;
@@ -15,10 +16,13 @@ const STATUS_COLORS: Record<StatusType, string> = {
 };
 
 export default function SignUpPage() {
-  const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
+  const [status, setStatus] = useState<{
+    type: StatusType;
+    message: string;
+  } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
-  const handleSubmit: FormSubmitCallback = useCallback((formData) => {
+  const handleSubmit: FormSubmitCallback = useCallback(formData => {
     const username = String(formData.get("username") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "").trim();
@@ -28,7 +32,6 @@ export default function SignUpPage() {
 
     const newErrors: Record<string, string> = {};
 
-    // Username validation
     if (!username) {
       newErrors.username = "Username is required";
     } else if (username.length < 3) {
@@ -36,10 +39,10 @@ export default function SignUpPage() {
     } else if (/^\d+$/.test(username)) {
       newErrors.username = "Username cannot be only numbers";
     } else if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(username)) {
-      newErrors.username = "Username must start with a letter and contain only letters, numbers, and underscores";
+      newErrors.username =
+        "Username must start with a letter and contain only letters, numbers, and underscores";
     }
 
-    // Email validation
     if (!email) {
       newErrors.email = "Email is required";
     } else {
@@ -49,14 +52,12 @@ export default function SignUpPage() {
       }
     }
 
-    // Password validation
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    // Confirm password validation
     if (!confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (password !== confirmPassword) {
@@ -65,13 +66,16 @@ export default function SignUpPage() {
 
     if (Object.keys(newErrors).length > 0) {
       setError(newErrors);
-      setStatus({ type: "error", message: "Please fix the errors below" });
+      setStatus({ type: "error", message: "Please fix the errors above" });
       return;
     }
 
     const data = Object.fromEntries(formData);
-    console.log("SignUp Data:", data);
-    setStatus({ type: "success", message: "Sign up submitted (check console for payload)" });
+// console.log("SignUp Data:", data);
+    setStatus({
+      type: "success",
+      message: "Sign up submitted (check console for payload)",
+    });
 
     setTimeout(() => {
       setStatus(null);
@@ -106,12 +110,7 @@ export default function SignUpPage() {
           onChange={handleFormChange}
           error={error}
         >
-          <Form.Input
-            name="username"
-            label="Username"
-            placeholder="Choose a username"
-            required
-          />
+          <Form.Input name="username" label="Username" placeholder="Choose a username" required />
           <Form.Input
             name="email"
             type="email"
@@ -136,10 +135,7 @@ export default function SignUpPage() {
 
           <div className="flex items-center justify-end">
             <div className="text-sm">
-              <Link
-                href="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
+              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
                 Already have an account? Sign in
               </Link>
             </div>

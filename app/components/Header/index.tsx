@@ -30,12 +30,7 @@ export default function Header({
         linkClassName={linkClassName}
         containerClassName={containerClassName}
       />
-      <MobileHeader
-        title={title}
-        links={links}
-        className={className}
-        logoHref={logoHref}
-      />
+      <MobileHeader title={title} links={links} className={className} logoHref={logoHref} />
     </>
   );
 }

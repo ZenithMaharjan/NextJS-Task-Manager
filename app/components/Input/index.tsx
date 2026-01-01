@@ -9,13 +9,7 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const {
-    className,
-    showRequired,
-    errorMessage,
-    containerClassName,
-    ...domProps
-  } = props;
+  const { className, showRequired, errorMessage, containerClassName, ...domProps } = props;
 
   return (
     <div className={containerClassName || ""}>
@@ -29,11 +23,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         {...domProps}
       />
       {showRequired && errorMessage && (
-        <p
-          id={`${domProps.name}-error`}
-          className="mt-1 text-sm text-red-500"
-          role="alert"
-        >
+        <p id={`${domProps.name}-error`} className="mt-1 text-sm text-red-500" role="alert">
           {errorMessage}
         </p>
       )}

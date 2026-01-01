@@ -5,9 +5,7 @@ export default function Contact() {
         Contact Page
       </h2>
       <div>
-        <button className="rounded p-2 border-red-600 hover:text-blue-600 m-4">
-          Click me
-        </button>
+        <button className="rounded p-2 border-red-600 hover:text-blue-600 m-4">Click me</button>
       </div>
       <div className="flex flex-col justify-center gap-4">
         <div>Box 1</div>
