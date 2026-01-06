@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 
 interface FAQItemProps {
   question: string;
@@ -9,7 +9,7 @@ interface FAQItemProps {
 }
 
 export default function FAQItem({ question, answer }: FAQItemProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 

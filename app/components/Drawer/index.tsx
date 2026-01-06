@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { X } from "lucide-react";
 import Link from "next/link";
-import * as React from "react";
+import { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
@@ -35,7 +35,7 @@ export default function Drawer({
 }: DrawerProps) {
   const pathname = usePathname();
 
-  const checkActive = React.useCallback(
+  const checkActive = useCallback(
     (href: string): boolean => {
       if (href === "/") return pathname === "/";
       return pathname.startsWith(href);
@@ -43,17 +43,17 @@ export default function Drawer({
     [pathname],
   );
 
-  const boxBgColor = React.useMemo(() => {
+  const boxBgColor = useMemo(() => {
     return className.includes("bg-[")
       ? className.match(/bg-\[([^\]]+)\]/)?.[1] || "#0a2b5c"
       : "#0a2b5c";
   }, [className]);
 
-  const handleLinkClick = React.useCallback(() => {
+  const handleLinkClick = useCallback(() => {
     onClose();
   }, [onClose]);
 
-  const drawerContent = React.useMemo(
+  const drawerContent = useMemo(
     () => (
       <Box
         sx={{

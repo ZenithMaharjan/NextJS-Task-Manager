@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -16,10 +16,7 @@ interface InventoryChartsProps {
   processedData: ProcessedData[];
 }
 
-const InventoryCharts: React.FC<InventoryChartsProps> = ({
-  processedData,
-}) => {
-  if (!processedData || processedData.length === 0) return null;
+const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
 
   return (
     <main className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -30,10 +27,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({
         </h2>
         <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={processedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-            >
+            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#374151"
@@ -77,10 +71,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({
         </h2>
         <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={processedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-            >
+            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#374151"
@@ -124,10 +115,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({
         </h2>
         <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={processedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-            >
+            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#374151"
