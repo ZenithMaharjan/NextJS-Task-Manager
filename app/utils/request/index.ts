@@ -101,7 +101,7 @@ class RequestBuilder {
 
     constructor(baseUrl: string) {
         this.fetch = fetch;
-        this.baseUrl = baseUrl?.replace(/\/^/, '');
+        this.baseUrl = baseUrl?.replace(/\/$/, '');
         this.interceptors = {
             request: [],
             response: [],

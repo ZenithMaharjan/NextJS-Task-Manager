@@ -2,61 +2,26 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-
 import { Form } from "../components";
-
-type FormSubmitCallback = (formData: FormData) => void;
-
-type StatusType = "success" | "warning" | "error";
-
-const STATUS_COLORS: Record<StatusType, string> = {
-  success: "#00af54",
-  warning: "#fbaf00",
-  error: "#d64933",
-};
+import { AuthCard } from "../components/Auth/AuthCard";
+import { StatusType } from "../constants/auth";
+import { validateEmail, validateUsername, validatePassword } from "../utils/validation";
 
 export default function SignUpPage() {
-  const [status, setStatus] = useState<{
-    type: StatusType;
-    message: string;
-  } | null>(null);
+  const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
-  const handleSubmit: FormSubmitCallback = useCallback(formData => {
+  const handleSubmit = useCallback((formData: FormData) => {
     const username = String(formData.get("username") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "").trim();
     const confirmPassword = String(formData.get("confirmPassword") ?? "").trim();
 
-    setError({});
-
-    const newErrors: Record<string, string> = {};
-
-    if (!username) {
-      newErrors.username = "Username is required";
-    } else if (username.length < 3) {
-      newErrors.username = "Username must be at least 3 characters";
-    } else if (/^\d+$/.test(username)) {
-      newErrors.username = "Username cannot be only numbers";
-    } else if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(username)) {
-      newErrors.username =
-        "Username must start with a letter and contain only letters, numbers, and underscores";
-    }
-
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        newErrors.email = "Please enter a valid email address";
-      }
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
+    const newErrors: Record<string, string> = {
+      username: validateUsername(username) || "",
+      email: validateEmail(email) || "",
+      password: validatePassword(password) || "",
+    };
 
     if (!confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
@@ -64,22 +29,18 @@ export default function SignUpPage() {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
+
     if (Object.keys(newErrors).length > 0) {
       setError(newErrors);
       setStatus({ type: "error", message: "Please fix the errors above" });
       return;
     }
 
-    const data = Object.fromEntries(formData);
-    console.log("SignUp Data:", data);
-    setStatus({
-      type: "success",
-      message: "Sign up submitted (check console for payload)",
-    });
-
-    setTimeout(() => {
-      setStatus(null);
-    }, 3000);
+    setStatus({ type: "success", message: "Sign up submitted successfully!" });
+    setTimeout(() => setStatus(null), 3000);
   }, []);
 
   const handleInvalidSubmit = useCallback(() => {
@@ -87,78 +48,41 @@ export default function SignUpPage() {
   }, []);
 
   const handleFormChange = useCallback(() => {
-    if (status) {
-      setStatus(null);
-    }
-    if (Object.keys(error).length > 0) {
-      setError({});
-    }
+    if (status) setStatus(null);
+    if (Object.keys(error).length > 0) setError({});
   }, [status, error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Create your account
-          </h2>
-        </div>
-        <Form
-          className="mt-8 space-y-6"
-          onSubmit={handleSubmit}
-          onInvalidSubmit={handleInvalidSubmit}
-          onChange={handleFormChange}
-          error={error}
-        >
+    <AuthCard title="Create your account" status={status}>
+      <Form
+        className="mt-8 space-y-6"
+        onSubmit={handleSubmit}
+        onInvalidSubmit={handleInvalidSubmit}
+        onChange={handleFormChange}
+        error={error}
+      >
+        <div className="space-y-4">
           <Form.Input name="username" label="Username" placeholder="Choose a username" required />
-          <Form.Input
-            name="email"
-            type="email"
-            label="Email"
-            placeholder="Enter your email"
-            required
-          />
-          <Form.Input
-            name="password"
-            type="password"
-            label="Password"
-            placeholder="Create a password"
-            required
-          />
-          <Form.Input
-            name="confirmPassword"
-            type="password"
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            required
-          />
+          <Form.Input name="email" type="email" label="Email" placeholder="Enter your email" required />
+          <Form.Input name="password" type="password" label="Password" placeholder="Create a password" required />
+          <Form.Input name="confirmPassword" type="password" label="Confirm Password" placeholder="Confirm your password" required />
+        </div>
 
-          <div className="flex items-center justify-end">
-            <div className="text-sm">
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                Already have an account? Sign in
-              </Link>
-            </div>
+        <div className="flex items-center justify-end">
+          <div className="text-sm">
+            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+              Already have an account? Sign in
+            </Link>
           </div>
+        </div>
 
-          <button
-            type="submit"
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors cursor-pointer"
-          >
-            Sign Up
-          </button>
-
-          {status && (
-            <div
-              className="text-sm text-center"
-              aria-live="polite"
-              style={{ color: STATUS_COLORS[status.type] }}
-            >
-              {status.message}
-            </div>
-          )}
-        </Form>
-      </div>
-    </div>
+        <button
+          type="submit"
+          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all cursor-pointer shadow-md active:scale-95"
+        >
+          Sign Up
+        </button>
+      </Form>
+    </AuthCard>
   );
 }

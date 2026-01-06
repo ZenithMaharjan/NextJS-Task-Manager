@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 interface NavItemProps {
   href: string;
@@ -21,7 +22,6 @@ export default function NavItem({
   activeClassName = "underline font-semibold",
 }: NavItemProps) {
   const pathname = usePathname();
-
   const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   if (isMobile) {

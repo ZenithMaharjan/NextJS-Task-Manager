@@ -4,11 +4,7 @@ import { HeaderProps } from "../Header/types";
 import Logo from "../Logo";
 import NavLinks from "../NavLinks";
 
-const DEFAULT_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
+import { DEFAULT_LINKS } from "../../constants/navigation";
 
 export default function DesktopHeader({
   title = "My Website",

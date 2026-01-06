@@ -1,4 +1,4 @@
-import { Inventory } from "./types";
+import { Inventory } from "../../../types/inventory";
 
 const inventories: Inventory[] = [
   {
