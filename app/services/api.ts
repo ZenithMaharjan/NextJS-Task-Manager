@@ -1,23 +1,26 @@
 import RequestBuilder from 'utils/request';
 import type { CustomRequestOptions } from 'utils/request/types';
 
-import { APIError } from './error';
+import { APIError } from '../utils/error';
 
 const TokenInterceptor = (req: Request) => {
-    const authState = localStorage?.getItem('auth');
+    if (typeof window === 'undefined') return;
+    const authState = localStorage.getItem('auth');
     if (authState && !req.url.includes('/auth/refresh')) {
         req.headers.append('Authorization', `Bearer ${JSON.parse(authState).accessToken}`);
     }
 };
 
-const LoggingInterceptor = (payload: Request | Response) => {
-    console.log(payload);
+const loggingInterceptor = (payload: Request | Response) => {
+    if (process.env.NODE_ENV === 'development') {
+        console.log(payload);
+    }
 };
 
 const request = <T>(url: string, options: CustomRequestOptions = {}) => {
     const requestBuilder = new RequestBuilder(process.env.NEXT_PUBLIC_API_BASE_URL as string)
-        .setRequestInterceptors([TokenInterceptor, LoggingInterceptor])
-        .setResponseInterceptors([LoggingInterceptor])
+        .setRequestInterceptors([TokenInterceptor, loggingInterceptor])
+        .setResponseInterceptors([loggingInterceptor])
         .setRetryConfig({ backoffFactor: 0, maxRetries: 2 })
         .build<T>();
 

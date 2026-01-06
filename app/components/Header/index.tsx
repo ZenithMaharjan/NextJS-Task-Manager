@@ -4,12 +4,7 @@ import DesktopHeader from "../DesktopHeader";
 import MobileHeader from "../MobileHeader";
 import { HeaderProps, NavLink } from "./types";
 
-const DEFAULT_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/example", label: "Example" }
-];
+import { DEFAULT_LINKS } from "../../constants/navigation";
 
 export default function Header({
   title = "My Website",

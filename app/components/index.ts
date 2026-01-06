@@ -9,5 +9,6 @@ export { default as Logo } from "./Logo";
 export { default as NavLinks } from "./NavLinks";
 export { default as NavItem } from "./NavItem";
 export { default as HamburgerButton } from "./HamburgerButton";
+export { AuthCard } from "./Auth/AuthCard";
 
 export type { FormContextType, FormFieldType, InputGroupContextType } from "./Form/FormContext";

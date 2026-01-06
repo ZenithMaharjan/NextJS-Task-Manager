@@ -1,7 +1,5 @@
-export interface NavLink {
-  href: string;
-  label: string;
-}
+import { NavLink } from "../../constants/navigation";
+export type { NavLink };
 
 export interface HeaderProps {
   title?: string;

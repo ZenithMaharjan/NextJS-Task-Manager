@@ -9,9 +9,8 @@ import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import * as React from "react";
-
+import { usePathname } from "next/navigation";
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
 
@@ -36,19 +35,19 @@ export default function Drawer({
 }: DrawerProps) {
   const pathname = usePathname();
 
-  const boxBgColor = React.useMemo(() => {
-    return className.includes("bg-[")
-      ? className.match(/bg-\[([^\]]+)\]/)?.[1] || "#0a2b5c"
-      : "#0a2b5c";
-  }, [className]);
-
-  const isActiveLink = React.useCallback(
+  const checkActive = React.useCallback(
     (href: string): boolean => {
       if (href === "/") return pathname === "/";
       return pathname.startsWith(href);
     },
     [pathname],
   );
+
+  const boxBgColor = React.useMemo(() => {
+    return className.includes("bg-[")
+      ? className.match(/bg-\[([^\]]+)\]/)?.[1] || "#0a2b5c"
+      : "#0a2b5c";
+  }, [className]);
 
   const handleLinkClick = React.useCallback(() => {
     onClose();
@@ -89,7 +88,7 @@ export default function Drawer({
 
         <List sx={{ padding: "16px" }}>
           {links.map(link => {
-            const active = isActiveLink(link.href);
+            const active = checkActive(link.href);
             return (
               <ListItem key={link.href} disablePadding sx={{ marginBottom: "8px" }}>
                 <Link
@@ -117,7 +116,7 @@ export default function Drawer({
         </List>
       </Box>
     ),
-    [boxBgColor, title, logoHref, links, handleLinkClick, isActiveLink, onClose],
+    [boxBgColor, title, logoHref, links, handleLinkClick, checkActive, onClose],
   );
 
   return (

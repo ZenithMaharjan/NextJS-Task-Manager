@@ -5,8 +5,8 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  useEffect,
   useState,
+  useEffect,
 } from "react";
 
 import { FormContext, InputGroupContext, useInputGroupContext, FormFieldType } from "./FormContext";
@@ -15,7 +15,7 @@ import { getErrorMessage } from "../../utils/error";
 import BaseInput from "../Input";
 import Label from "../Label";
 
-// Type definitions
+
 interface ValueExtractorItem {
   value?: unknown;
 }
@@ -26,14 +26,12 @@ type FormValueExtractor = (value: unknown) => unknown;
 interface InputGroupProps {
   name: string;
   children: React.ReactNode;
-  [key: string]: unknown;
 }
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
-  component?: React.ComponentType<unknown> | string;
-  error?: Record<string, string>;
+  component?: React.ComponentType<any> | string;
   formData?: FormData;
   onChange?: (payload: unknown, ...otherArgs: unknown[]) => void;
   formValueExtractor?: FormValueExtractor;
@@ -42,14 +40,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputContainerClassName?: string;
   labelClassName?: string;
   standaloneName?: string;
-  fields?: Record<string, FormFieldType>;
   addField?: (fieldObj: { name: string; field: FormFieldType }) => void;
   removeField?: (fieldName: string) => void;
   showRequiredFields?: boolean;
   onFormChange?: (inputProps: Record<string, unknown>) => void;
-  valueExtractor?: (value: unknown) => unknown;
   errorMessage?: string;
-  showRequired?: boolean;
+  error?: Record<string, string>;
 }
 
 interface FormProps {
@@ -72,6 +68,7 @@ interface FormRef {
   nativeForm: HTMLFormElement | null;
 }
 
+
 const defaultValueExtractor = (item: ValueExtractorItem | unknown): unknown => {
   if (item && typeof item === "object" && "value" in item) {
     return (item as ValueExtractorItem).value;
@@ -79,21 +76,15 @@ const defaultValueExtractor = (item: ValueExtractorItem | unknown): unknown => {
   return undefined;
 };
 
-const InputGroup = (props: InputGroupProps) => {
-  const { name, children } = useInputGroupContext(props);
 
-  const inputGroupContext = useMemo(() => {
-    return { name: name || "" };
-  }, [name]);
-
-  return (
-    <InputGroupContext.Provider value={inputGroupContext}>{children}</InputGroupContext.Provider>
-  );
+const InputGroup = ({ name, children }: InputGroupProps) => {
+  const context = useMemo(() => ({ name: name || "" }), [name]);
+  return <InputGroupContext.Provider value={context}>{children}</InputGroupContext.Provider>;
 };
 
-const Input = (props: InputProps) => {
+const FormInput = (props: InputProps) => {
+  const context = useInputGroupContext(props) || {};
   const {
-    error,
     component: Component = BaseInput,
     formData,
     onChange,
@@ -104,37 +95,28 @@ const Input = (props: InputProps) => {
     labelClassName,
     label,
     standaloneName,
-    fields,
     addField,
     removeField,
     showRequiredFields,
     onFormChange,
+    error,
     ...inputProps
-  } = useInputGroupContext(props) || {};
+  } = context;
 
   const inputFieldRef = useRef<{ onInvalidSubmit?: () => void }>(null);
   const inputRef = useRef<HTMLDivElement>(null);
-  const [showRequired] = useControlledState(false, {
-    value: showRequiredFields,
-  });
+  const [showRequired] = useControlledState(false, { value: showRequiredFields });
 
   const handleChange = useCallback(
     (payload: unknown, ...otherArgs: unknown[]) => {
-      onChange && onChange(payload, ...otherArgs);
-      if (!standaloneName || !inputProps.name || !formData) {
-        return;
-      }
+      onChange?.(payload, ...otherArgs);
+      if (!standaloneName || !inputProps.name || !formData) return;
 
       const name = inputProps.name;
       let value: unknown;
       if (fieldValueExtractor) {
         value = fieldValueExtractor(payload, ...otherArgs);
-      } else if (
-        payload &&
-        typeof payload === "object" &&
-        "nativeEvent" in payload &&
-        payload.nativeEvent instanceof Event
-      ) {
+      } else if (payload && typeof payload === "object" && "target" in payload) {
         value = (payload as React.ChangeEvent<HTMLInputElement>).target.value;
       } else {
         value = defaultValueExtractor(payload) ?? payload;
@@ -147,12 +129,6 @@ const Input = (props: InputProps) => {
 
   useEffect(() => {
     if (standaloneName && inputProps.name && formData) {
-      let value: unknown = inputProps.value ?? inputProps.defaultValue ?? null;
-      if (formValueExtractor) {
-        value = value ? formValueExtractor(value) : value;
-      } else if (inputProps.valueExtractor) {
-        value = value ? inputProps.valueExtractor(value) : value;
-      }
       addField?.({
         name: inputProps.name,
         field: {
@@ -161,58 +137,28 @@ const Input = (props: InputProps) => {
           ref: inputFieldRef.current || undefined,
         },
       });
-      if (value !== undefined && value !== null) {
-        formData.set(inputProps.name, String(value));
-      }
       return () => {
         removeField?.(inputProps.name);
         formData.delete(inputProps.name);
       };
     }
-  }, [
-    formData,
-    inputProps.name,
-    inputProps.required,
-    inputProps.value,
-    inputProps.defaultValue,
-    inputProps.valueExtractor,
-    formValueExtractor,
-    standaloneName,
-    addField,
-    removeField,
-  ]);
+  }, [formData, inputProps.name, inputProps.required, standaloneName, addField, removeField]);
 
-  const handleInvalidSubmit = useCallback(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  useImperativeHandle(
-    inputFieldRef,
-    () => ({
-      onInvalidSubmit: handleInvalidSubmit,
-    }),
-    [handleInvalidSubmit],
-  );
+  useImperativeHandle(inputFieldRef, () => ({
+    onInvalidSubmit: () => inputRef.current?.focus(),
+  }));
 
   const fieldProps = useMemo(() => {
     const value = formData?.get(inputProps.name || "");
-
-    if (typeof Component !== "string") {
-      return {
-        ...inputProps,
-        showRequired:
-          inputProps.required && (!value || ["undefined", "null"].includes(String(value)))
-            ? showRequired
-            : false,
-        errorMessage: error?.[inputProps.name || ""],
-      };
-    }
-    return inputProps;
-  }, [Component, inputProps, showRequired, formData, error]);
+    const isError = inputProps.required && (!value || ["undefined", "null"].includes(String(value))) && showRequired;
+    
+    return {
+      ...inputProps,
+      errorMessage: error?.[inputProps.name || ""] || (isError ? "This field is required" : undefined),
+    };
+  }, [inputProps, showRequired, formData, error]);
 
   if (!formData) return <Component {...props} />;
-
-  const hasError = Boolean(fieldProps.errorMessage);
 
   return (
     <div ref={inputRef} className={containerClassName} style={{ outline: "none" }} tabIndex={-1}>
@@ -222,12 +168,10 @@ const Input = (props: InputProps) => {
         containerClassName={inputContainerClassName}
         onChange={handleChange}
       />
-      {hasError && (
-        <span className="text-red-500 text-xs mt-1 block">{fieldProps.errorMessage}</span>
-      )}
     </div>
   );
 };
+
 
 const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
   const {
@@ -235,35 +179,26 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     onSubmit,
     onChange,
     error,
-    formErrorClassName = "text-red-500 text-sm mt-2",
+    formErrorClassName = "text-red-500 text-sm mt-2 font-medium",
     onInvalidSubmit,
     defaultFormData,
     ...formProps
   } = props;
 
   const formRef = useRef<HTMLFormElement>(null);
-
   const [showRequiredFields, setShowRequiredFields] = useState(false);
   const [fields, setFields] = useState<Record<string, FormFieldType>>({});
 
   const addField = useCallback((fieldObj: { name: string; field: FormFieldType }) => {
-    setFields(fs => {
-      if (!fs[fieldObj.name]) {
-        const newFields = { ...fs, [fieldObj.name]: fieldObj.field };
-        return { ...newFields };
-      }
-      return fs;
-    });
+    setFields(fs => fs[fieldObj.name] ? fs : { ...fs, [fieldObj.name]: fieldObj.field });
   }, []);
 
   const removeField = useCallback((fieldName: string) => {
     setFields(fs => {
-      if (fs[fieldName]) {
-        const newFields = { ...fs };
-        delete newFields[fieldName];
-        return { ...newFields };
-      }
-      return fs;
+      if (!fs[fieldName]) return fs;
+      const newFields = { ...fs };
+      delete newFields[fieldName];
+      return newFields;
     });
   }, []);
 
@@ -271,20 +206,17 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
   const formData = useMemo(() => formDataObject.current, []);
 
   const handleSubmitForm = useCallback(
-    (evnt: React.FormEvent<HTMLFormElement>) => {
-      evnt.preventDefault();
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
       let hasError = false;
-      for (const key of Object.keys(fields)) {
+      
+      Object.keys(fields).forEach(key => {
         const value = formData.get(key);
-        if (
-          fields[key] &&
-          fields[key].required &&
-          (!value || ["undefined", "null"].includes(String(value)))
-        ) {
+        if (fields[key]?.required && (!value || ["undefined", "null"].includes(String(value)))) {
           fields[key].ref?.onInvalidSubmit?.();
           hasError = true;
         }
-      }
+      });
 
       if (hasError) {
         onInvalidSubmit?.("required");
@@ -297,70 +229,36 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     [formData, fields, onInvalidSubmit, onSubmit],
   );
 
-  const handleFormChange = useCallback(
-    (payload: unknown) => {
-      if (payload && typeof payload === "object" && "target" in payload) {
-        const event = payload as React.ChangeEvent<HTMLFormElement>;
-        if (!event.target.name) {
-          return;
-        }
-        return onChange?.(payload);
-      }
-      if (onChange) {
-        return onChange({ ...(payload as object), formData });
-      }
-    },
-    [formData, onChange],
-  );
-
-  const formContext = useMemo(() => {
-    return {
-      formData,
-      fields,
-      addField,
-      removeField,
-      showRequiredFields,
-      error: typeof error === "string" ? undefined : error,
-      onFormChange: handleFormChange,
-    };
-  }, [formData, fields, addField, removeField, showRequiredFields, error, handleFormChange]);
+  const context = useMemo(() => ({
+    formData,
+    fields,
+    addField,
+    removeField,
+    showRequiredFields,
+    error: typeof error === "string" ? undefined : error,
+    onFormChange: onChange,
+  }), [formData, fields, addField, removeField, showRequiredFields, error, onChange]);
 
   const hasFormError = useMemo(() => {
-    if (!error) {
-      return false;
-    }
-    if (typeof error === "string") {
-      return true;
-    }
-    // Check if there are any errors that are NOT field-specific
-    const errorKeys = Object.keys(error);
-    const fieldKeys = Object.keys(fields);
-
-    // If there are error keys that don't match any field names, show general error
-    const hasNonFieldErrors = errorKeys.some(key => !fieldKeys.includes(key));
-
-    return hasNonFieldErrors;
+    if (!error) return false;
+    if (typeof error === "string") return true;
+    
+    return Object.keys(error).some(key => !fields[key]);
   }, [fields, error]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      getFormData: () => {
-        return formData;
-      },
-      nativeForm: formRef.current,
-    }),
-    [formData],
-  );
+  useImperativeHandle(ref, () => ({
+    getFormData: () => formData,
+    nativeForm: formRef.current,
+  }), [formData]);
 
   return (
-    <FormContext.Provider value={formContext}>
+    <FormContext.Provider value={context}>
       <form
         ref={formRef}
         noValidate
         {...formProps}
         onSubmit={handleSubmitForm}
-        onChange={handleFormChange}
+        onChange={onChange}
       >
         {children}
       </form>
@@ -375,12 +273,12 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
 
 Form.displayName = "Form";
 
-const FormWithSubComponents = Form as typeof Form & {
+const ExportedForm = Form as typeof Form & {
   InputGroup: typeof InputGroup;
-  Input: typeof Input;
+  Input: typeof FormInput;
 };
 
-FormWithSubComponents.InputGroup = InputGroup;
-FormWithSubComponents.Input = Input;
+ExportedForm.InputGroup = InputGroup;
+ExportedForm.Input = FormInput;
 
-export default FormWithSubComponents;
+export default ExportedForm;
