@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, FC } from "react";
 import CheckboxInput from "@/components/Input/CheckboxInput";
 import SelectInput from "@/components/Form/SelectInput";
 import { SORT_OPTIONS } from "@/utils/inventory";
@@ -10,18 +10,18 @@ interface DashboardFiltersProps {
   setSortBy: (value: string) => void;
 }
 
-const DashboardFilters: React.FC<DashboardFiltersProps> = ({
+const DashboardFilters: FC<DashboardFiltersProps> = ({
   inStockOnly,
   setInStockOnly,
   sortBy,
   setSortBy,
 }) => {
-  const handleStockChange = React.useCallback(
+  const handleStockChange = useCallback(
     (target: { checked: boolean }) => setInStockOnly(target.checked),
     [setInStockOnly],
   );
 
-  const handleSortChange = React.useCallback(
+  const handleSortChange = useCallback(
     (e: { value: string }) => setSortBy(e.value),
     [setSortBy],
   );

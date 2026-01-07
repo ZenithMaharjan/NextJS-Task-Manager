@@ -15,7 +15,6 @@ import { getErrorMessage } from "../../utils/error";
 import BaseInput from "../Input";
 import Label from "../Label";
 
-
 interface ValueExtractorItem {
   value?: unknown;
 }
@@ -68,14 +67,12 @@ interface FormRef {
   nativeForm: HTMLFormElement | null;
 }
 
-
 const defaultValueExtractor = (item: ValueExtractorItem | unknown): unknown => {
   if (item && typeof item === "object" && "value" in item) {
     return (item as ValueExtractorItem).value;
   }
   return undefined;
 };
-
 
 const InputGroup = ({ name, children }: InputGroupProps) => {
   const context = useMemo(() => ({ name: name || "" }), [name]);
@@ -150,11 +147,15 @@ const FormInput = (props: InputProps) => {
 
   const fieldProps = useMemo(() => {
     const value = formData?.get(inputProps.name || "");
-    const isError = inputProps.required && (!value || ["undefined", "null"].includes(String(value))) && showRequired;
-    
+    const isError =
+      inputProps.required &&
+      (!value || ["undefined", "null"].includes(String(value))) &&
+      showRequired;
+
     return {
       ...inputProps,
-      errorMessage: error?.[inputProps.name || ""] || (isError ? "This field is required" : undefined),
+      errorMessage:
+        error?.[inputProps.name || ""] || (isError ? "This field is required" : undefined),
     };
   }, [inputProps, showRequired, formData, error]);
 
@@ -171,7 +172,6 @@ const FormInput = (props: InputProps) => {
     </div>
   );
 };
-
 
 const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
   const {
@@ -190,7 +190,7 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
   const [fields, setFields] = useState<Record<string, FormFieldType>>({});
 
   const addField = useCallback((fieldObj: { name: string; field: FormFieldType }) => {
-    setFields(fs => fs[fieldObj.name] ? fs : { ...fs, [fieldObj.name]: fieldObj.field });
+    setFields(fs => (fs[fieldObj.name] ? fs : { ...fs, [fieldObj.name]: fieldObj.field }));
   }, []);
 
   const removeField = useCallback((fieldName: string) => {
@@ -209,7 +209,7 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       let hasError = false;
-      
+
       Object.keys(fields).forEach(key => {
         const value = formData.get(key);
         if (fields[key]?.required && (!value || ["undefined", "null"].includes(String(value)))) {
@@ -229,37 +229,38 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     [formData, fields, onInvalidSubmit, onSubmit],
   );
 
-  const context = useMemo(() => ({
-    formData,
-    fields,
-    addField,
-    removeField,
-    showRequiredFields,
-    error: typeof error === "string" ? undefined : error,
-    onFormChange: onChange,
-  }), [formData, fields, addField, removeField, showRequiredFields, error, onChange]);
+  const context = useMemo(
+    () => ({
+      formData,
+      fields,
+      addField,
+      removeField,
+      showRequiredFields,
+      error: typeof error === "string" ? undefined : error,
+      onFormChange: onChange,
+    }),
+    [formData, fields, addField, removeField, showRequiredFields, error, onChange],
+  );
 
   const hasFormError = useMemo(() => {
     if (!error) return false;
     if (typeof error === "string") return true;
-    
+
     return Object.keys(error).some(key => !fields[key]);
   }, [fields, error]);
 
-  useImperativeHandle(ref, () => ({
-    getFormData: () => formData,
-    nativeForm: formRef.current,
-  }), [formData]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getFormData: () => formData,
+      nativeForm: formRef.current,
+    }),
+    [formData],
+  );
 
   return (
     <FormContext.Provider value={context}>
-      <form
-        ref={formRef}
-        noValidate
-        {...formProps}
-        onSubmit={handleSubmitForm}
-        onChange={onChange}
-      >
+      <form ref={formRef} noValidate {...formProps} onSubmit={handleSubmitForm} onChange={onChange}>
         {children}
       </form>
       {hasFormError && (
