@@ -8,5 +8,5 @@ export const DEFAULT_LINKS: NavLink[] = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/example", label: "Example" },
-  { href: "/dashboard", label: "Dashboard" }
+  { href: "/dashboard", label: "Dashboard" },
 ];
