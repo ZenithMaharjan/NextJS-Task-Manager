@@ -7,10 +7,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { X } from "lucide-react";
+import { X, Heart } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
 
@@ -34,6 +37,7 @@ export default function Drawer({
   className = "bg-[#0a2b5c]",
 }: DrawerProps) {
   const pathname = usePathname();
+  const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
 
   const checkActive = useCallback(
     (href: string): boolean => {
@@ -113,10 +117,39 @@ export default function Drawer({
               </ListItem>
             );
           })}
+
+          <ListItem disablePadding sx={{ marginBottom: "8px" }}>
+            <Link
+              href="/wishlist"
+              onClick={handleLinkClick}
+              style={{ width: "100%", textDecoration: "none" }}
+            >
+              <ListItemButton
+                sx={{
+                  borderRadius: "8px",
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                }}
+              >
+                <div className="relative">
+                  <Heart size={20} />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </div>
+                <span>Wishlist</span>
+              </ListItemButton>
+            </Link>
+          </ListItem>
         </List>
       </Box>
     ),
-    [boxBgColor, title, logoHref, links, handleLinkClick, checkActive, onClose],
+    [boxBgColor, title, logoHref, links, handleLinkClick, checkActive, onClose, wishlistCount],
   );
 
   return (

@@ -1,5 +1,6 @@
 import RequestBuilder from 'utils/request';
 import type { CustomRequestOptions } from 'utils/request/types';
+import { Inventory } from '@/types/inventory';
 
 import { APIError } from '../utils/error';
 
@@ -127,6 +128,10 @@ class APIService {
 
     getInventory = () => {
         return this.get('/inventory');
+    }
+
+    getInventoryById = (id: string): Promise<Inventory> => {
+        return this.get<Inventory>(`/inventory/${id}`);
     }
 }
 

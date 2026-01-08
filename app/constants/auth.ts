@@ -5,3 +5,7 @@ export const STATUS_COLORS: Record<StatusType, string> = {
   warning: "#fbaf00",
   error: "#d64933",
 };
+interface ApiError {
+  message: string;
+  code?: number;
+}
