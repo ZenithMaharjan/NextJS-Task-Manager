@@ -1,6 +1,6 @@
 import RequestBuilder from 'utils/request';
 import type { CustomRequestOptions } from 'utils/request/types';
-import { Inventory } from '@/types/inventory';
+import { Inventory, InventoryResponse } from '@/types/inventory';
 
 import { APIError } from '../utils/error';
 
@@ -126,8 +126,8 @@ class APIService {
         return this.get('/health');
     }
 
-    getInventory = () => {
-        return this.get('/inventory');
+    getInventory = (): Promise<InventoryResponse> => {
+        return this.get<InventoryResponse>('/inventory');
     }
 
     getInventoryById = (id: string): Promise<Inventory> => {
