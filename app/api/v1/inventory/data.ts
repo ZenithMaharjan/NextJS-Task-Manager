@@ -3,6 +3,7 @@ import { Inventory } from "../../../types/inventory";
 const inventories: Inventory[] = [
   {
     id: '1',
+    userId: 'user-1',
     brand: 'Honda',
     model: 'CBR500R',
     year: 2024,
@@ -17,6 +18,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '2',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'MT-07',
     year: 2024,
@@ -31,6 +33,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '3',
+    userId: 'user-1',
     brand: 'Kawasaki',
     model: 'Ninja 400',
     year: 2023,
@@ -45,6 +48,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '4',
+    userId: 'admin',
     brand: 'Royal Enfield',
     model: 'Himalayan',
     year: 2024,
@@ -59,6 +63,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '5',
+    userId: 'user-2',
     brand: 'Harley-Davidson',
     model: 'Street 750',
     year: 2023,
@@ -73,6 +78,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '6',
+    userId: 'user-1',
     brand: 'Suzuki',
     model: 'V-Strom 650',
     year: 2024,
@@ -87,6 +93,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '7',
+    userId: 'admin',
     brand: 'Honda',
     model: 'CBR500R',
     year: 2023,
@@ -101,6 +108,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '8',
+    userId: 'user-1',
     brand: 'Honda',
     model: 'CBR500R',
     year: 2024,
@@ -115,6 +123,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '9',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'CBR500R',
     year: 2022,
@@ -129,6 +138,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '10',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'MT-07',
     year: 2023,
@@ -143,6 +153,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '11',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'MT-07',
     year: 2024,
@@ -157,6 +168,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '12',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'MT-07',
     year: 2025,
@@ -171,6 +183,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '13',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Ninja 400',
     year: 2024,
@@ -185,6 +198,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '14',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Ninja 400',
     year: 2023,
@@ -199,6 +213,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '15',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Ninja 400',
     year: 2024,
@@ -213,6 +228,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '16',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Himalayan',
     year: 2023,
@@ -227,6 +243,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '17',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Himalayan',
     year: 2024,
@@ -241,6 +258,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '18',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Himalayan',
     year: 2024,
@@ -255,6 +273,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '19',
+    userId: 'user-2',
     brand: 'Harley-Davidson',
     model: 'Street 750',
     year: 2024,
@@ -269,6 +288,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '20',
+    userId: 'user-2',
     brand: 'Harley-Davidson',
     model: 'Street 750',
     year: 2022,
@@ -283,6 +303,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '21',
+    userId: 'user-2',
     brand: 'Suzuki',
     model: 'V-Strom 650',
     year: 2023,
@@ -297,6 +318,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '22',
+    userId: 'user-2',
     brand: 'Suzuki',
     model: 'V-Strom 650',
     year: 2024,
@@ -311,6 +333,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '23',
+    userId: 'user-2',
     brand: 'KTM',
     model: 'Duke 390',
     year: 2024,
@@ -325,6 +348,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '24',
+    userId: 'user-2',
     brand: 'KTM',
     model: 'Duke 390',
     year: 2023,
@@ -339,6 +363,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '25',
+    userId: 'user-2',
     brand: 'KTM',
     model: 'Duke 390',
     year: 2024,
@@ -353,6 +378,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '26',
+    userId: 'user-2',
     brand: 'BMW',
     model: 'G 310 R',
     year: 2024,
@@ -367,6 +393,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '27',
+    userId: 'user-2',
     brand: 'BMW',
     model: 'G 310 R',
     year: 2023,
@@ -381,6 +408,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '28',
+    userId: 'user-2',
     brand: 'BMW',
     model: 'G 310 R',
     year: 2024,
@@ -395,6 +423,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '29',
+    userId: 'user-2',
     brand: 'Triumph',
     model: 'Street Triple',
     year: 2024,
@@ -409,6 +438,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '30',
+    userId: 'user-2',
     brand: 'Triumph',
     model: 'Street Triple',
     year: 2023,
@@ -423,6 +453,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '31',
+    userId: 'user-2',
     brand: 'Triumph',
     model: 'Street Triple',
     year: 2024,
@@ -437,6 +468,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '32',
+    userId: 'user-2',
     brand: 'Ducati',
     model: 'Monster 821',
     year: 2024,
@@ -451,6 +483,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '33',
+    userId: 'user-2',
     brand: 'Ducati',
     model: 'Monster 821',
     year: 2023,
@@ -465,6 +498,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '34',
+    userId: 'user-2',
     brand: 'Ducati',
     model: 'Monster 821',
     year: 2024,
@@ -479,6 +513,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '35',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'CB650R',
     year: 2024,
@@ -493,6 +528,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '36',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'CB650R',
     year: 2023,
@@ -507,6 +543,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '37',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'CB650R',
     year: 2024,
@@ -521,6 +558,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '38',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'R3',
     year: 2024,
@@ -535,6 +573,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '39',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'R3',
     year: 2023,
@@ -549,6 +588,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '40',
+    userId: 'user-2',
     brand: 'Yamaha',
     model: 'R3',
     year: 2024,
@@ -563,6 +603,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '41',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Z650',
     year: 2024,
@@ -577,6 +618,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '42',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Z650',
     year: 2023,
@@ -591,6 +633,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '43',
+    userId: 'user-2',
     brand: 'Kawasaki',
     model: 'Z650',
     year: 2024,
@@ -605,6 +648,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '44',
+    userId: 'user-2',
     brand: 'Suzuki',
     model: 'GSX-S750',
     year: 2024,
@@ -619,6 +663,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '45',
+    userId: 'user-2',
     brand: 'Suzuki',
     model: 'GSX-S750',
     year: 2023,
@@ -633,6 +678,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '46',
+    userId: 'user-2',
     brand: 'Suzuki',
     model: 'GSX-S750',
     year: 2024,
@@ -647,6 +693,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '47',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Classic 350',
     year: 2024,
@@ -661,6 +708,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '48',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Classic 350',
     year: 2023,
@@ -675,6 +723,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '49',
+    userId: 'user-2',
     brand: 'Royal Enfield',
     model: 'Classic 350',
     year: 2024,
@@ -689,6 +738,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '50',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'Rebel 500',
     year: 2024,
@@ -703,6 +753,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '51',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'Rebel 500',
     year: 2023,
@@ -717,6 +768,7 @@ const inventories: Inventory[] = [
   },
   {
     id: '52',
+    userId: 'user-2',
     brand: 'Honda',
     model: 'Rebel 500',
     year: 2024,

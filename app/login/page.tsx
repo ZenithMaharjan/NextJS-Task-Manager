@@ -1,40 +1,60 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Form } from "../components";
 import { AuthCard } from "../components/Auth/AuthCard";
 import { StatusType } from "../constants/auth";
+import { setUser } from "../store/slices/userSlice";
 import { validateEmail, validateUsername, validatePassword } from "../utils/validation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
-  const handleSubmit = useCallback((formData: FormData) => {
-    const username = String(formData.get("username") ?? "").trim();
-    const email = String(formData.get("email") ?? "").trim();
-    const password = String(formData.get("password") ?? "").trim();
+  const handleSubmit = useCallback(
+    (formData: FormData) => {
+      const username = String(formData.get("username") ?? "").trim();
+      const email = String(formData.get("email") ?? "").trim();
+      const password = String(formData.get("password") ?? "").trim();
 
-    const newErrors: Record<string, string> = {
-      username: validateUsername(username) || "",
-      email: validateEmail(email) || "",
-      password: validatePassword(password) || "",
-    };
+      const newErrors: Record<string, string> = {
+        username: validateUsername(username) || "",
+        email: validateEmail(email) || "",
+        password: validatePassword(password) || "",
+      };
 
-    Object.keys(newErrors).forEach(key => {
-      if (!newErrors[key]) delete newErrors[key];
-    });
+      Object.keys(newErrors).forEach((key) => {
+        if (!newErrors[key]) delete newErrors[key];
+      });
 
-    if (Object.keys(newErrors).length > 0) {
-      setError(newErrors);
-      setStatus({ type: "error", message: "Please fix the errors below" });
-      return;
-    }
+      if (Object.keys(newErrors).length > 0) {
+        setError(newErrors);
+        setStatus({ type: "error", message: "Please fix the errors below" });
+        return;
+      }
 
-    setStatus({ type: "success", message: "Sign in submitted successfully!" });
-    setTimeout(() => setStatus(null), 3000);
-  }, []);
+      // Mock Authentication Success
+      dispatch(
+        setUser({
+          id: "user-1",
+          name: username || "Mock User",
+          email: email,
+        })
+      );
+
+      setStatus({ type: "success", message: "Successfully signed in! Redirecting..." });
+
+      setTimeout(() => {
+        router.push("/inventory");
+      }, 1000);
+    },
+    [dispatch, router]
+  );
 
   const handleInvalidSubmit = useCallback(() => {
     setStatus({ type: "warning", message: "Please fill all required fields" });

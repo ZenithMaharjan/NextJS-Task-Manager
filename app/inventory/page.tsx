@@ -37,6 +37,10 @@ export default function InventoryPage() {
     fetchInventory();
   }, [fetchInventory]);
 
+  const handleDeleteItem = useCallback((id: string) => {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -45,15 +49,12 @@ export default function InventoryPage() {
             Motorcycle <span className="text-blue-600">Inventory</span>
           </h1>
           <p className="mt-4 text-xl text-gray-500 dark:text-gray-400 max-w-2xl">
-            Explore our premium selection of motorcycles. Search, filter, and add your favorites to your wishlist.
+            Explore our premium selection of motorcycles. Search, filter, and add your favorites to
+            your wishlist.
           </p>
         </header>
 
-        <InventoryList 
-          items={items} 
-          loading={loading} 
-          error={error} 
-        />
+        <InventoryList items={items} loading={loading} error={error} onDelete={handleDeleteItem} />
       </div>
     </div>
   );

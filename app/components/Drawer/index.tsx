@@ -7,12 +7,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { X, Heart } from "lucide-react";
+import { X, Heart, User, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
+import { setUser, logout } from "../../store/slices/userSlice";
 
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
@@ -36,8 +37,23 @@ export default function Drawer({
   links,
   className = "bg-[#0a2b5c]",
 }: DrawerProps) {
+  const dispatch = useDispatch();
   const pathname = usePathname();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+  const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
+
+  const toggleMockUser = useCallback(() => {
+    if (currentUser?.id === "user-1") {
+      dispatch(setUser({ id: "user-2", name: "Other User", email: "other@example.com" }));
+    } else {
+      dispatch(setUser({ id: "user-1", name: "Mock User", email: "mock@example.com" }));
+    }
+  }, [currentUser, dispatch]);
+
+  const handleLogout = useCallback(() => {
+    dispatch(logout());
+    onClose();
+  }, [dispatch, onClose]);
 
   const checkActive = useCallback(
     (href: string): boolean => {
@@ -91,7 +107,7 @@ export default function Drawer({
         </Box>
 
         <List sx={{ padding: "16px" }}>
-          {links.map(link => {
+          {links.map((link) => {
             const active = checkActive(link.href);
             return (
               <ListItem key={link.href} disablePadding sx={{ marginBottom: "8px" }}>
@@ -146,10 +162,103 @@ export default function Drawer({
               </ListItemButton>
             </Link>
           </ListItem>
+
+          {isAuthenticated ? (
+            <>
+              <ListItem
+                disablePadding
+                sx={{
+                  marginTop: "16px",
+                  pt: "16px",
+                  borderTop: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <ListItemButton
+                  onClick={toggleMockUser}
+                  sx={{
+                    borderRadius: "8px",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                  }}
+                >
+                  <User size={20} className="text-blue-300" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-blue-200 uppercase font-bold opacity-70">
+                      Mock Profile
+                    </span>
+                    <span className="text-sm font-semibold">{currentUser?.name}</span>
+                  </div>
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding sx={{ marginTop: "8px" }}>
+                <ListItemButton
+                  onClick={handleLogout}
+                  sx={{
+                    borderRadius: "8px",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    "&:hover": { backgroundColor: "rgba(239, 68, 68, 0.2)" },
+                  }}
+                >
+                  <LogOut size={20} className="text-red-400" />
+                  <span className="text-sm font-semibold">Logout</span>
+                </ListItemButton>
+              </ListItem>
+            </>
+          ) : (
+            <ListItem
+              disablePadding
+              sx={{
+                marginTop: "16px",
+                pt: "16px",
+                borderTop: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <Link
+                href="/login"
+                onClick={handleLinkClick}
+                style={{ width: "100%", textDecoration: "none" }}
+              >
+                <ListItemButton
+                  sx={{
+                    borderRadius: "8px",
+                    color: "white",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.15)" },
+                  }}
+                >
+                  <User size={20} />
+                  <span className="text-sm font-bold">Sign In</span>
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          )}
         </List>
       </Box>
     ),
-    [boxBgColor, title, logoHref, links, handleLinkClick, checkActive, onClose, wishlistCount],
+    [
+      boxBgColor,
+      title,
+      logoHref,
+      links,
+      handleLinkClick,
+      checkActive,
+      onClose,
+      wishlistCount,
+      isAuthenticated,
+      currentUser,
+      toggleMockUser,
+      handleLogout,
+    ],
   );
 
   return (
