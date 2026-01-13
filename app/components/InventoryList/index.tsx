@@ -11,6 +11,7 @@ interface InventoryListProps {
   items: Inventory[];
   loading?: boolean;
   error?: string | null;
+  onDelete: (id: string) => void;
 }
 
 const ROWS_PER_PAGE_OPTIONS = [
@@ -46,7 +47,7 @@ const PaginationButton = ({ page, currentPage, onPageChange }: PaginationButtonP
   );
 };
 
-const InventoryList = ({ items, loading, error }: InventoryListProps) => {
+const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -144,7 +145,7 @@ const InventoryList = ({ items, loading, error }: InventoryListProps) => {
       {paginatedItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {paginatedItems.map(item => (
-            <InventoryCard key={item.id} item={item} />
+            <InventoryCard key={item.id} item={item} onDelete={onDelete} />
           ))}
         </div>
       ) : (
