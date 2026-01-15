@@ -9,6 +9,7 @@ import { RootState } from "@/store";
 import { Inventory } from "@/types/inventory";
 
 import { Pencil, Trash2, User } from "lucide-react";
+import { DeleteConfirmationModal } from "@/components";
 
 export default function InventoryItemPage() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const isOwner = useMemo(() => {
     return currentUser?.id === item?.userId;
@@ -50,13 +52,21 @@ const router = useRouter();
 
   const handleDelete = useCallback(() => {
     if (!item) return;
-    if (confirm(`Are you sure you want to delete this ${item.brand} ${item.model}?`)) {
-      console.log("Delete item:", item.id);
-      setIsDeleted(true);
-      setTimeout(() => {
-        router.push("/inventory");
-      }, 1000);
-    }
+    setIsDeleteModalOpen(true);
+  }, [item]);
+
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!item) return;
+    setIsDeleteModalOpen(false);
+    console.log("Delete item:", item.id);
+    setIsDeleted(true);
+    setTimeout(() => {
+      router.push("/inventory");
+    }, 1000);
   }, [item, router]);
 
   if (isDeleted) {
@@ -85,7 +95,8 @@ const router = useRouter();
   if (!item) return <div className="p-8 text-center">Item not found</div>;
 
   return (
-    <div className="container mx-auto p-6 max-w-2xl">
+    <>
+      <div className="container mx-auto p-6 max-w-2xl">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
         <div className="bg-gray-50 dark:bg-gray-900/50 p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start">
           <div>
@@ -179,5 +190,15 @@ const router = useRouter();
         </div>
       </div>
     </div>
-  );
+
+    {item && (
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        itemName={`${item.brand} ${item.model}`}
+      />
+    )}
+  </>
+);
 }
