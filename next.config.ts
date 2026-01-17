@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
 
+const origin =
+  process.env.NODE_ENV === "production"
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+console.log(process.env);
+console.log(process.env.VERCEL_URL);
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   async headers() {
@@ -8,7 +15,7 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: process.env.ALLOWED_ORIGIN || "*" },
+          { key: "Access-Control-Allow-Origin", value: origin },
           { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
           {
             key: "Access-Control-Allow-Headers",
