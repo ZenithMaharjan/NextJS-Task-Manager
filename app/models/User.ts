@@ -6,6 +6,7 @@ export interface UserDocument extends mongoose.Document {
   username: string;
   email: string;
   password: string;
+  wishlists: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -35,6 +36,10 @@ const userSchema = new Schema<UserDocument>(
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
       select: false, // Don't include password in queries by default
+    },
+    wishlists: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Inventory" }],
+      default: [],
     },
   },
   {
