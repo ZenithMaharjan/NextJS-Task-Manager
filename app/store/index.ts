@@ -3,6 +3,7 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from "redux-persist/lib/storage";
 import wishlistReducer from "./slices/wishlistSlice";
 import userReducer from "./slices/userSlice";
+import inventoryReducer from "./slices/inventorySlice";
 
 const persistConfig = {
   key: "root",
@@ -15,6 +16,7 @@ export const store = configureStore({
   reducer: {
     wishlist: persistedReducer,
     user: userReducer,
+    inventory: inventoryReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
