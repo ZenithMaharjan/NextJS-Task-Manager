@@ -6,6 +6,8 @@ import clsx from "clsx";
 import { Inventory } from "@/types/inventory";
 import InventoryCard from "../InventoryCard";
 import SelectInput from "../Form/SelectInput";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface InventoryListProps {
   items: Inventory[];
@@ -51,16 +53,19 @@ const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const tempDeletes = useSelector((state: RootState) => state.inventory.tempDeletes);
 
   const filteredItems = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
-    return items.filter(
-      item =>
-        item.brand.toLowerCase().includes(searchLower) ||
-        item.model.toLowerCase().includes(searchLower) ||
-        (typeof item.type === "string" && item.type.toLowerCase().includes(searchLower)),
-    );
-  }, [items, searchTerm]);
+    return items
+      .filter((item) => !tempDeletes[item.id]) 
+      .filter(
+        (item) =>
+          item.brand.toLowerCase().includes(searchLower) ||
+          item.model.toLowerCase().includes(searchLower) ||
+          (typeof item.type === "string" && item.type.toLowerCase().includes(searchLower)),
+      );
+  }, [items, searchTerm, tempDeletes]);
 
   const totalPages = Math.ceil(filteredItems.length / rowsPerPage);
 

@@ -8,7 +8,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     await connectDB();
 
     const { id } = await params;
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid inventory ID" }, { status: 400 });
     }
@@ -104,3 +103,4 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     return NextResponse.json({ error: "Failed to delete inventory item" }, { status: 500 });
   }
 }
+
