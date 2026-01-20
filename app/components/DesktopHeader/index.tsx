@@ -6,6 +6,8 @@ import { Heart, User, LogOut } from "lucide-react";
 import Link from "next/link";
 import { RootState } from "@/store";
 import { setUser, logout } from "@/store/slices/userSlice";
+import { clearWishlist, setWishlist } from "@/store/slices/wishlistSlice";
+import apiService from "@/services/api";
 
 import { HeaderProps } from "../Header/types";
 import Logo from "../Logo";
@@ -26,16 +28,9 @@ export default function DesktopHeader({
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
 
-  const toggleMockUser = useCallback(() => {
-    if (currentUser?.id === "user-1") {
-      dispatch(setUser({ id: "user-2", name: "Other User", email: "other@example.com" }));
-    } else {
-      dispatch(setUser({ id: "user-1", name: "Mock User", email: "mock@example.com" }));
-    }
-  }, [currentUser?.id, dispatch]);
-
   const handleLogout = useCallback(() => {
     dispatch(logout());
+    dispatch(clearWishlist());
   }, [dispatch]);
 
   return (
@@ -61,17 +56,15 @@ export default function DesktopHeader({
 
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <button
-                  onClick={toggleMockUser}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors border border-white/10 shadow-sm group"
-                  title="Switch mock user"
+                <div
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 shadow-sm"
                 >
-                  <User className="w-4 h-4 text-blue-200 group-hover:text-white transition-colors" />
+                  <User className="w-4 h-4 text-blue-200" />
                   <div className="text-left leading-none">
                     <p className="text-[9px] text-blue-100 uppercase font-black opacity-60">Profile</p>
                     <p className="text-sm font-bold truncate max-w-[80px]">{currentUser?.name}</p>
                   </div>
-                </button>
+                </div>
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500 text-white transition-all border border-red-500/20 shadow-sm"

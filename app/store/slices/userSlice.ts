@@ -8,16 +8,14 @@ interface User {
 
 interface UserState {
   currentUser: User | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
 }
 
 const initialState: UserState = {
-  currentUser: {
-    id: "user-1",
-    name: "Mock User",
-    email: "mock@example.com",
-  },
-  isAuthenticated: true,
+  currentUser: null,
+  accessToken: null,
+  isAuthenticated: false,
 };
 
 const userSlice = createSlice({
@@ -25,11 +23,14 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.currentUser = action.payload;
-      state.isAuthenticated = !!action.payload;
+      const { user, token } = action.payload;
+      state.currentUser = user || action.payload; // Fallback for pure user object if needed
+      state.accessToken = token || state.accessToken;
+      state.isAuthenticated = !!state.currentUser;
     },
     logout: (state) => {
       state.currentUser = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
     },
   },

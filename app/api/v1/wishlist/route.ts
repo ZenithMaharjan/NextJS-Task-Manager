@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDB from "../../../lib/mongodb";
-import UserModel from "../../../models/User";
+import WishlistModel from "../../../models/Wishlist";
 import InventoryModel from "../../../models/Inventory";
 import { verifyToken, extractTokenFromHeader } from "../../../utils/jwt";
 
@@ -37,24 +37,22 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get user with populated wishlists
-    const user = await UserModel.findById(payload.userId).populate("wishlists");
+    // Get user's wishlist items
+    const wishlistItems = await WishlistModel.find({ userId: payload.userId }).populate(
+      "inventoryId",
+    );
 
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "User not found",
-        },
-        { status: 404 },
-      );
-    }
+    // Transform to match expected frontend format if necessary
+    // Frontend expects an array of inventory items
+    const formattedWishlist = wishlistItems
+      .filter(item => item.inventoryId) // Filter out items where inventory might have been deleted
+      .map(item => item.inventoryId);
 
     return NextResponse.json(
       {
         success: true,
-        count: user.wishlists.length,
-        wishlists: user.wishlists,
+        count: formattedWishlist.length,
+        wishlists: formattedWishlist,
       },
       { status: 200 },
     );
@@ -128,29 +126,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Add to wishlist (using $addToSet to prevent duplicates)
-    const user = await UserModel.findByIdAndUpdate(
-      payload.userId,
-      { $addToSet: { wishlists: inventoryId } },
-      { new: true },
-    ).populate("wishlists");
+    // Add to wishlist (using updateOne with upsert to prevent duplicates for same user)
+    await WishlistModel.updateOne(
+      { userId: payload.userId, inventoryId },
+      { $set: { userId: payload.userId, inventoryId } },
+      { upsert: true },
+    );
 
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "User not found",
-        },
-        { status: 404 },
-      );
-    }
+    // Get updated wishlist
+    const wishlistItems = await WishlistModel.find({ userId: payload.userId }).populate(
+      "inventoryId",
+    );
+    const formattedWishlist = wishlistItems
+      .filter(item => item.inventoryId)
+      .map(item => item.inventoryId);
 
     return NextResponse.json(
       {
         success: true,
         message: "Item added to wishlist",
-        count: user.wishlists.length,
-        wishlists: user.wishlists,
+        count: formattedWishlist.length,
+        wishlists: formattedWishlist,
       },
       { status: 200 },
     );
@@ -212,29 +208,26 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Remove from wishlist
-    const user = await UserModel.findByIdAndUpdate(
-      payload.userId,
-      { $pull: { wishlists: inventoryId } },
-      { new: true },
-    ).populate("wishlists");
+    // Remove from wishlist (scoped to user)
+    await WishlistModel.findOneAndDelete({
+      userId: payload.userId,
+      inventoryId,
+    });
 
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "User not found",
-        },
-        { status: 404 },
-      );
-    }
+    // Get updated wishlist
+    const wishlistItems = await WishlistModel.find({ userId: payload.userId }).populate(
+      "inventoryId",
+    );
+    const formattedWishlist = wishlistItems
+      .filter(item => item.inventoryId)
+      .map(item => item.inventoryId);
 
     return NextResponse.json(
       {
         success: true,
         message: "Item removed from wishlist",
-        count: user.wishlists.length,
-        wishlists: user.wishlists,
+        count: formattedWishlist.length,
+        wishlists: formattedWishlist,
       },
       { status: 200 },
     );

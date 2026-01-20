@@ -1,7 +1,9 @@
 import RequestBuilder from "utils/request";
 import type { CustomRequestOptions } from "utils/request/types";
 import { Inventory, InventoryResponse } from "@/types/inventory";
+import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
 
+import { store } from "@/store";
 import { APIError } from "../utils/error";
 
 const apiBaseUrl =
@@ -11,9 +13,10 @@ const apiBaseUrl =
 
 const TokenInterceptor = (req: Request) => {
   if (typeof window === "undefined") return;
-  const authState = localStorage.getItem("auth");
-  if (authState && !req.url.includes("/auth/refresh")) {
-    req.headers.append("Authorization", `Bearer ${JSON.parse(authState).accessToken}`);
+  const state = store.getState();
+  const token = state.user.accessToken;
+  if (token && !req.url.includes("/auth/refresh")) {
+    req.headers.append("Authorization", `Bearer ${token}`);
   }
 };
 
@@ -141,6 +144,26 @@ class APIService {
 
   patchInventory = (id: string, data: Partial<Inventory>): Promise<Inventory> => {
     return this.patch<Partial<Inventory>, Inventory>(`/inventory/${id}`, data);
+  };
+
+  login = (data: LoginRequest): Promise<AuthResponse> => {
+    return this.post<LoginRequest, AuthResponse>("/auth/login", data);
+  };
+
+  signup = (data: SignupRequest): Promise<AuthResponse> => {
+    return this.post<SignupRequest, AuthResponse>("/auth/signup", data);
+  };
+
+  getWishlist = (): Promise<{ success: boolean; count: number; wishlists: Inventory[] }> => {
+    return this.get("/wishlist");
+  };
+
+  addToWishlist = (inventoryId: string): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
+    return this.post("/wishlist", { inventoryId });
+  };
+
+  removeFromWishlist = (inventoryId: string): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
+    return this.delete(`/wishlist?inventoryId=${inventoryId}`);
   };
 }
 

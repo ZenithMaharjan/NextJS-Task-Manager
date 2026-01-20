@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { setUser, logout } from "../../store/slices/userSlice";
+import { clearWishlist, setWishlist } from "../../store/slices/wishlistSlice";
 
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
@@ -42,16 +43,9 @@ export default function Drawer({
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
 
-  const toggleMockUser = useCallback(() => {
-    if (currentUser?.id === "user-1") {
-      dispatch(setUser({ id: "user-2", name: "Other User", email: "other@example.com" }));
-    } else {
-      dispatch(setUser({ id: "user-1", name: "Mock User", email: "mock@example.com" }));
-    }
-  }, [currentUser, dispatch]);
-
   const handleLogout = useCallback(() => {
     dispatch(logout());
+    dispatch(clearWishlist());
     onClose();
   }, [dispatch, onClose]);
 
@@ -173,26 +167,26 @@ export default function Drawer({
                   borderTop: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                <ListItemButton
-                  onClick={toggleMockUser}
+                <Box
                   sx={{
+                    px: "16px",
+                    py: "8px",
                     borderRadius: "8px",
                     color: "white",
                     display: "flex",
                     alignItems: "center",
                     gap: "12px",
                     backgroundColor: "rgba(255,255,255,0.05)",
-                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
                   }}
                 >
                   <User size={20} className="text-blue-300" />
                   <div className="flex flex-col">
                     <span className="text-[10px] text-blue-200 uppercase font-bold opacity-70">
-                      Mock Profile
+                      Profile
                     </span>
                     <span className="text-sm font-semibold">{currentUser?.name}</span>
                   </div>
-                </ListItemButton>
+                </Box>
               </ListItem>
               <ListItem disablePadding sx={{ marginTop: "8px" }}>
                 <ListItemButton
@@ -256,7 +250,6 @@ export default function Drawer({
       wishlistCount,
       isAuthenticated,
       currentUser,
-      toggleMockUser,
       handleLogout,
     ],
   );
