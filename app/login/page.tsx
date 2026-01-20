@@ -7,7 +7,9 @@ import { useDispatch } from "react-redux";
 import { Form } from "../components";
 import { AuthCard } from "../components/Auth/AuthCard";
 import { StatusType } from "../constants/auth";
+import apiService from "../services/api";
 import { setUser } from "../store/slices/userSlice";
+import { setWishlist } from "../store/slices/wishlistSlice";
 import { validateEmail, validateUsername, validatePassword } from "../utils/validation";
 
 export default function LoginPage() {
@@ -17,7 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState<Record<string, string>>({});
 
   const handleSubmit = useCallback(
-    (formData: FormData) => {
+    async (formData: FormData) => {
       const username = String(formData.get("username") ?? "").trim();
       const email = String(formData.get("email") ?? "").trim();
       const password = String(formData.get("password") ?? "").trim();
@@ -28,7 +30,7 @@ export default function LoginPage() {
         password: validatePassword(password) || "",
       };
 
-      Object.keys(newErrors).forEach((key) => {
+      Object.keys(newErrors).forEach(key => {
         if (!newErrors[key]) delete newErrors[key];
       });
 
@@ -38,22 +40,36 @@ export default function LoginPage() {
         return;
       }
 
-      // Mock Authentication Success
-      dispatch(
-        setUser({
-          id: "user-1",
-          name: username || "Mock User",
-          email: email,
-        })
-      );
+      setStatus({ type: "success", message: "Signing in..." });
 
-      setStatus({ type: "success", message: "Successfully signed in! Redirecting..." });
+      try {
+        const response = await apiService.login({ email, password });
 
-      setTimeout(() => {
-        router.push("/inventory");
-      }, 1000);
+        if (response.user && response.token) {
+          // Save user and token to Redux store (persistence handled by redux-persist)
+          dispatch(setUser({ user: response.user, token: response.token }));
+          
+          // Fetch user's wishlist
+          try {
+            const wishlistResponse = await apiService.getWishlist();
+            if (wishlistResponse.success) {
+              dispatch(setWishlist(wishlistResponse.wishlists));
+            }
+          } catch (wishlistErr) {
+            console.error("Failed to fetch wishlist:", wishlistErr);
+          }
+        }
+
+        setStatus({ type: "success", message: "Successfully signed in! Redirecting..." });
+
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      } catch (err: any) {
+        setStatus({ type: "error", message: err.message || "Failed to login" });
+      }
     },
-    [dispatch, router]
+    [dispatch, router],
   );
 
   const handleInvalidSubmit = useCallback(() => {

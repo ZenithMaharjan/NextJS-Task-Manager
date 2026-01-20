@@ -11,11 +11,12 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, wishlistReducer);
+const persistedUserReducer = persistReducer({ key: "user", storage }, userReducer);
 
 export const store = configureStore({
   reducer: {
     wishlist: persistedReducer,
-    user: userReducer,
+    user: persistedUserReducer,
     inventory: inventoryReducer,
   },
   middleware: (getDefaultMiddleware) =>

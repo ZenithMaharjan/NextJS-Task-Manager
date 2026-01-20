@@ -1,17 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Form } from "../components";
 import { AuthCard } from "../components/Auth/AuthCard";
 import { StatusType } from "../constants/auth";
+import apiService from "../services/api";
+import { setUser } from "../store/slices/userSlice";
 import { validateEmail, validateUsername, validatePassword } from "../utils/validation";
 
 export default function SignUpPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
-  const handleSubmit = useCallback((formData: FormData) => {
+  const handleSubmit = useCallback(async (formData: FormData) => {
     const username = String(formData.get("username") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "").trim();
@@ -39,9 +45,29 @@ export default function SignUpPage() {
       return;
     }
 
-    setStatus({ type: "success", message: "Sign up submitted successfully!" });
-    setTimeout(() => setStatus(null), 3000);
-  }, []);
+    setStatus({ type: "success", message: "Creating account..." });
+
+    try {
+      const response = await apiService.signup({ username, email, password });
+
+      // Auto-login on successful signup
+      if (response.token) {
+          localStorage.setItem("auth", JSON.stringify({ accessToken: response.token }));
+      }
+
+      if (response.user) {
+          dispatch(setUser(response.user));
+      }
+
+      setStatus({ type: "success", message: "Account created successfully! Redirecting..." });
+      
+      setTimeout(() => {
+        router.push("/inventory");
+      }, 1000);
+    } catch (err: any) {
+      setStatus({ type: "error", message: err.message || "Failed to create account" });
+    }
+  }, [dispatch, router]);
 
   const handleInvalidSubmit = useCallback(() => {
     setStatus({ type: "warning", message: "Please fill all required fields" });
