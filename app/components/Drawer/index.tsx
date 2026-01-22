@@ -128,34 +128,36 @@ export default function Drawer({
             );
           })}
 
-          <ListItem disablePadding sx={{ marginBottom: "8px" }}>
-            <Link
-              href="/wishlist"
-              onClick={handleLinkClick}
-              style={{ width: "100%", textDecoration: "none" }}
-            >
-              <ListItemButton
-                sx={{
-                  borderRadius: "8px",
-                  color: "white",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-                }}
+          {isAuthenticated && (
+            <ListItem disablePadding sx={{ marginBottom: "8px" }}>
+              <Link
+                href="/wishlist"
+                onClick={handleLinkClick}
+                style={{ width: "100%", textDecoration: "none" }}
               >
-                <div className="relative">
-                  <Heart size={20} />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </div>
-                <span>Wishlist</span>
-              </ListItemButton>
-            </Link>
-          </ListItem>
+                <ListItemButton
+                  sx={{
+                    borderRadius: "8px",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                  }}
+                >
+                  <div className="relative">
+                    <Heart size={20} />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </div>
+                  <span>Wishlist</span>
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          )}
 
           {isAuthenticated ? (
             <>

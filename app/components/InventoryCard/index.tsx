@@ -19,7 +19,7 @@ import DeleteConfirmationModal from "../DeleteConfirmationModal";
 
 interface InventoryCardProps {
   item: Inventory;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
@@ -106,11 +106,12 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
     [router, mergedItem.id],
   );
 
+
   return (
     <>
       <div
         onClick={handleNavigate}
-        className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transform hover:-translate-y-1"
+        className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500"
       >
         <div className="absolute top-4 right-14 z-10 transition-transform duration-300">
           {isOwner && (
@@ -121,7 +122,7 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
           )}
         </div>
 
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
           <button
             onClick={handleToggleWishlist}
             className={clsx(
@@ -201,10 +202,10 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
         <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
         {isOwner && (
-          <div className="absolute bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 p-2 flex justify-around items-center transition-transform duration-300 ease-out z-20 translate-y-full group-hover:translate-y-0">
+          <div className="absolute bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 p-2 flex justify-around items-center transition-all duration-300 ease-out z-20 translate-y-full group-hover:translate-y-0 group-focus-within:translate-y-0">
             <button
               onClick={handleEditClick}
-              className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer outline-none focus:text-blue-700"
             >
               <Pencil className="w-3.5 h-3.5" />
               Edit Listing
@@ -212,7 +213,7 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
             <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
             <button
               onClick={handleDelete}
-              className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-blue-300 transition-colors cursor-pointer outline-none focus:text-red-700"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Delete Listing
