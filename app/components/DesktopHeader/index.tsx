@@ -40,19 +40,21 @@ export default function DesktopHeader({
         <div className="flex items-center gap-6">
           <NavLinks links={links} linkClassName={linkClassName} activeClassName={activeClassName} />
           <div className="flex items-center gap-4 pl-4 border-l border-white/20">
-            <Link
-              href="/wishlist"
-              className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-            >
-              <div className="relative">
-                <Heart className="w-6 h-6 shadow-sm" />
-                {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
-                    {wishlistCount}
-                  </span>
-                )}
-              </div>
-            </Link>
+            {isAuthenticated && (
+              <Link
+                href="/wishlist"
+                className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+              >
+                <div className="relative">
+                  <Heart className="w-6 h-6 shadow-sm" />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )}
 
             {isAuthenticated ? (
               <div className="flex items-center gap-3">

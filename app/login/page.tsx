@@ -48,7 +48,7 @@ export default function LoginPage() {
         if (response.user && response.token) {
           // Save user and token to Redux store (persistence handled by redux-persist)
           dispatch(setUser({ user: response.user, token: response.token }));
-          
+
           // Fetch user's wishlist
           try {
             const wishlistResponse = await apiService.getWishlist();
