@@ -158,12 +158,25 @@ class APIService {
     return this.get("/wishlist");
   };
 
-  addToWishlist = (inventoryId: string): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
+  addToWishlist = (
+    inventoryId: string,
+  ): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
     return this.post("/wishlist", { inventoryId });
   };
 
-  removeFromWishlist = (inventoryId: string): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
+  removeFromWishlist = (
+    inventoryId: string,
+  ): Promise<{ success: boolean; message: string; wishlists: Inventory[] }> => {
     return this.delete(`/wishlist?inventoryId=${inventoryId}`);
+  };
+
+  getNotifications = (): Promise<{
+    success: boolean;
+    count: number;
+    unreadCount: number;
+    results: any[];
+  }> => {
+    return this.get("/notifications");
   };
 }
 

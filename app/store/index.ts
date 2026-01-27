@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import wishlistReducer from "./slices/wishlistSlice";
 import userReducer from "./slices/userSlice";
 import inventoryReducer from "./slices/inventorySlice";
+import notificationsReducer from "./slices/notificationsSlice";
 
 const persistConfig = {
   key: "root",
@@ -18,7 +19,9 @@ export const store = configureStore({
     wishlist: persistedReducer,
     user: persistedUserReducer,
     inventory: inventoryReducer,
+    notifications: notificationsReducer,
   },
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
