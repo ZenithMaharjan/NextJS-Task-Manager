@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { X, Heart, User, LogOut } from "lucide-react";
+import { X, Heart, User, LogOut, Bell } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
@@ -41,7 +41,9 @@ export default function Drawer({
   const dispatch = useDispatch();
   const pathname = usePathname();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+  const unreadCount = useSelector((state: RootState) => state.notifications.unreadCount);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
+
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
@@ -129,35 +131,68 @@ export default function Drawer({
           })}
 
           {isAuthenticated && (
-            <ListItem disablePadding sx={{ marginBottom: "8px" }}>
-              <Link
-                href="/wishlist"
-                onClick={handleLinkClick}
-                style={{ width: "100%", textDecoration: "none" }}
-              >
-                <ListItemButton
-                  sx={{
-                    borderRadius: "8px",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-                  }}
+            <>
+              <ListItem disablePadding sx={{ marginBottom: "8px" }}>
+                <Link
+                  href="/wishlist"
+                  onClick={handleLinkClick}
+                  style={{ width: "100%", textDecoration: "none" }}
                 >
-                  <div className="relative">
-                    <Heart size={20} />
-                    {wishlistCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                        {wishlistCount}
-                      </span>
-                    )}
-                  </div>
-                  <span>Wishlist</span>
-                </ListItemButton>
-              </Link>
-            </ListItem>
+                  <ListItemButton
+                    sx={{
+                      borderRadius: "8px",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                    }}
+                  >
+                    <div className="relative">
+                      <Heart size={20} />
+                      {wishlistCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {wishlistCount}
+                        </span>
+                      )}
+                    </div>
+                    <span>Wishlist</span>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+
+              <ListItem disablePadding sx={{ marginBottom: "8px" }}>
+                <Link
+                  href="/notifications"
+                  onClick={handleLinkClick}
+                  style={{ width: "100%", textDecoration: "none" }}
+                >
+                  <ListItemButton
+                    sx={{
+                      borderRadius: "8px",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                    }}
+                  >
+                    <div className="relative">
+                      <Bell size={20} />
+                      {unreadCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    <span>Notifications</span>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            </>
           )}
+
+
 
           {isAuthenticated ? (
             <>

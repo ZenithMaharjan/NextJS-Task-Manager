@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Heart, User, LogOut } from "lucide-react";
+import { Heart, User, LogOut, Bell } from "lucide-react";
 import Link from "next/link";
 import { RootState } from "@/store";
 import { setUser, logout } from "@/store/slices/userSlice";
@@ -26,6 +26,7 @@ export default function DesktopHeader({
 }: HeaderProps) {
   const dispatch = useDispatch();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+  const unreadCount = useSelector((state: RootState) => state.notifications.unreadCount);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
 
   const handleLogout = useCallback(() => {
@@ -41,20 +42,37 @@ export default function DesktopHeader({
           <NavLinks links={links} linkClassName={linkClassName} activeClassName={activeClassName} />
           <div className="flex items-center gap-4 pl-4 border-l border-white/20">
             {isAuthenticated && (
-              <Link
-                href="/wishlist"
-                className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-              >
-                <div className="relative">
-                  <Heart className="w-6 h-6 shadow-sm" />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </div>
-              </Link>
+              <>
+                <Link
+                  href="/wishlist"
+                  className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                >
+                  <div className="relative">
+                    <Heart className="w-6 h-6 shadow-sm" />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+
+                <Link
+                  href="/notifications"
+                  className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                >
+                  <div className="relative">
+                    <Bell className="w-6 h-6 shadow-sm" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </>
             )}
+
 
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
