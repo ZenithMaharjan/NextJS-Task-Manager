@@ -15,6 +15,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { setUser, logout } from "../../store/slices/userSlice";
 import { clearWishlist, setWishlist } from "../../store/slices/wishlistSlice";
+import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
+import apiService from "@/services/api";
+import { NotificationDropdown } from "../Header/NotificationDropdown";
 
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
@@ -41,7 +44,9 @@ export default function Drawer({
   const dispatch = useDispatch();
   const pathname = usePathname();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
-  const unreadCount = useSelector((state: RootState) => state.notifications.unreadCount);
+  const { items: notifications, unreadCount } = useSelector(
+    (state: RootState) => state.notifications,
+  );
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
 
 
@@ -50,6 +55,27 @@ export default function Drawer({
     dispatch(clearWishlist());
     onClose();
   }, [dispatch, onClose]);
+
+  const handleMarkAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await apiService.markNotificationAsRead(id);
+        dispatch(markAsRead(id));
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+      }
+    },
+    [dispatch],
+  );
+
+  const handleMarkAllAsRead = useCallback(async () => {
+    try {
+      await apiService.markAllNotificationsAsRead();
+      dispatch(markAllRead());
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+    }
+  }, [dispatch]);
 
   const checkActive = useCallback(
     (href: string): boolean => {
@@ -77,6 +103,7 @@ export default function Drawer({
           height: "100%",
           backgroundColor: boxBgColor,
           color: "white",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.1)",
         }}
         role="presentation"
       >
@@ -178,10 +205,10 @@ export default function Drawer({
                     }}
                   >
                     <div className="relative">
-                      <Bell size={20} />
+                      <Bell size={20} className="text-gray-300" />
                       {unreadCount > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {unreadCount}
+                        <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] rounded-full h-4 min-w-[16px] flex items-center justify-center font-bold px-1 ring-1 ring-[#0a2b5c]">
+                          {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
                     </div>

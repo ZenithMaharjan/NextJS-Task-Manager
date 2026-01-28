@@ -1,6 +1,7 @@
 import RequestBuilder from "utils/request";
 import type { CustomRequestOptions } from "utils/request/types";
 import { Inventory, InventoryResponse } from "@/types/inventory";
+import { Notification } from "@/types/notification";
 import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
 
 import { store } from "@/store";
@@ -174,9 +175,17 @@ class APIService {
     success: boolean;
     count: number;
     unreadCount: number;
-    results: any[];
+    results: Notification[];
   }> => {
     return this.get("/notifications");
+  };
+
+  markNotificationAsRead = (id: string): Promise<{ success: boolean; message: string }> => {
+    return this.post(`/notifications/${id}/mark-as-read`);
+  };
+
+  markAllNotificationsAsRead = (): Promise<{ success: boolean; message: string }> => {
+    return this.post("/notifications/mark-all-as-read");
   };
 }
 

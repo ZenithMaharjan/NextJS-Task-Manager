@@ -6,7 +6,7 @@ import apiService from "@/services/api";
 import { setNotifications } from "@/store/slices/notificationsSlice";
 import { RootState } from "@/store";
 
-export const useNotificationsPolling = (intervalMs: number = 5000) => {
+export const useNotificationsPolling = (intervalMs: number = 20000) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
 
@@ -20,7 +20,7 @@ export const useNotificationsPolling = (intervalMs: number = 5000) => {
           setNotifications({
             items: data.results,
             unreadCount: data.unreadCount,
-          }),
+          })
         );
       }
     } catch (error) {
