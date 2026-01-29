@@ -5,9 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { Heart, User, LogOut, Bell } from "lucide-react";
 import Link from "next/link";
 import { RootState } from "@/store";
-import { setUser, logout } from "@/store/slices/userSlice";
-import { clearWishlist, setWishlist } from "@/store/slices/wishlistSlice";
+import { logout } from "@/store/slices/userSlice";
+import { clearWishlist } from "@/store/slices/wishlistSlice";
+import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
 import apiService from "@/services/api";
+import { NotificationDropdown } from "../Header/NotificationDropdown";
 
 import { HeaderProps } from "../Header/types";
 import Logo from "../Logo";
@@ -26,13 +28,33 @@ export default function DesktopHeader({
 }: HeaderProps) {
   const dispatch = useDispatch();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
-  const unreadCount = useSelector((state: RootState) => state.notifications.unreadCount);
+  const { items: notifications, unreadCount } = useSelector(
+    (state: RootState) => state.notifications,
+  );
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
     dispatch(clearWishlist());
   }, [dispatch]);
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await apiService.markNotificationAsRead(id);
+      dispatch(markAsRead(id));
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await apiService.markAllNotificationsAsRead();
+      dispatch(markAllRead());
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+    }
+  };
 
   return (
     <header className={`${className} hidden md:block shadow-md`}>
@@ -57,19 +79,12 @@ export default function DesktopHeader({
                   </div>
                 </Link>
 
-                <Link
-                  href="/notifications"
-                  className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-                >
-                  <div className="relative">
-                    <Bell className="w-6 h-6 shadow-sm" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-sm">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </div>
-                </Link>
+                <NotificationDropdown
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                />
               </>
             )}
 

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
 import Drawer from "../Drawer";
 import HamburgerButton from "../HamburgerButton";
 import { HeaderProps } from "../Header/types";
 import Logo from "../Logo";
-
 import { DEFAULT_LINKS } from "../../constants/navigation";
 
 export default function MobileHeader({
@@ -23,8 +21,8 @@ export default function MobileHeader({
 
   return (
     <>
-      <header className={`${className} md:hidden`}>
-        <div className="container mx-auto flex justify-between items-center">
+      <header className={`${className} md:hidden sticky top-0 z-40 shadow-md`}>
+        <div className="container mx-auto flex justify-between items-center px-4 py-2">
           <Logo title={title} href={logoHref} />
           <HamburgerButton onClick={openDrawer} />
         </div>

@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@layer utilities {
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(-2%) scale(1.02);
+    }
+    50% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s ease-in-out infinite;
+  }
+}
