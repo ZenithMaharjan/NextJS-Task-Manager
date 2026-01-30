@@ -12,6 +12,7 @@ import apiService from "@/services/api";
 import { NotificationDropdown } from "../Header/NotificationDropdown";
 
 import { HeaderProps } from "../Header/types";
+import { ThemeToggler } from "../index";
 import Logo from "../Logo";
 import NavLinks from "../NavLinks";
 
@@ -63,6 +64,7 @@ export default function DesktopHeader({
         <div className="flex items-center gap-6">
           <NavLinks links={links} linkClassName={linkClassName} activeClassName={activeClassName} />
           <div className="flex items-center gap-4 pl-4 border-l border-white/20">
+            <ThemeToggler />
             {isAuthenticated && (
               <>
                 <Link
