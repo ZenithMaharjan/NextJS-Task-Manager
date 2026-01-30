@@ -111,12 +111,12 @@ export const NotificationDropdown = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200">
-          <div className="flex items-center justify-between px-5 py-4 bg-gray-50/50 border-b border-gray-100">
+        <div className="absolute right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200">
+          <div className="flex items-center justify-between px-5 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-gray-900">Notifications</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">Notifications</h3>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-600 rounded-full uppercase tracking-wider">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full uppercase tracking-wider">
                   {unreadCount} New
                 </span>
               )}
@@ -125,7 +125,7 @@ export const NotificationDropdown = ({
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 >
                   Mark all read
                 </button>
@@ -135,59 +135,23 @@ export const NotificationDropdown = ({
 
           <div className="max-h-[400px] overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 px-5 text-center">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <Bell className="w-8 h-8 text-gray-300" />
-                </div>
-                <p className="text-sm font-medium text-gray-900">No notifications yet</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  We'll let you know when something happens.
-                </p>
-              </div>
+              <EmptyDropdownState />
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-50 dark:divide-gray-800">
                 {currentItems.map(notification => (
-                  <div
+                  <DropdownNotificationItem
                     key={notification.id}
-                    onClick={() => handleNotificationClick(notification.id)}
-                    className={`group relative flex items-start gap-4 px-5 py-4 cursor-pointer transition-all duration-200 ${
-                      !notification.isRead
-                        ? "bg-blue-50/40 hover:bg-blue-50"
-                        : "hover:bg-gray-50/80"
-                    }`}
-                  >
-                    {/* Unread Indicator Dot */}
-                    {!notification.isRead && (
-                      <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
-                    )}
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <p
-                          className={`text-sm ${!notification.isRead ? "font-bold text-gray-900" : "font-medium text-gray-700"}`}
-                        >
-                          {notification.title}
-                        </p>
-                        {notification.isRead && (
-                          <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
-                        {notification.message}
-                      </p>
-                      <p className="text-[10px] font-semibold text-gray-400 mt-2 uppercase tracking-tight">
-                        {formatTime(notification.createdAt)}
-                      </p>
-                    </div>
-                  </div>
+                    notification={notification}
+                    onClick={handleNotificationClick}
+                  />
                 ))}
               </div>
             )}
           </div>
 
           {notifications.length > 0 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50/30">
-              <span className="text-[11px] font-bold text-gray-400 tracking-tight">
+            <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-800/30">
+              <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 tracking-tight">
                 PAGE {currentPage} OF {totalPages || 1}
               </span>
               <div className="flex items-center gap-1">
@@ -196,8 +160,8 @@ export const NotificationDropdown = ({
                   disabled={currentPage === 1}
                   className={`p-1.5 rounded-lg transition-all ${
                     currentPage === 1
-                      ? "text-gray-200 cursor-not-allowed"
-                      : "text-gray-600 hover:bg-white hover:shadow-sm active:scale-95"
+                      ? "text-gray-200 dark:text-gray-700 cursor-not-allowed"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95"
                   }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -207,8 +171,8 @@ export const NotificationDropdown = ({
                   disabled={currentPage === totalPages || totalPages === 0}
                   className={`p-1.5 rounded-lg transition-all ${
                     currentPage === totalPages || totalPages === 0
-                      ? "text-gray-200 cursor-not-allowed"
-                      : "text-gray-600 hover:bg-white hover:shadow-sm active:scale-95"
+                      ? "text-gray-200 dark:text-gray-700 cursor-not-allowed"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95"
                   }`}
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -221,6 +185,72 @@ export const NotificationDropdown = ({
     </div>
   );
 };
+
+function EmptyDropdownState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 px-5 text-center">
+      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800/50 rounded-full flex items-center justify-center mb-4">
+        <Bell className="w-8 h-8 text-gray-300 dark:text-gray-700" />
+      </div>
+      <p className="text-sm font-medium text-gray-900 dark:text-white">No notifications yet</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        We'll let you know when something happens.
+      </p>
+    </div>
+  );
+}
+
+interface DropdownNotificationItemProps {
+  notification: Notification;
+  onClick: (id: string) => void;
+}
+
+function DropdownNotificationItem({ notification, onClick }: DropdownNotificationItemProps) {
+  const handleClick = useCallback(() => onClick(notification.id), [notification.id, onClick]);
+
+  const itemClasses = useMemo(
+    () =>
+      `group relative flex items-start gap-4 px-5 py-4 cursor-pointer transition-all duration-200 ${
+        !notification.isRead
+          ? "bg-blue-50/40 dark:bg-blue-900/10 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+          : "hover:bg-gray-50/80 dark:hover:bg-gray-800/40"
+      }`,
+    [notification.isRead],
+  );
+
+  const titleClasses = useMemo(
+    () =>
+      `text-sm ${
+        !notification.isRead
+          ? "font-bold text-gray-900 dark:text-white"
+          : "font-medium text-gray-700 dark:text-gray-300"
+      }`,
+    [notification.isRead],
+  );
+
+  const formattedTime = useMemo(() => formatTime(notification.createdAt), [notification.createdAt]);
+
+  return (
+    <div key={notification.id} onClick={handleClick} className={itemClasses}>
+      {!notification.isRead && (
+        <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
+      )}
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <p className={titleClasses}>{notification.title}</p>
+          {notification.isRead && <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />}
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+          {notification.message}
+        </p>
+        <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 mt-2 uppercase tracking-tight">
+          {formattedTime}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 const formatTime = (dateString: string) => {
   const date = new Date(dateString);

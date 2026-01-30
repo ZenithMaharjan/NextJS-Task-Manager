@@ -13,5 +13,6 @@ export { AuthCard } from "./Auth/AuthCard";
 export { default as InventoryCard } from "./InventoryCard";
 export { default as RAList } from "./InventoryList";
 export { default as DeleteConfirmationModal } from "./DeleteConfirmationModal";
+export { default as ThemeToggler } from "./ThemeToggler";
 
 export type { FormContextType, FormFieldType, InputGroupContextType } from "./Form/FormContext";
