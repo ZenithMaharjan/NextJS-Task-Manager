@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import React from "react";
 
 import "./globals.css";
 import { Header } from "./components";
@@ -8,12 +9,11 @@ export const metadata: Metadata = {
   description: " digital platform",
 };
 
-
 import { ReduxProvider } from "@/store/provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ReduxProvider>
           <Header />
           {children}
