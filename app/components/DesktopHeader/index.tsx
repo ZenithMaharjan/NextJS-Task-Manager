@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Heart, User, LogOut, Bell } from "lucide-react";
+import { Heart, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { RootState } from "@/store";
-import { logout } from "@/store/slices/userSlice";
-import { clearWishlist } from "@/store/slices/wishlistSlice";
-import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
-import apiService from "@/services/api";
-import { NotificationDropdown } from "../Header/NotificationDropdown";
+import { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
+import { DEFAULT_LINKS } from "../../constants/navigation";
+import { NotificationDropdown } from "../Header/NotificationDropdown";
 import { HeaderProps } from "../Header/types";
 import { ThemeToggler } from "../index";
 import Logo from "../Logo";
 import NavLinks from "../NavLinks";
 
-import { DEFAULT_LINKS } from "../../constants/navigation";
+import apiService from "@/services/api";
+import { RootState } from "@/store";
+import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
+import { logout } from "@/store/slices/userSlice";
+import { clearWishlist } from "@/store/slices/wishlistSlice";
 
 export default function DesktopHeader({
   title = "My Website",
@@ -90,15 +90,14 @@ export default function DesktopHeader({
               </>
             )}
 
-
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <div
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 shadow-sm"
-                >
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 shadow-sm">
                   <User className="w-4 h-4 text-blue-200" />
                   <div className="text-left leading-none">
-                    <p className="text-[9px] text-blue-100 uppercase font-black opacity-60">Profile</p>
+                    <p className="text-[9px] text-blue-100 uppercase font-black opacity-60">
+                      Profile
+                    </p>
                     <p className="text-sm font-bold truncate max-w-[80px]">{currentUser?.name}</p>
                   </div>
                 </div>

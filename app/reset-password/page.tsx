@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
+
 import { Form } from "../components";
 import { AuthCard } from "../components/Auth/AuthCard";
 import { StatusType } from "../constants/auth";
@@ -31,8 +32,8 @@ export default function ResetPasswordPage() {
   }, [status]);
 
   return (
-    <AuthCard 
-      title="Reset your password" 
+    <AuthCard
+      title="Reset your password"
       subtitle="Enter your email and we'll send you a link to get back into your account."
       status={status}
     >
@@ -52,7 +53,10 @@ export default function ResetPasswordPage() {
 
         <div className="flex items-center justify-end">
           <div className="text-sm">
-            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            <Link
+              href="/login"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
               Back to Sign in
             </Link>
           </div>

@@ -1,16 +1,20 @@
 import { Inventory, InventoryResponse, ProcessedInventoryData } from "../types/inventory";
 
-export type { Inventory as InventoryItem, InventoryResponse, ProcessedInventoryData as ProcessedData };
+export type {
+  Inventory as InventoryItem,
+  InventoryResponse,
+  ProcessedInventoryData as ProcessedData,
+};
 
 export const processInventoryData = (
   data: Inventory[],
   inStockOnly: boolean,
-  sortBy: string
+  sortBy: string,
 ): ProcessedInventoryData[] => {
-  const filtered = inStockOnly ? data.filter((item) => item.inStock) : data;
+  const filtered = inStockOnly ? data.filter(item => item.inStock) : data;
 
   const groups: Record<string, { brand: string; items: Inventory[] }> = {};
-  filtered.forEach((item) => {
+  filtered.forEach(item => {
     if (!groups[item.model]) {
       groups[item.model] = { brand: item.brand, items: [] };
     }
@@ -20,8 +24,7 @@ export const processInventoryData = (
   let result: ProcessedInventoryData[] = Object.entries(groups).map(([model, group]) => {
     const items = group.items;
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-    const avgPrice =
-      items.reduce((sum, item) => sum + item.price, 0) / items.length;
+    const avgPrice = items.reduce((sum, item) => sum + item.price, 0) / items.length;
     const avgEngineCapacity =
       items.reduce((sum, item) => sum + item.engineCapacity, 0) / items.length;
 

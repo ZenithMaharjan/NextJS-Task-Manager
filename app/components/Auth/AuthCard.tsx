@@ -1,4 +1,5 @@
 import React from "react";
+
 import { STATUS_COLORS, StatusType } from "../../constants/auth";
 
 interface AuthCardProps {
@@ -17,9 +18,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({ title, subtitle, children, s
             {title}
           </h2>
           {subtitle && (
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              {subtitle}
-            </p>
+            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">{subtitle}</p>
           )}
         </div>
         {children}

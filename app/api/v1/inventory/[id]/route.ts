@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+
 import connectDB from "../../../../lib/mongodb";
 import InventoryModel from "../../../../models/Inventory";
-import mongoose from "mongoose";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

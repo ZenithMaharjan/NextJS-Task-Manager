@@ -9,18 +9,20 @@ import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { X, Heart, User, LogOut, Bell } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
+import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store";
-import { setUser, logout } from "../../store/slices/userSlice";
-import { clearWishlist, setWishlist } from "../../store/slices/wishlistSlice";
-import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
-import apiService from "@/services/api";
-import { NotificationDropdown } from "../Header/NotificationDropdown";
 
+import { logout } from "../../store/slices/userSlice";
+import { clearWishlist } from "../../store/slices/wishlistSlice";
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
+
+import { RootState } from "@/store";
+import {
+  markAsRead as _markAsRead,
+  markAllRead as _markAllRead,
+} from "@/store/slices/notificationsSlice";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -44,38 +46,14 @@ export default function Drawer({
   const dispatch = useDispatch();
   const pathname = usePathname();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
-  const { items: notifications, unreadCount } = useSelector(
-    (state: RootState) => state.notifications,
-  );
+  const { unreadCount } = useSelector((state: RootState) => state.notifications);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
-
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
     dispatch(clearWishlist());
     onClose();
   }, [dispatch, onClose]);
-
-  const handleMarkAsRead = useCallback(
-    async (id: string) => {
-      try {
-        await apiService.markNotificationAsRead(id);
-        dispatch(markAsRead(id));
-      } catch (error) {
-        console.error("Failed to mark notification as read:", error);
-      }
-    },
-    [dispatch],
-  );
-
-  const handleMarkAllAsRead = useCallback(async () => {
-    try {
-      await apiService.markAllNotificationsAsRead();
-      dispatch(markAllRead());
-    } catch (error) {
-      console.error("Failed to mark all notifications as read:", error);
-    }
-  }, [dispatch]);
 
   const checkActive = useCallback(
     (href: string): boolean => {
@@ -130,7 +108,7 @@ export default function Drawer({
         </Box>
 
         <List sx={{ padding: "16px" }}>
-          {links.map((link) => {
+          {links.map(link => {
             const active = checkActive(link.href);
             return (
               <ListItem key={link.href} disablePadding sx={{ marginBottom: "8px" }}>
@@ -218,8 +196,6 @@ export default function Drawer({
               </ListItem>
             </>
           )}
-
-
 
           {isAuthenticated ? (
             <>
@@ -310,11 +286,12 @@ export default function Drawer({
       links,
       handleLinkClick,
       checkActive,
-      onClose,
+      unreadCount,
       wishlistCount,
       isAuthenticated,
       currentUser,
       handleLogout,
+      onClose,
     ],
   );
 

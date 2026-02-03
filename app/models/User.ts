@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
 import bcrypt from "bcryptjs";
+import mongoose, { Schema, Model } from "mongoose";
 
 export interface UserDocument extends mongoose.Document {
   _id: mongoose.Types.ObjectId;
@@ -65,7 +65,7 @@ userSchema.pre("save", async function () {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-  } catch (error) {
+  } catch (_error) {
     throw new Error("Error hashing password");
   }
 });

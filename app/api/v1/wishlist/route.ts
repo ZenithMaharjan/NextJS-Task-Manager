@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+
 import connectDB from "../../../lib/mongodb";
-import WishlistModel from "../../../models/Wishlist";
 import InventoryModel from "../../../models/Inventory";
+import WishlistModel from "../../../models/Wishlist";
 import { verifyToken, extractTokenFromHeader } from "../../../utils/jwt";
 
 /**

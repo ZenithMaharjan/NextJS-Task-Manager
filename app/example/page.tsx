@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-
 import API from "services/api";
 
 const ExamplePage = () => {

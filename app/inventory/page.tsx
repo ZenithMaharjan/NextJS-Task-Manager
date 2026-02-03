@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
+
+import InventoryList from "@/components/InventoryList";
 import apiService from "@/services/api";
 import { Inventory } from "@/types/inventory";
-import InventoryList from "@/components/InventoryList";
 
 export default function InventoryPage() {
   const [items, setItems] = useState<Inventory[]>([]);
@@ -38,7 +39,7 @@ export default function InventoryPage() {
   }, [fetchInventory]);
 
   const handleDeleteItem = useCallback((id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    setItems(prevItems => prevItems.filter(item => item.id !== id));
   }, []);
 
   return (

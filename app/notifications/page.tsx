@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { Bell, Check, Trash2, ArrowLeft } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store";
-import { markAsRead, markAllRead, setNotifications } from "@/store/slices/notificationsSlice";
-import apiService from "@/services/api";
+import { Bell, Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState as _useState, useCallback, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { useToast } from "@/hooks/useToast";
+import apiService from "@/services/api";
+import { RootState } from "@/store";
+import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
 
 export default function NotificationsPage() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { showToast } = useToast();
   const { items: notifications, unreadCount } = useSelector(
     (state: RootState) => state.notifications,
   );
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -24,23 +26,26 @@ export default function NotificationsPage() {
     }
   }, [isAuthenticated, router]);
 
-  const handleMarkAsRead = useCallback(async (id: string) => {
-    try {
-      await apiService.markNotificationAsRead(id);
-      dispatch(markAsRead(id));
-    } catch (error) {
-      console.error("Failed to mark as read:", error);
-    }
-  }, [dispatch]);
+  const handleMarkAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await apiService.markNotificationAsRead(id);
+        dispatch(markAsRead(id));
+      } catch {
+        showToast("Failed to mark as read", "error");
+      }
+    },
+    [dispatch, showToast],
+  );
 
   const handleMarkAllRead = useCallback(async () => {
     try {
       await apiService.markAllNotificationsAsRead();
       dispatch(markAllRead());
-    } catch (error) {
-      console.error("Failed to mark all read:", error);
+    } catch {
+      showToast("Failed to mark all read", "error");
     }
-  }, [dispatch]);
+  }, [dispatch, showToast]);
 
   const handleBack = useCallback(() => router.back(), [router]);
 
@@ -97,7 +102,7 @@ function EmptyNotifications() {
       </div>
       <h2 className="text-lg font-bold text-gray-900 dark:text-white">No notifications yet</h2>
       <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">
-        We'll notify you when there's an update to your inventory or wishlist.
+        We&apos;ll notify you when there&apos;s an update to your inventory or wishlist.
       </p>
       <Link
         href="/"

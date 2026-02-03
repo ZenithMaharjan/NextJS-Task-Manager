@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
+import { DEFAULT_LINKS } from "../../constants/navigation";
 import Drawer from "../Drawer";
 import HamburgerButton from "../HamburgerButton";
 import { HeaderProps } from "../Header/types";
 import { ThemeToggler } from "../index";
 import Logo from "../Logo";
-import { DEFAULT_LINKS } from "../../constants/navigation";
 
 export default function MobileHeader({
   title = "My Website",
@@ -16,7 +17,6 @@ export default function MobileHeader({
 }: HeaderProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
 

@@ -52,7 +52,12 @@ export default function Error({
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                       {showStack ? "Hide" : "Show"} Error Details
                     </button>
@@ -66,19 +71,32 @@ export default function Error({
                               viewBox="0 0 24 24"
                               stroke="currentColor"
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
                             </svg>
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white">Error Message</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                              Error Message
+                            </p>
                           </div>
                           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                            <p className="text-sm font-mono text-gray-900 dark:text-gray-100 leading-relaxed">{error.message}</p>
+                            <p className="text-sm font-mono text-gray-900 dark:text-gray-100 leading-relaxed">
+                              {error.message}
+                            </p>
                           </div>
                         </div>
                         {error.stack && (
                           <div className="space-y-2">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white">Stack Trace</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                              Stack Trace
+                            </p>
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto">
-                              <pre className="text-xs font-mono text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">{error.stack}</pre>
+                              <pre className="text-xs font-mono text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
+                                {error.stack}
+                              </pre>
                             </div>
                           </div>
                         )}
@@ -91,14 +109,26 @@ export default function Error({
                     onClick={reset}
                     className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200"
                   >
-                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
                     </svg>
                     Try Again
                   </button>
                 </div>
                 <div className="text-center pt-4">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">If this problem persists, please contact support</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    If this problem persists, please contact support
+                  </p>
                 </div>
               </div>
             </div>

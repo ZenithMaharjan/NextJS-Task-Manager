@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+
 import { Form } from "../components";
 import { AuthCard } from "../components/Auth/AuthCard";
 import { StatusType } from "../constants/auth";
@@ -12,9 +13,12 @@ import { setUser } from "../store/slices/userSlice";
 import { setWishlist } from "../store/slices/wishlistSlice";
 import { validateEmail, validateUsername, validatePassword } from "../utils/validation";
 
+import { useToast } from "@/hooks/useToast";
+
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
   const [error, setError] = useState<Record<string, string>>({});
 
@@ -36,6 +40,7 @@ export default function LoginPage() {
 
       if (Object.keys(newErrors).length > 0) {
         setError(newErrors);
+        showToast("Please fix the validation errors", "error");
         setStatus({ type: "error", message: "Please fix the errors below" });
         return;
       }
@@ -56,25 +61,27 @@ export default function LoginPage() {
               dispatch(setWishlist(wishlistResponse.wishlists));
             }
           } catch (wishlistErr) {
-            console.error("Failed to fetch wishlist:", wishlistErr);
+            showToast(
+              `Failed to fetch wishlist: ${wishlistErr instanceof Error ? wishlistErr.message : "Unknown error"}`,
+              "error",
+            );
           }
         }
 
-        setStatus({ type: "success", message: "Successfully signed in! Redirecting..." });
-
-        setTimeout(() => {
-          router.push("/");
-        }, 1000);
+        showToast("Successfully signed in! Redirecting...", "success");
+        router.push("/");
       } catch (err: any) {
+        showToast(err.message || "Failed to login", "error");
         setStatus({ type: "error", message: err.message || "Failed to login" });
       }
     },
-    [dispatch, router],
+    [dispatch, router, showToast],
   );
 
   const handleInvalidSubmit = useCallback(() => {
+    showToast("Please fill all required fields", "warning");
     setStatus({ type: "warning", message: "Please fill all required fields" });
-  }, []);
+  }, [showToast]);
 
   const handleFormChange = useCallback(() => {
     if (status) setStatus(null);

@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
 import { X, AlertTriangle } from "lucide-react";
+import React from "react";
+
 import Modal from "../Modal";
 
 interface DeleteConfirmationModalProps {
@@ -18,12 +19,7 @@ const DeleteConfirmationModal = ({
   itemName,
 }: DeleteConfirmationModalProps) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      closeOnEscape
-      closeOnOutsideClick
-      onClose={onClose}
-    >
+    <Modal isOpen={isOpen} closeOnEscape closeOnOutsideClick onClose={onClose}>
       <div className="relative p-6">
         <button
           onClick={onClose}
@@ -43,8 +39,9 @@ const DeleteConfirmationModal = ({
         </div>
 
         <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-          Are you sure you want to delete <span className="font-semibold text-gray-900 dark:text-white">{itemName}</span>? 
-          This action cannot be undone.
+          Are you sure you want to delete{" "}
+          <span className="font-semibold text-gray-900 dark:text-white">{itemName}</span>? This
+          action cannot be undone.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-end">

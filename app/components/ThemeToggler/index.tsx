@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 export default function ThemeToggler() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(isDark ? "dark" : "light");
   }, []);
 
   const toggleTheme = useCallback(() => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    
+
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+
 import connectDB from "../../../../lib/mongodb";
 import UserModel from "../../../../models/User";
-import { verifyToken, extractTokenFromHeader } from "../../../../utils/jwt";
 import { AuthResponse, ErrorResponse } from "../../../../types/auth";
+import { verifyToken, extractTokenFromHeader } from "../../../../utils/jwt";
 
 export async function GET(request: Request) {
   try {

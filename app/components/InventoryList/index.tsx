@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
-import { Inventory } from "@/types/inventory";
-import InventoryCard from "../InventoryCard";
-import SelectInput from "../Form/SelectInput";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
+
+import SelectInput from "../Form/SelectInput";
+import InventoryCard from "../InventoryCard";
+
 import { RootState } from "@/store";
+import { Inventory } from "@/types/inventory";
 
 interface InventoryListProps {
   items: Inventory[];
@@ -58,9 +60,9 @@ const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) 
   const filteredItems = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
     return items
-      .filter((item) => !tempDeletes[item.id]) 
+      .filter(item => !tempDeletes[item.id])
       .filter(
-        (item) =>
+        item =>
           item.brand.toLowerCase().includes(searchLower) ||
           item.model.toLowerCase().includes(searchLower) ||
           (typeof item.type === "string" && item.type.toLowerCase().includes(searchLower)),

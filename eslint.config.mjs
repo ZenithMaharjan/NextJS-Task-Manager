@@ -11,6 +11,8 @@ import prettierPlugin from "eslint-plugin-prettier";
 import reactPerf from "eslint-plugin-react-perf";
 import importPlugin from "eslint-plugin-import";
 
+import globals from "globals";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,24 +23,7 @@ export default [
     ignores: [".next/**", "out/**", "build/**", "next-env.d.ts", "node_modules/**"],
   },
   js.configs.recommended,
-  {
-    files: ["**/*.ts", "**/*.tsx"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-      },
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
-    },
-    rules: {
-      ...tsPlugin.configs.recommended.rules,
-      "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
-  // React, Next.js, Import, Prettier, Perf
+  // JavaScript, React, Next.js, Import, Prettier, Perf
   {
     files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
     plugins: {
@@ -58,6 +43,7 @@ export default [
       // Custom Overrides
       "react/react-in-jsx-scope": "off",
       "react/jsx-no-bind": "off",
+      "react/prop-types": "off",
       "react-hooks/exhaustive-deps": "warn",
 
       // Prettier
@@ -79,9 +65,15 @@ export default [
           alphabetize: { order: "asc", caseInsensitive: true },
         },
       ],
+      "no-unused-vars": [
+        "error",
+        { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" },
+      ],
     },
     languageOptions: {
       globals: {
+        ...globals.browser,
+        ...globals.node,
         process: "readonly",
         module: "readonly",
         require: "readonly",
@@ -93,6 +85,35 @@ export default [
       react: {
         version: "detect",
       },
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        RequestInit: "readonly",
+        BodyInit: "readonly",
+        FormData: "readonly",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" },
+      ],
+      "no-unused-vars": "off",
     },
   },
   // Extends Prettier Config (disables conflicting rules)

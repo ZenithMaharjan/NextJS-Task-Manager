@@ -1,10 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import wishlistReducer from "./slices/wishlistSlice";
-import userReducer from "./slices/userSlice";
+
 import inventoryReducer from "./slices/inventorySlice";
 import notificationsReducer from "./slices/notificationsSlice";
+import userReducer from "./slices/userSlice";
+import wishlistReducer from "./slices/wishlistSlice";
 
 const persistConfig = {
   key: "root",
@@ -22,7 +32,7 @@ export const store = configureStore({
     notifications: notificationsReducer,
   },
 
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],

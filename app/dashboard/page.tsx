@@ -1,20 +1,15 @@
-'use client';
+"use client";
 
 import React from "react";
-import { useInventoryDashboard } from "@/hooks/useInventoryDashboard";
+
 import DashboardFilters from "./components/DashboardFilters";
 import InventoryCharts from "./components/InventoryCharts";
 
+import { useInventoryDashboard } from "@/hooks/useInventoryDashboard";
+
 export default function DashboardPage() {
-  const {
-    processedData,
-    loading,
-    error,
-    inStockOnly,
-    setInStockOnly,
-    sortBy,
-    setSortBy,
-  } = useInventoryDashboard();
+  const { processedData, loading, error, inStockOnly, setInStockOnly, sortBy, setSortBy } =
+    useInventoryDashboard();
 
   if (loading) {
     return (
@@ -45,9 +40,7 @@ export default function DashboardPage() {
           />
         </header>
 
-        <InventoryCharts
-          processedData={processedData}
-        />
+        <InventoryCharts processedData={processedData} />
 
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl">

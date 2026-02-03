@@ -1,11 +1,12 @@
 import RequestBuilder from "utils/request";
 import type { CustomRequestOptions } from "utils/request/types";
-import { Inventory, InventoryResponse } from "@/types/inventory";
-import { Notification } from "@/types/notification";
-import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
+
+import { APIError } from "../utils/error";
 
 import { store } from "@/store";
-import { APIError } from "../utils/error";
+import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
+import { Inventory, InventoryResponse } from "@/types/inventory";
+import { Notification } from "@/types/notification";
 
 const apiBaseUrl =
   process.env.NODE_ENV === "production"
@@ -115,7 +116,6 @@ class APIService {
     return data;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async delete<B extends BodyInit>(url: string, body?: B): Promise<any> {
     const headers = {
       "content-type": "application/json",

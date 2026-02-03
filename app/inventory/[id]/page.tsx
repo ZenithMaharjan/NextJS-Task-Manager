@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import apiService from "@/services/api";
-import { addToWishlist, removeFromWishlist } from "@/store/slices/wishlistSlice";
-import { setTempDelete } from "@/store/slices/inventorySlice";
-import { RootState } from "@/store";
-import { Inventory } from "@/types/inventory";
-
-import { Pencil, Trash2, User } from "lucide-react";
-import { DeleteConfirmationModal } from "@/components";
 import clsx from "clsx";
+import { Pencil, Trash2, User } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { DeleteConfirmationModal } from "@/components";
+import apiService from "@/services/api";
+import { RootState } from "@/store";
+import { setTempDelete } from "@/store/slices/inventorySlice";
+import { addToWishlist, removeFromWishlist } from "@/store/slices/wishlistSlice";
+import { Inventory } from "@/types/inventory";
 
 export default function InventoryItemPage() {
   const { id } = useParams();
@@ -65,7 +65,7 @@ export default function InventoryItemPage() {
   const handleEditClick = useCallback(() => {
     if (!activeItem) return;
     router.push(`/inventory/${activeItem.id}/edit`);
-  }, [router, activeItem?.id]);
+  }, [router, activeItem]);
 
   const handleDelete = useCallback(() => {
     if (!activeItem) return;
