@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Digitals",
   description: " digital platform",
 };
-
+import { ToastProvider } from "@/context/ToastContext";
 import { ReduxProvider } from "@/store/provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -34,8 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body suppressHydrationWarning>
         <ReduxProvider>
-          <Header />
-          {children}
+          <ToastProvider>
+            <Header />
+            {children}
+          </ToastProvider>
         </ReduxProvider>
       </body>
     </html>

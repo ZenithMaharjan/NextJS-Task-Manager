@@ -2,9 +2,10 @@
 
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import apiService from "@/services/api";
-import { setNotifications } from "@/store/slices/notificationsSlice";
 import { RootState } from "@/store";
+import { setNotifications } from "@/store/slices/notificationsSlice";
 
 export const useNotificationsPolling = (intervalMs: number = 20000) => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ export const useNotificationsPolling = (intervalMs: number = 20000) => {
           setNotifications({
             items: data.results,
             unreadCount: data.unreadCount,
-          })
+          }),
         );
       }
     } catch (error) {

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+
 import connectDB from "../../../../lib/mongodb";
 import UserModel from "../../../../models/User";
-import { generateToken } from "../../../../utils/jwt";
 import { SignupRequest, AuthResponse, ErrorResponse } from "../../../../types/auth";
+import { generateToken } from "../../../../utils/jwt";
 
 export async function POST(request: Request) {
   try {

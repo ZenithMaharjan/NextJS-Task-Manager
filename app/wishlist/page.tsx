@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store';
-import { setWishlist } from '@/store/slices/wishlistSlice';
-import apiService from '@/services/api';
-import InventoryCard from '@/components/InventoryCard';
-import { Inventory } from '@/types/inventory';
-import { Heart } from 'lucide-react';
+import { Heart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import InventoryCard from "@/components/InventoryCard";
+import { useToast } from "@/hooks/useToast";
+import apiService from "@/services/api";
+import { RootState } from "@/store";
+import { setWishlist } from "@/store/slices/wishlistSlice";
+import { Inventory } from "@/types/inventory";
 
 export default function WishlistPage() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
   const [loading, setLoading] = useState(true);
@@ -24,16 +27,16 @@ export default function WishlistPage() {
       if (response.success) {
         dispatch(setWishlist(response.wishlists));
       }
-    } catch (error) {
-      console.error('Failed to fetch wishlist', error);
+    } catch {
+      showToast("Failed to fetch wishlist", "error");
     } finally {
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, showToast]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
 
@@ -59,7 +62,7 @@ export default function WishlistPage() {
             My Wishlist
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Manage the items you're interested in.
+            Manage the items you&apos;re interested in.
           </p>
         </header>
 
@@ -73,7 +76,7 @@ export default function WishlistPage() {
               Start adding items from the inventory to track them here.
             </p>
             <button
-              onClick={() => router.push('/inventory')}
+              onClick={() => router.push("/inventory")}
               className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium transition-colors"
             >
               Browse Inventory
@@ -82,10 +85,7 @@ export default function WishlistPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {wishlistItems.map((item: Inventory) => (
-              <InventoryCard
-                key={item.id}
-                item={item}
-              />
+              <InventoryCard key={item.id} item={item} />
             ))}
           </div>
         )}

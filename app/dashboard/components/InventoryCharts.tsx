@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+
 import { ProcessedData } from "@/utils/inventory";
 
 interface InventoryChartsProps {
@@ -17,7 +18,6 @@ interface InventoryChartsProps {
 }
 
 const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
-
   return (
     <main className="grid grid-cols-1 xl:grid-cols-2 gap-8">
       <section className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">

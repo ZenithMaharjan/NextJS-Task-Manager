@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import API from "services/api";
-import { 
-  InventoryItem, 
+
+import {
+  InventoryItem,
   InventoryResponse,
-  processInventoryData, 
-  ProcessedData 
+  processInventoryData,
+  ProcessedData as _ProcessedData,
 } from "@/utils/inventory";
 
 export const useInventoryDashboard = () => {
@@ -18,7 +19,7 @@ export const useInventoryDashboard = () => {
     const fetchData = async () => {
       setError(null);
       try {
-        const result = await API.getInventory() as InventoryResponse;
+        const result = (await API.getInventory()) as InventoryResponse;
         setData(result.results || []);
       } catch (err) {
         console.error("Error fetching data:", err);

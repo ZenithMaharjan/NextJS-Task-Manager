@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback, ReactNode } from "react";
 import clsx from "clsx";
+import React, { useEffect, useRef, useCallback, ReactNode } from "react";
+
 import Portal from "./Portal";
 
 interface ModalProps {
@@ -31,7 +32,7 @@ const Modal = ({
         onClose?.({ escape: true });
       }
     },
-    [closeOnEscape, onClose]
+    [closeOnEscape, onClose],
   );
 
   const handleClickOutside = useCallback(
@@ -44,7 +45,7 @@ const Modal = ({
         onClose?.({ outsideClick: true });
       }
     },
-    [closeOnOutsideClick, onClose]
+    [closeOnOutsideClick, onClose],
   );
 
   useEffect(() => {
@@ -68,14 +69,14 @@ const Modal = ({
       <div
         className={clsx(
           "fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300",
-          overlayClassName
+          overlayClassName,
         )}
       >
         <div
           ref={wrapperRef}
           className={clsx(
             "bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform animate-in zoom-in-95 duration-200",
-            className
+            className,
           )}
           role="dialog"
           aria-modal="true"

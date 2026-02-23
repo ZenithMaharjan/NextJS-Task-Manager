@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Bell, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 interface Notification {
   id: string;
@@ -194,7 +194,7 @@ function EmptyDropdownState() {
       </div>
       <p className="text-sm font-medium text-gray-900 dark:text-white">No notifications yet</p>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-        We'll let you know when something happens.
+        We&apos;ll let you know when something happens.
       </p>
     </div>
   );

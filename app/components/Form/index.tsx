@@ -85,7 +85,6 @@ const FormInput = (props: InputProps) => {
     component: Component = BaseInput,
     formData,
     onChange,
-    formValueExtractor,
     fieldValueExtractor,
     containerClassName = "mb-4",
     inputContainerClassName,
@@ -202,8 +201,7 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     });
   }, []);
 
-  const formDataObject = useRef(defaultFormData || new FormData());
-  const formData = useMemo(() => formDataObject.current, []);
+  const [formData] = useState(() => defaultFormData || new FormData());
 
   const handleSubmitForm = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {

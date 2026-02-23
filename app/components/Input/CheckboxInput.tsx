@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from "react";
 import clsx from "clsx";
+import React, { useCallback, useEffect } from "react";
 const Localize = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 interface CheckboxInputProps {
@@ -28,7 +28,6 @@ const CheckboxInput = (props: CheckboxInputProps) => {
     size = "1.25em",
     inputRef,
     disabled,
-    required,
     onChange,
     errorMessage,
     warning,
@@ -85,7 +84,7 @@ const CheckboxInput = (props: CheckboxInputProps) => {
 
   const errMsg = getErrorMessage();
 
-  const { value: _v, ...inputProps } = otherProps;
+  const { value: _value, ...inputProps } = otherProps;
 
   return (
     <div className="flex flex-col gap-1.5">

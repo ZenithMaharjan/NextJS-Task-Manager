@@ -1,34 +1,32 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { Pencil, Trash2, Heart, User, Save, X } from "lucide-react";
 import clsx from "clsx";
-import { Inventory } from "@/types/inventory";
-import { RootState } from "@/store";
-import apiService from "@/services/api";
-import { addToWishlist, removeFromWishlist, setWishlist } from "@/store/slices/wishlistSlice";
-import {
-  setTempEdit,
-  clearTempEdit,
-  setTempDelete,
-  clearTempDelete,
-} from "@/store/slices/inventorySlice";
+import { Pencil, Trash2, Heart, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState, useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+
+import { useToast } from "@/hooks/useToast";
+import apiService from "@/services/api";
+import { RootState } from "@/store";
+import { setTempDelete, clearTempDelete } from "@/store/slices/inventorySlice";
+import { setWishlist } from "@/store/slices/wishlistSlice";
+import { Inventory } from "@/types/inventory";
 
 interface InventoryCardProps {
   item: Inventory;
   onDelete?: (id: string) => void;
 }
 
-const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
+const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const tempEdits = useSelector((state: RootState) => state.inventory.tempEdits);
-  const tempDeletes = useSelector((state: RootState) => state.inventory.tempDeletes);
 
   const mergedItem = useMemo(() => {
     return {
@@ -36,10 +34,6 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
       ...(tempEdits[item.id] || {}),
     };
   }, [item, tempEdits]);
-
-  const isDeleted = useMemo(() => {
-    return !!tempDeletes[mergedItem.id];
-  }, [tempDeletes, mergedItem.id]);
 
   const isOwner = useMemo(() => {
     return currentUser?.id === mergedItem.userId;
@@ -64,11 +58,11 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
             dispatch(setWishlist(response.wishlists));
           }
         }
-      } catch (error) {
-        console.error("Failed to update wishlist:", error);
+      } catch {
+        showToast("Failed to update wishlist", "error");
       }
     },
-    [dispatch, isInWishlist, mergedItem.id],
+    [dispatch, isInWishlist, mergedItem.id, showToast],
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -91,8 +85,8 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
       dispatch(clearTempDelete(mergedItem.id));
     }, 20000);
 
-    console.log("Starting temporary delete for item:", mergedItem.id);
-  }, [mergedItem.id, dispatch]);
+    showToast("Item deleted temporarily", "info");
+  }, [mergedItem.id, dispatch, showToast]);
 
   const handleNavigate = useCallback(() => {
     router.push(`/inventory/${mergedItem.id}`);
@@ -105,7 +99,6 @@ const InventoryCard = ({ item, onDelete }: InventoryCardProps) => {
     },
     [router, mergedItem.id],
   );
-
 
   return (
     <>

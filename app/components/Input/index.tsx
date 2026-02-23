@@ -24,7 +24,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         {...domProps}
       />
       {hasError && (
-        <p id={`${domProps.name}-error`} className="mt-1 text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1" role="alert">
+        <p
+          id={`${domProps.name}-error`}
+          className="mt-1 text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1"
+          role="alert"
+        >
           {errorMessage}
         </p>
       )}

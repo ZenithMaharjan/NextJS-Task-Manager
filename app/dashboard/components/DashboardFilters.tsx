@@ -1,6 +1,7 @@
 import React, { useCallback, FC } from "react";
-import CheckboxInput from "@/components/Input/CheckboxInput";
+
 import SelectInput from "@/components/Form/SelectInput";
+import CheckboxInput from "@/components/Input/CheckboxInput";
 import { SORT_OPTIONS } from "@/utils/inventory";
 
 interface DashboardFiltersProps {
@@ -21,10 +22,7 @@ const DashboardFilters: FC<DashboardFiltersProps> = ({
     [setInStockOnly],
   );
 
-  const handleSortChange = useCallback(
-    (e: { value: string }) => setSortBy(e.value),
-    [setSortBy],
-  );
+  const handleSortChange = useCallback((e: { value: string }) => setSortBy(e.value), [setSortBy]);
 
   return (
     <div className="flex flex-col sm:flex-row items-end sm:items-center gap-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full md:w-auto">

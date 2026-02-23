@@ -24,11 +24,11 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const { user, token } = action.payload;
-      state.currentUser = user || action.payload; // Fallback for pure user object if needed
+      state.currentUser = user;
       state.accessToken = token || state.accessToken;
-      state.isAuthenticated = !!state.currentUser;
+      state.isAuthenticated = !!state.accessToken;
     },
-    logout: (state) => {
+    logout: state => {
       state.currentUser = null;
       state.accessToken = null;
       state.isAuthenticated = false;

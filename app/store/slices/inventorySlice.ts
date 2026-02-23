@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { Inventory } from "../../types/inventory";
 
 interface InventoryState {
@@ -15,10 +16,7 @@ const inventorySlice = createSlice({
   name: "inventory",
   initialState,
   reducers: {
-    setTempEdit: (
-      state,
-      action: PayloadAction<{ id: string; data: Partial<Inventory> }>
-    ) => {
+    setTempEdit: (state, action: PayloadAction<{ id: string; data: Partial<Inventory> }>) => {
       const { id, data } = action.payload;
       state.tempEdits[id] = {
         ...state.tempEdits[id],
@@ -34,18 +32,13 @@ const inventorySlice = createSlice({
     clearTempDelete: (state, action: PayloadAction<string>) => {
       delete state.tempDeletes[action.payload];
     },
-    resetInventoryState: (state) => {
+    resetInventoryState: state => {
       state.tempEdits = {};
       state.tempDeletes = {};
     },
   },
 });
 
-export const { 
-  setTempEdit, 
-  clearTempEdit, 
-  setTempDelete, 
-  clearTempDelete, 
-  resetInventoryState 
-} = inventorySlice.actions;
+export const { setTempEdit, clearTempEdit, setTempDelete, clearTempDelete, resetInventoryState } =
+  inventorySlice.actions;
 export default inventorySlice.reducer;

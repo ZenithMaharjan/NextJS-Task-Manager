@@ -2,10 +2,10 @@
 
 import DesktopHeader from "../DesktopHeader";
 import MobileHeader from "../MobileHeader";
-import { useNotificationsPolling } from "@/hooks/useNotificationsPolling";
 import { HeaderProps, NavLink } from "./types";
-
 import { DEFAULT_LINKS } from "../../constants/navigation";
+
+import { useNotificationsPolling } from "@/hooks/useNotificationsPolling";
 
 export default function Header({
   title = "My Website",

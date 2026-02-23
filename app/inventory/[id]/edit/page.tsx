@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { User, Save } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Pencil, Trash2, User, Save, X } from "lucide-react";
-import { DeleteConfirmationModal } from "@/components";
-import clsx from "clsx";
+
+import { DeleteConfirmationModal as _DeleteConfirmationModal } from "@/components";
 import apiService from "@/services/api";
-import { Inventory } from "@/types/inventory";
 import { RootState } from "@/store";
-import { addToWishlist, removeFromWishlist } from "@/store/slices/wishlistSlice";
 import { setTempEdit } from "@/store/slices/inventorySlice";
+import { Inventory } from "@/types/inventory";
 
 export default function InventoryEditPage() {
   const { id } = useParams();
@@ -22,7 +21,7 @@ export default function InventoryEditPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [editedData, setEditedData] = useState({
     brand: "",
     model: "",
@@ -71,10 +70,10 @@ export default function InventoryEditPage() {
   }, [id, fetchItem]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
-    setEditedData((prev) => ({
+    setEditedData(prev => ({
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
@@ -84,7 +83,7 @@ export default function InventoryEditPage() {
     if (!id) return;
     const itemId = Array.isArray(id) ? id[0] : id;
     setSaving(true);
-    
+
     try {
       const updatedData = {
         ...editedData,
@@ -92,7 +91,10 @@ export default function InventoryEditPage() {
         price: Number(editedData.price),
         engineCapacity: Number(editedData.engineCapacity),
         quantity: Number(editedData.quantity),
-        features: editedData.features.split(",").map(f => f.trim()).filter(f => f !== ""),
+        features: editedData.features
+          .split(",")
+          .map(f => f.trim())
+          .filter(f => f !== ""),
       };
 
       dispatch(setTempEdit({ id: itemId, data: updatedData }));
@@ -124,8 +126,8 @@ export default function InventoryEditPage() {
     return (
       <div className="container mx-auto p-6 max-w-2xl text-center">
         <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p className="text-gray-600 mt-2">You don't have permission to edit this listing.</p>
-        <button 
+        <p className="text-gray-600 mt-2">You don&apos;t have permission to edit this listing.</p>
+        <button
           onClick={handleBackToListing}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
         >
@@ -140,8 +142,10 @@ export default function InventoryEditPage() {
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
         <div className="bg-gray-50 dark:bg-gray-900/50 p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start">
           <div className="flex-1 space-y-4">
-            <h1 className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Edit Listing</h1>
-            
+            <h1 className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">
+              Edit Listing
+            </h1>
+
             <div className="flex flex-col sm:flex-row gap-4 w-full">
               <div className="flex-1 flex flex-col gap-1">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Brand</span>
@@ -215,10 +219,12 @@ export default function InventoryEditPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Stock Management</p>
+              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
+                Stock Management
+              </p>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                   <span className="text-[10px] uppercase font-bold text-gray-400">Status</span>
+                  <span className="text-[10px] uppercase font-bold text-gray-400">Status</span>
                   <select
                     name="inStock"
                     value={editedData.inStock.toString()}
@@ -245,7 +251,9 @@ export default function InventoryEditPage() {
 
             <div className="space-y-6">
               <div className="space-y-1">
-                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Engine Displacement</p>
+                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
+                  Engine Displacement
+                </p>
                 <div className="flex items-center gap-1 border-b border-gray-200 dark:border-gray-700 py-1">
                   <input
                     type="number"
@@ -259,7 +267,9 @@ export default function InventoryEditPage() {
               </div>
 
               <div className="space-y-1">
-                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Color</p>
+                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
+                  Color
+                </p>
                 <input
                   type="text"
                   name="color"
@@ -272,7 +282,9 @@ export default function InventoryEditPage() {
           </div>
 
           <div className="space-y-3 pt-2">
-            <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Features</p>
+            <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
+              Features
+            </p>
             <textarea
               name="features"
               value={editedData.features}

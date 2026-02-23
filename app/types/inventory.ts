@@ -1,5 +1,5 @@
-export type InventoryType = 'sport' | 'cruiser' | 'touring' | 'naked' | 'adventure' | 'scooter';
-export type InventoryCondition = 'new' | 'used';
+export type InventoryType = "sport" | "cruiser" | "touring" | "naked" | "adventure" | "scooter";
+export type InventoryCondition = "new" | "used";
 
 export interface Inventory {
   id: string;

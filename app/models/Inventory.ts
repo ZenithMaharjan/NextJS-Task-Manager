@@ -1,4 +1,5 @@
 import mongoose, { Schema, Model } from "mongoose";
+
 import { Inventory } from "../types/inventory";
 
 export interface InventoryDocument extends Omit<Inventory, "id"> {

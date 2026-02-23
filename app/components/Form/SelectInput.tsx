@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import clsx from 'clsx';
+import clsx from "clsx";
+import React from "react";
 
 interface Option {
   label: string;
@@ -17,24 +17,22 @@ interface SelectInputProps {
   placeholder?: string;
 }
 
-const SelectInput = ({ 
-  label, 
-  options = [], 
-  value, 
-  onChange, 
+const SelectInput = ({
+  label,
+  options = [],
+  value,
+  onChange,
   className,
-  placeholder = "Select an option..."
+  placeholder = "Select an option...",
 }: SelectInputProps) => {
   return (
     <div className={clsx("flex flex-col gap-1.5", className)}>
       {label && (
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-        </label>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
       )}
       <select
         value={value}
-        onChange={(e) => onChange({ value: e.target.value })}
+        onChange={e => onChange({ value: e.target.value })}
         className="block w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white transition-colors"
       >
         {placeholder && !value && (
@@ -42,7 +40,7 @@ const SelectInput = ({
             {placeholder}
           </option>
         )}
-        {options.map((option) => (
+        {options.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
