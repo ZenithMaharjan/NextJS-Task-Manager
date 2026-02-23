@@ -118,7 +118,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-between">
           <div className="text-sm">
             <Link
-              href="/signup"
+              href="/Signup"
               className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               Don&apos;t have an account?
@@ -126,7 +126,7 @@ export default function LoginPage() {
           </div>
           <div className="text-sm">
             <Link
-              href="/reset-password"
+              href="/ResetPassword"
               className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               Forgot your password?

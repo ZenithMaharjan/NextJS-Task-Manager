@@ -64,7 +64,7 @@ export default function InventoryItemPage() {
 
   const handleEditClick = useCallback(() => {
     if (!activeItem) return;
-    router.push(`/inventory/${activeItem.id}/edit`);
+    router.push(`/Inventory/${activeItem.id}/edit`);
   }, [router, activeItem]);
 
   const handleDelete = useCallback(() => {
@@ -83,7 +83,7 @@ export default function InventoryItemPage() {
 
     setShowDeletedUI(true);
     setTimeout(() => {
-      router.push("/inventory");
+      router.push("/Inventory");
     }, 1000);
   }, [activeItem, router, dispatch]);
 

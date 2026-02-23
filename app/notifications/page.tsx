@@ -3,7 +3,7 @@
 import { Bell, Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState as _useState, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { useToast } from "@/hooks/useToast";
@@ -22,7 +22,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push("/Login");
     }
   }, [isAuthenticated, router]);
 

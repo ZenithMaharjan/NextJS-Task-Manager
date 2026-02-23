@@ -26,13 +26,19 @@ const wishlistSlice = createSlice({
     setWishlist: (state, action: { payload: Inventory[] }) => {
       state.items = action.payload;
     },
+    appendWishlist: (state, action: { payload: Inventory[] }) => {
+      const newItems = action.payload.filter(
+        newItem => !state.items.some(existingItem => existingItem.id === newItem.id),
+      );
+      state.items = [...state.items, ...newItems];
+    },
     clearWishlist: state => {
       state.items = [];
     },
   },
 });
 
-export const { addToWishlist, removeFromWishlist, setWishlist, clearWishlist } =
+export const { addToWishlist, removeFromWishlist, setWishlist, clearWishlist, appendWishlist } =
   wishlistSlice.actions;
 
 export default wishlistSlice.reducer;

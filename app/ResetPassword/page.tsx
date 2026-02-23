@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
         <div className="flex items-center justify-end">
           <div className="text-sm">
             <Link
-              href="/login"
+              href="/Login"
               className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               Back to Sign in

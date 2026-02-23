@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import InventoryCard from "@/components/InventoryCard";
+import { RAList } from "@/components";
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
-import { setWishlist } from "@/store/slices/wishlistSlice";
-import { Inventory } from "@/types/inventory";
+import { setWishlist, appendWishlist, removeFromWishlist } from "@/store/slices/wishlistSlice";
 
 export default function WishlistPage() {
   const router = useRouter();
@@ -19,29 +18,62 @@ export default function WishlistPage() {
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchWishlist = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await apiService.getWishlist();
-      if (response.success) {
-        dispatch(setWishlist(response.wishlists));
+  const fetchWishlist = useCallback(
+    async (pageToFetch: number, isInitial: boolean = false) => {
+      try {
+        if (isInitial) setLoading(true);
+        else setLoadingMore(true);
+
+        const response = await apiService.getWishlist(pageToFetch, 6);
+        if (response.success) {
+          if (isInitial) {
+            dispatch(setWishlist(response.wishlists));
+          } else {
+            dispatch(appendWishlist(response.wishlists));
+          }
+          setHasMore(response.hasMore);
+          setTotalCount(response.count);
+        }
+      } catch {
+        showToast("Failed to fetch wishlist", "error");
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch {
-      showToast("Failed to fetch wishlist", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, showToast]);
+    },
+    [dispatch, showToast],
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push("/Login");
       return;
     }
 
-    fetchWishlist();
+    fetchWishlist(1, true);
   }, [isAuthenticated, router, fetchWishlist]);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasMore && !loadingMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchWishlist(nextPage);
+    }
+  }, [hasMore, loadingMore, page, fetchWishlist]);
+
+  const handleDeleteItem = useCallback(
+    (id: string) => {
+      dispatch(removeFromWishlist(id));
+    },
+    [dispatch],
+  );
+
+  const handleBrowseInventory = useCallback(() => router.push("/Inventory"), [router]);
 
   if (!isAuthenticated) return null;
 
@@ -76,18 +108,23 @@ export default function WishlistPage() {
               Start adding items from the inventory to track them here.
             </p>
             <button
-              onClick={() => router.push("/inventory")}
+              onClick={handleBrowseInventory}
               className="mt-6 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium transition-colors"
             >
               Browse Inventory
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wishlistItems.map((item: Inventory) => (
-              <InventoryCard key={item.id} item={item} />
-            ))}
-          </div>
+          <RAList
+            items={wishlistItems}
+            loading={loading}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
+            onDelete={handleDeleteItem}
+            infiniteScroll={true}
+            onLoadMore={handleLoadMore}
+            totalItems={totalCount}
+          />
         )}
       </div>
     </div>

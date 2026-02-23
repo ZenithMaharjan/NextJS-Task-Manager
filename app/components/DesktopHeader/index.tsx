@@ -8,9 +8,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { DEFAULT_LINKS } from "../../constants/navigation";
 import { NotificationDropdown } from "../Header/NotificationDropdown";
 import { HeaderProps } from "../Header/types";
-import { ThemeToggler } from "../index";
 import Logo from "../Logo";
 import NavLinks from "../NavLinks";
+import ThemeToggler from "../ThemeToggler";
 
 import apiService from "@/services/api";
 import { RootState } from "@/store";
@@ -68,7 +68,7 @@ export default function DesktopHeader({
             {isAuthenticated && (
               <>
                 <Link
-                  href="/wishlist"
+                  href="/Wishlist"
                   className="flex items-center gap-1 hover:opacity-80 transition-opacity"
                 >
                   <div className="relative">
@@ -111,7 +111,7 @@ export default function DesktopHeader({
               </div>
             ) : (
               <Link
-                href="/login"
+                href="/Login"
                 className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white text-blue-600 font-bold text-sm hover:bg-blue-50 transition-colors shadow-sm"
               >
                 Sign In

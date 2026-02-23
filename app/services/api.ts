@@ -155,8 +155,18 @@ class APIService {
     return this.post<SignupRequest, AuthResponse>("/auth/signup", data);
   };
 
-  getWishlist = (): Promise<{ success: boolean; count: number; wishlists: Inventory[] }> => {
-    return this.get("/wishlist");
+  getWishlist = (
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    success: boolean;
+    count: number;
+    currentPage: number;
+    totalPages: number;
+    hasMore: boolean;
+    wishlists: Inventory[];
+  }> => {
+    return this.get(`/wishlist?page=${page}&limit=${limit}`);
   };
 
   addToWishlist = (
