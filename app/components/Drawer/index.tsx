@@ -139,7 +139,7 @@ export default function Drawer({
             <>
               <ListItem disablePadding sx={{ marginBottom: "8px" }}>
                 <Link
-                  href="/wishlist"
+                  href="/Wishlist"
                   onClick={handleLinkClick}
                   style={{ width: "100%", textDecoration: "none" }}
                 >
@@ -168,7 +168,7 @@ export default function Drawer({
 
               <ListItem disablePadding sx={{ marginBottom: "8px" }}>
                 <Link
-                  href="/notifications"
+                  href="/Notifications"
                   onClick={handleLinkClick}
                   style={{ width: "100%", textDecoration: "none" }}
                 >
@@ -255,7 +255,7 @@ export default function Drawer({
               }}
             >
               <Link
-                href="/login"
+                href="/Login"
                 onClick={handleLinkClick}
                 style={{ width: "100%", textDecoration: "none" }}
               >

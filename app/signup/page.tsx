@@ -56,17 +56,12 @@ export default function SignUpPage() {
       try {
         const response = await apiService.signup({ username, email, password });
 
-        // Auto-login on successful signup
-        if (response.token) {
-          localStorage.setItem("auth", JSON.stringify({ accessToken: response.token }));
-        }
-
         if (response.user) {
           dispatch(setUser({ user: response.user, token: response.token }));
         }
 
         showToast("Account created successfully! Redirecting...", "success");
-        router.push("/inventory");
+        router.push("/Inventory");
       } catch (err: any) {
         showToast(err.message || "Failed to create account", "error");
         setStatus({ type: "error", message: err.message || "Failed to create account" });
@@ -122,7 +117,7 @@ export default function SignUpPage() {
         <div className="flex items-center justify-end">
           <div className="text-sm">
             <Link
-              href="/login"
+              href="/Login"
               className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               Already have an account? Sign in

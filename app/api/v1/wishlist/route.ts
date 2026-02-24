@@ -38,10 +38,16 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get user's wishlist items
-    const wishlistItems = await WishlistModel.find({ userId: payload.userId }).populate(
-      "inventoryId",
-    );
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
+
+    const totalCount = await WishlistModel.countDocuments({ userId: payload.userId });
+    const wishlistItems = await WishlistModel.find({ userId: payload.userId })
+      .skip(skip)
+      .limit(limit)
+      .populate("inventoryId");
 
     // Transform to match expected frontend format if necessary
     // Frontend expects an array of inventory items
@@ -52,7 +58,10 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        count: formattedWishlist.length,
+        count: totalCount,
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        hasMore: skip + wishlistItems.length < totalCount,
         wishlists: formattedWishlist,
       },
       { status: 200 },

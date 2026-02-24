@@ -89,13 +89,13 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   }, [mergedItem.id, dispatch, showToast]);
 
   const handleNavigate = useCallback(() => {
-    router.push(`/inventory/${mergedItem.id}`);
+    router.push(`/Inventory/${mergedItem.id}`);
   }, [router, mergedItem.id]);
 
   const handleEditClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      router.push(`/inventory/${mergedItem.id}/edit`);
+      router.push(`/Inventory/${mergedItem.id}/edit`);
     },
     [router, mergedItem.id],
   );

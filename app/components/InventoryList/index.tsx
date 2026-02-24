@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import SelectInput from "../Form/SelectInput";
@@ -14,8 +14,13 @@ import { Inventory } from "@/types/inventory";
 interface InventoryListProps {
   items: Inventory[];
   loading?: boolean;
+  loadingMore?: boolean;
+  hasMore?: boolean;
   error?: string | null;
   onDelete: (id: string) => void;
+  infiniteScroll?: boolean;
+  onLoadMore?: () => void;
+  totalItems?: number;
 }
 
 const ROWS_PER_PAGE_OPTIONS = [
@@ -51,11 +56,22 @@ const PaginationButton = ({ page, currentPage, onPageChange }: PaginationButtonP
   );
 };
 
-const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) => {
+const InventoryList = ({
+  items,
+  loading,
+  loadingMore,
+  hasMore,
+  error,
+  onDelete,
+  infiniteScroll = false,
+  onLoadMore,
+  totalItems,
+}: InventoryListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const tempDeletes = useSelector((state: RootState) => state.inventory.tempDeletes);
+  const loaderRef = React.useRef<HTMLDivElement>(null);
 
   const filteredItems = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
@@ -71,10 +87,35 @@ const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) 
 
   const totalPages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const paginatedItems = useMemo(() => {
+  const activeItems = useMemo(() => {
+    if (infiniteScroll) return filteredItems;
     const startIndex = (currentPage - 1) * rowsPerPage;
     return filteredItems.slice(startIndex, startIndex + rowsPerPage);
-  }, [filteredItems, currentPage, rowsPerPage]);
+  }, [filteredItems, currentPage, rowsPerPage, infiniteScroll]);
+
+  useEffect(() => {
+    if (!infiniteScroll || !onLoadMore || !hasMore || loading) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && !loadingMore) {
+          onLoadMore();
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [infiniteScroll, onLoadMore, hasMore, loadingMore, loading]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -138,20 +179,22 @@ const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) 
           />
         </div>
 
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <SelectInput
-            label="Rows per page"
-            options={ROWS_PER_PAGE_OPTIONS}
-            value={rowsPerPage.toString()}
-            onChange={handleRowsPerPageChange}
-            className="min-w-[120px]"
-          />
-        </div>
+        {!infiniteScroll && (
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <SelectInput
+              label="Rows per page"
+              options={ROWS_PER_PAGE_OPTIONS}
+              value={rowsPerPage.toString()}
+              onChange={handleRowsPerPageChange}
+              className="min-w-[120px]"
+            />
+          </div>
+        )}
       </div>
 
-      {paginatedItems.length > 0 ? (
+      {activeItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {paginatedItems.map(item => (
+          {activeItems.map((item: Inventory) => (
             <InventoryCard key={item.id} item={item} onDelete={onDelete} />
           ))}
         </div>
@@ -163,7 +206,35 @@ const InventoryList = ({ items, loading, error, onDelete }: InventoryListProps) 
         </div>
       )}
 
-      {totalPages > 1 && (
+      {infiniteScroll && (
+        <div className="flex flex-col items-center gap-4 py-8">
+          {totalItems !== undefined && (
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Showing <span className="text-gray-900 dark:text-white">{items.length}</span> of{" "}
+              <span className="text-gray-900 dark:text-white">{totalItems}</span> motorcycle items
+            </p>
+          )}
+
+          {hasMore && (
+            <div ref={loaderRef} className="py-2 flex justify-center">
+              {loadingMore && (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-gray-500 text-sm font-medium">Loading more items...</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!hasMore && items.length > 0 && (
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
+              You&apos;ve reached the end of your wishlist
+            </p>
+          )}
+        </div>
+      )}
+
+      {!infiniteScroll && totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-12 pb-8">
           <button
             onClick={handlePrevPage}

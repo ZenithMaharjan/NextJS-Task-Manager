@@ -6,8 +6,8 @@ import { DEFAULT_LINKS } from "../../constants/navigation";
 import Drawer from "../Drawer";
 import HamburgerButton from "../HamburgerButton";
 import { HeaderProps } from "../Header/types";
-import { ThemeToggler } from "../index";
 import Logo from "../Logo";
+import ThemeToggler from "../ThemeToggler";
 
 export default function MobileHeader({
   title = "My Website",

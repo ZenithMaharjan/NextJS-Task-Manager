@@ -98,7 +98,7 @@ export default function InventoryEditPage() {
       };
 
       dispatch(setTempEdit({ id: itemId, data: updatedData }));
-      router.replace("/inventory");
+      router.replace("/Inventory");
     } catch (err) {
       console.error("Save error:", err);
     } finally {
@@ -107,11 +107,11 @@ export default function InventoryEditPage() {
   }, [id, editedData, dispatch, router]);
 
   const handleCancelClick = useCallback(() => {
-    router.push(`/inventory/${id}`);
+    router.push(`/Inventory/${id}`);
   }, [router, id]);
 
   const handleBackToListing = useCallback(() => {
-    router.push(`/inventory/${id}`);
+    router.push(`/Inventory/${id}`);
   }, [router, id]);
 
   const handleInStockChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
