@@ -3,14 +3,15 @@ import React from "react";
 
 import "./globals.css";
 import { Header } from "./components";
+import Chatbot from "./components/Chatbot";
+
+import { ToastProvider } from "@/context/ToastContext";
+import { ReduxProvider } from "@/store/provider";
 
 export const metadata: Metadata = {
   title: "Digitals",
   description: " digital platform",
 };
-import { ToastProvider } from "@/context/ToastContext";
-import { ReduxProvider } from "@/store/provider";
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider>
             <Header />
             {children}
+            <Chatbot />
           </ToastProvider>
         </ReduxProvider>
       </body>
