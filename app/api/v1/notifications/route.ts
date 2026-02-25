@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import connectDB from "../../../lib/mongodb";
 import NotificationModel from "../../../models/Notification";
+import "../../../models/Inventory";
 import { verifyToken, extractTokenFromHeader } from "../../../utils/jwt";
 
 /**
