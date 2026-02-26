@@ -8,7 +8,8 @@ import { useSelector } from "react-redux";
 import SelectInput from "../Form/SelectInput";
 import InventoryCard from "../InventoryCard";
 
-import { RootState } from "@/store";
+import { ShimmerLoading } from "@/components";
+import type { RootState } from "@/store";
 import { Inventory } from "@/types/inventory";
 
 interface InventoryListProps {
@@ -147,9 +148,21 @@ const InventoryList = ({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-        <div className="h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-gray-500 font-medium">Fetching Inventory Items...</p>
+      <div className="space-y-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
+          >
+            <div className="flex items-center space-x-4">
+              <ShimmerLoading className="h-12 w-12 rounded-full shrink-0" />
+              <div className="flex-1 space-y-3">
+                <ShimmerLoading className="h-4 w-3/4 rounded" />
+                <ShimmerLoading className="h-4 w-1/2 rounded" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -219,8 +232,8 @@ const InventoryList = ({
             <div ref={loaderRef} className="py-2 flex justify-center">
               {loadingMore && (
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-gray-500 text-sm font-medium">Loading more items...</p>
+                  <ShimmerLoading className="h-8 w-8 rounded-full" />
+                  <ShimmerLoading className="h-4 w-32 rounded" />
                 </div>
               )}
             </div>

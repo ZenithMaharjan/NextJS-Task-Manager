@@ -26,6 +26,7 @@ export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -50,6 +51,7 @@ export default function Chatbot() {
 
       setMessages(prev => [...prev, newMessage]);
       setInputValue("");
+      setIsTyping(true);
 
       setTimeout(() => {
         const aiResponse: Message = {
@@ -59,6 +61,7 @@ export default function Chatbot() {
           timestamp: new Date(),
         };
         setMessages(prev => [...prev, aiResponse]);
+        setIsTyping(false);
       }, 1000);
     },
     [inputValue],
@@ -138,6 +141,24 @@ export default function Chatbot() {
               </div>
             </div>
           ))}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="max-w-[85%] rounded-2xl px-4 py-3.5 bg-white dark:bg-slate-800 rounded-bl-sm border border-gray-100 dark:border-slate-700 shadow-sm flex items-center gap-1.5 h-10">
+                <div
+                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
+                  style={{ animationDelay: "0s" }}
+                />
+                <div
+                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
+                  style={{ animationDelay: "0.2s" }}
+                />
+                <div
+                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
+                  style={{ animationDelay: "0.4s" }}
+                />
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} className="h-1" />
         </div>
 

@@ -6,6 +6,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { RAList } from "@/components";
+import { WishlistSkeleton } from "@/components";
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
@@ -78,11 +79,7 @@ export default function WishlistPage() {
   if (!isAuthenticated) return null;
 
   if (loading && wishlistItems.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-      </div>
-    );
+    return <WishlistSkeleton />;
   }
 
   return (

@@ -7,6 +7,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DeleteConfirmationModal } from "@/components";
+import { InventoryDetailSkeleton } from "@/components";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { setTempDelete } from "@/store/slices/inventorySlice";
@@ -110,7 +111,9 @@ export default function InventoryItemPage() {
       </div>
     );
   }
-  if (loading) return <div className="p-8 text-center dark:text-gray-300">Loading...</div>;
+  if (loading) {
+    return <InventoryDetailSkeleton />;
+  }
   if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   if (!activeItem) return <div className="p-8 text-center dark:text-gray-300">Item not found</div>;
 

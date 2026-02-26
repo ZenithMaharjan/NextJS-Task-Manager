@@ -14,5 +14,5 @@ export { default as InventoryCard } from "./InventoryCard";
 export { default as RAList } from "./InventoryList";
 export { default as DeleteConfirmationModal } from "./DeleteConfirmationModal";
 export { default as ThemeToggler } from "./ThemeToggler";
-
+export * from "./ShimmerLoading";
 export type { FormContextType, FormFieldType, InputGroupContextType } from "./Form/FormContext";

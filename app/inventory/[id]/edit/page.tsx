@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DeleteConfirmationModal as _DeleteConfirmationModal } from "@/components";
+import { InventoryEditSkeleton } from "@/components";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { setTempEdit } from "@/store/slices/inventorySlice";
@@ -118,7 +119,9 @@ export default function InventoryEditPage() {
     setEditedData(prev => ({ ...prev, inStock: e.target.value === "true" }));
   }, []);
 
-  if (loading) return <div className="p-8 text-center dark:text-gray-300">Loading...</div>;
+  if (loading) {
+    return <InventoryEditSkeleton />;
+  }
   if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   if (!item) return <div className="p-8 text-center dark:text-gray-300">Item not found</div>;
 

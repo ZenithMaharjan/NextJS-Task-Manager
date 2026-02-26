@@ -5,6 +5,7 @@ import React from "react";
 import DashboardFilters from "./components/DashboardFilters";
 import InventoryCharts from "./components/InventoryCharts";
 
+import { DashboardSkeleton } from "@/components";
 import { useInventoryDashboard } from "@/hooks/useInventoryDashboard";
 
 export default function DashboardPage() {
@@ -12,11 +13,7 @@ export default function DashboardPage() {
     useInventoryDashboard();
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-vh-100 dark:bg-gray-900 min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
