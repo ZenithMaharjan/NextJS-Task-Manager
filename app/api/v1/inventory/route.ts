@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import connectDB from "../../../lib/mongodb";
 import InventoryModel from "../../../models/Inventory";
 
+import { extractUserIdFromHeader } from "@/utils/jwt";
+
 export async function GET(request: Request) {
   try {
     await connectDB();
@@ -71,7 +73,18 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    const inventory = await InventoryModel.create(body);
+    const userId = extractUserIdFromHeader(request.headers.get("Authorization"));
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const inventoryBody = {
+      ...body,
+      userId,
+    };
+
+    const inventory = await InventoryModel.create(inventoryBody);
 
     return NextResponse.json(inventory, { status: 201 });
   } catch (error) {

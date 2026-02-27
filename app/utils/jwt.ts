@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
@@ -42,4 +43,13 @@ export function extractTokenFromHeader(authHeader: string | null): string | null
     return null;
   }
   return authHeader.substring(7);
+}
+
+export function extractUserIdFromHeader(authHeader: string | null) {
+  const token = extractTokenFromHeader(authHeader);
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const payload = verifyToken(token);
+  return payload ? payload.userId : null;
 }
