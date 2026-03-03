@@ -41,7 +41,7 @@ export const Toast: React.FC<ToastProps> = ({ id, message, type, onClose }) => {
       <div className="flex-1 text-sm font-medium">{message}</div>
       <button
         onClick={handleClose}
-        className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
         aria-label="Close"
       >
         <X className="w-4 h-4" />

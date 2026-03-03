@@ -99,7 +99,7 @@ export const NotificationDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="relative p-2 rounded-full text-blue-100 hover:bg-white/10 hover:text-white transition-all duration-200 focus:outline-none"
+        className="relative p-2 rounded-full text-blue-100 hover:bg-white/10 hover:text-white transition-all duration-200 focus:outline-none cursor-pointer"
         aria-label="Notifications"
       >
         <Bell className="w-6 h-6" />
@@ -125,7 +125,7 @@ export const NotificationDropdown = ({
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
                 >
                   Mark all read
                 </button>
@@ -161,7 +161,7 @@ export const NotificationDropdown = ({
                   className={`p-1.5 rounded-lg transition-all ${
                     currentPage === 1
                       ? "text-gray-200 dark:text-gray-700 cursor-not-allowed"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95 cursor-pointer"
                   }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -172,7 +172,7 @@ export const NotificationDropdown = ({
                   className={`p-1.5 rounded-lg transition-all ${
                     currentPage === totalPages || totalPages === 0
                       ? "text-gray-200 dark:text-gray-700 cursor-not-allowed"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95 cursor-pointer"
                   }`}
                 >
                   <ChevronRight className="w-4 h-4" />

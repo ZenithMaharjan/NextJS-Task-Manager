@@ -1,9 +1,8 @@
 "use client";
-
+import { DEFAULT_LINKS } from "../../constants/navigation";
 import DesktopHeader from "../DesktopHeader";
 import MobileHeader from "../MobileHeader";
 import { HeaderProps, NavLink } from "./types";
-import { DEFAULT_LINKS } from "../../constants/navigation";
 
 import { useNotificationsPolling } from "@/hooks/useNotificationsPolling";
 
