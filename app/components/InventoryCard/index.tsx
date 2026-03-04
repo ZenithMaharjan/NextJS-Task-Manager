@@ -106,39 +106,39 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
         onClick={handleNavigate}
         className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500"
       >
-        <div className="absolute top-4 right-14 z-10 transition-transform duration-300">
-          {isOwner && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-600/90 dark:bg-blue-500/90 text-white text-[10px] font-bold shadow-lg backdrop-blur-md border border-white/20 whitespace-nowrap">
-              <User className="w-3 h-3" />
-              Your Listing
-            </span>
-          )}
-        </div>
-
-        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
-          <button
-            onClick={handleToggleWishlist}
-            className={clsx(
-              "p-2 rounded-full backdrop-blur-md transition-all duration-300 cursor-pointer shadow-sm border",
-              isInWishlist
-                ? "bg-red-100 text-red-500 border-red-200 dark:bg-red-900/80 dark:border-red-700"
-                : "bg-white/90 dark:bg-gray-900/90 text-gray-400 hover:text-red-400 border-gray-100 dark:border-gray-800",
-            )}
-            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
-          >
-            <Heart
-              className={clsx(
-                "w-5 h-5 transition-transform duration-300",
-                isInWishlist
-                  ? "fill-current scale-110"
-                  : "fill-none scale-100 group-hover:scale-110",
-              )}
-            />
-          </button>
-        </div>
-
         <div className="p-5 space-y-4">
-          <div className="pt-2">
+          <div className="flex justify-between items-start gap-2 min-h-[32px]">
+            {isOwner ? (
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-600/90 dark:bg-blue-500/90 text-white text-[10px] font-bold shadow-lg backdrop-blur-md border border-white/20 whitespace-nowrap">
+                <User className="w-3 h-3" />
+                Your Listing
+              </span>
+            ) : (
+              <div />
+            )}
+
+            <button
+              onClick={handleToggleWishlist}
+              className={clsx(
+                "p-2 rounded-full backdrop-blur-md transition-all duration-300 cursor-pointer shadow-sm border",
+                isInWishlist
+                  ? "bg-red-100 text-red-500 border-red-200 dark:bg-red-900/80 dark:border-red-700"
+                  : "bg-white/90 dark:bg-gray-900/90 text-gray-400 hover:text-red-400 border-gray-100 dark:border-gray-800",
+              )}
+              aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <Heart
+                className={clsx(
+                  "w-5 h-5 transition-transform duration-300",
+                  isInWishlist
+                    ? "fill-current scale-110"
+                    : "fill-none scale-100 group-hover:scale-110",
+                )}
+              />
+            </button>
+          </div>
+
+          <div className="pt-0">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center mb-1">
                 <h3 className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">

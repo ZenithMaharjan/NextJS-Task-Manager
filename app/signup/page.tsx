@@ -118,7 +118,7 @@ export default function SignUpPage() {
           <div className="text-sm">
             <Link
               href="/Login"
-              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors cursor-pointer"
             >
               Already have an account? Sign in
             </Link>

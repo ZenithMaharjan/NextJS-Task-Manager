@@ -119,7 +119,7 @@ export default function LoginPage() {
           <div className="text-sm">
             <Link
               href="/Signup"
-              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors cursor-pointer"
             >
               Don&apos;t have an account?
             </Link>
@@ -127,7 +127,7 @@ export default function LoginPage() {
           <div className="text-sm">
             <Link
               href="/ResetPassword"
-              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors cursor-pointer"
             >
               Forgot your password?
             </Link>

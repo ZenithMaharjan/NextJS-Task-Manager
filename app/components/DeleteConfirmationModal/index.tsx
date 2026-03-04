@@ -23,7 +23,7 @@ const DeleteConfirmationModal = ({
       <div className="relative p-6">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
           aria-label="Close"
         >
           <X size={20} />
@@ -47,13 +47,13 @@ const DeleteConfirmationModal = ({
         <div className="flex flex-col sm:flex-row gap-3 justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors order-2 sm:order-1"
+            className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors order-2 sm:order-1 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg shadow-red-200 dark:shadow-none transition-all active:scale-95 order-1 sm:order-2"
+            className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg shadow-red-200 dark:shadow-none transition-all active:scale-95 order-1 sm:order-2 cursor-pointer"
           >
             Delete
           </button>

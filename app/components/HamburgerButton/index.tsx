@@ -10,7 +10,7 @@ export default function HamburgerButton({ onClick }: HamburgerButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="p-2 hover:bg-white/10 rounded-lg transition"
+      className="p-2 hover:bg-white/10 rounded-lg transition cursor-pointer"
       aria-label="Toggle menu"
     >
       <Menu size={24} />

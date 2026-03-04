@@ -69,7 +69,7 @@ export default function DesktopHeader({
               <>
                 <Link
                   href="/Wishlist"
-                  className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+                  className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   <div className="relative">
                     <Heart className="w-6 h-6 shadow-sm" />
@@ -103,7 +103,7 @@ export default function DesktopHeader({
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500 text-white transition-all border border-red-500/20 shadow-sm"
+                  className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500 text-white transition-all border border-red-500/20 shadow-sm cursor-pointer"
                   title="Logout"
                 >
                   <LogOut className="w-4 h-4" />

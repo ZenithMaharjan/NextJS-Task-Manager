@@ -100,6 +100,7 @@ export default function Drawer({
             sx={{
               color: "white",
               "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+              cursor: "pointer",
             }}
             aria-label="Close menu"
           >
@@ -126,6 +127,7 @@ export default function Drawer({
                       "&:hover": {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
+                      cursor: "pointer",
                     }}
                   >
                     <ListItemText primary={link.label} />
@@ -151,6 +153,7 @@ export default function Drawer({
                       alignItems: "center",
                       gap: "8px",
                       "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                      cursor: "pointer",
                     }}
                   >
                     <div className="relative">
@@ -180,6 +183,7 @@ export default function Drawer({
                       alignItems: "center",
                       gap: "8px",
                       "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                      cursor: "pointer",
                     }}
                   >
                     <div className="relative">
@@ -217,6 +221,7 @@ export default function Drawer({
                     alignItems: "center",
                     gap: "12px",
                     backgroundColor: "rgba(255,255,255,0.05)",
+                    cursor: "pointer",
                   }}
                 >
                   <User size={20} className="text-blue-300" />
@@ -238,6 +243,7 @@ export default function Drawer({
                     alignItems: "center",
                     gap: "12px",
                     "&:hover": { backgroundColor: "rgba(239, 68, 68, 0.2)" },
+                    cursor: "pointer",
                   }}
                 >
                   <LogOut size={20} className="text-red-400" />
@@ -268,6 +274,7 @@ export default function Drawer({
                     alignItems: "center",
                     gap: "12px",
                     "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.15)" },
+                    cursor: "pointer",
                   }}
                 >
                   <User size={20} />

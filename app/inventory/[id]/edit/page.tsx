@@ -7,10 +7,20 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DeleteConfirmationModal as _DeleteConfirmationModal } from "@/components";
 import { InventoryEditSkeleton } from "@/components";
+import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { setTempEdit } from "@/store/slices/inventorySlice";
-import { Inventory } from "@/types/inventory";
+import { Inventory, InventoryType } from "@/types/inventory";
+
+const INVENTORY_TYPES: InventoryType[] = [
+  "sport",
+  "cruiser",
+  "touring",
+  "naked",
+  "adventure",
+  "scooter",
+];
 
 export default function InventoryEditPage() {
   const { id } = useParams();
@@ -18,10 +28,11 @@ export default function InventoryEditPage() {
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
+  const { showToast } = useToast();
+
   const [item, setItem] = useState<Inventory | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [editedData, setEditedData] = useState({
     brand: "",
@@ -31,6 +42,7 @@ export default function InventoryEditPage() {
     engineCapacity: 0,
     color: "",
     condition: "",
+    type: "sport",
     inStock: false,
     quantity: 0,
     features: "",
@@ -52,13 +64,17 @@ export default function InventoryEditPage() {
         engineCapacity: data.engineCapacity,
         color: data.color,
         condition: data.condition,
+        type: data.type,
         inStock: data.inStock,
         quantity: data.quantity,
         features: data.features.join(", "),
       });
     } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Failed to load inventory item");
+      if (err instanceof Error) {
+        showToast(err.message, "error");
+      } else {
+        showToast("Failed to load inventory item", "error");
+      }
     } finally {
       setLoading(false);
     }
@@ -71,19 +87,19 @@ export default function InventoryEditPage() {
   }, [id, fetchItem]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value, type } = event.target;
     setEditedData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]: type === "checkbox" ? (event.target as HTMLInputElement).checked : value,
     }));
   };
 
   const handleSaveClick = useCallback(async () => {
     if (!id) return;
     const itemId = Array.isArray(id) ? id[0] : id;
-    setSaving(true);
+    setIsSaving(true);
 
     try {
       const updatedData = {
@@ -99,13 +115,14 @@ export default function InventoryEditPage() {
       };
 
       dispatch(setTempEdit({ id: itemId, data: updatedData }));
+      showToast("Changes saved successfully", "success");
       router.replace("/Inventory");
-    } catch (err) {
-      console.error("Save error:", err);
+    } catch (err: any) {
+      showToast(err?.message || "Failed to save changes", "error");
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
-  }, [id, editedData, dispatch, router]);
+  }, [id, editedData, dispatch, router, showToast]);
 
   const handleCancelClick = useCallback(() => {
     router.push(`/Inventory/${id}`);
@@ -122,7 +139,7 @@ export default function InventoryEditPage() {
   if (loading) {
     return <InventoryEditSkeleton />;
   }
-  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+
   if (!item) return <div className="p-8 text-center dark:text-gray-300">Item not found</div>;
 
   if (!isOwner) {
@@ -197,6 +214,21 @@ export default function InventoryEditPage() {
                   <option value="used">Used</option>
                 </select>
               </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Type</span>
+                <select
+                  name="type"
+                  value={editedData.type}
+                  onChange={handleInputChange}
+                  className="text-gray-600 dark:text-gray-300 bg-transparent border-b border-gray-300 dark:border-gray-600 outline-none py-1 cursor-pointer font-medium capitalize"
+                >
+                  {INVENTORY_TYPES.map(t => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
           <span className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-blue-500/30 shrink-0">
@@ -232,7 +264,7 @@ export default function InventoryEditPage() {
                     name="inStock"
                     value={editedData.inStock.toString()}
                     onChange={handleInStockChange}
-                    className="text-sm font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 outline-none dark:text-white"
+                    className="text-sm font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 outline-none dark:text-white cursor-pointer w-full"
                   >
                     <option value="true">In Stock</option>
                     <option value="false">Out of Stock</option>
@@ -292,7 +324,7 @@ export default function InventoryEditPage() {
               name="features"
               value={editedData.features}
               onChange={handleInputChange}
-              className="w-full bg-gray-50 dark:bg-gray-100/5 border border-gray-100 dark:border-gray-700 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500/20 text-sm font-medium dark:text-gray-300 transition-all"
+              className="w-full bg-gray-50 dark:bg-gray-100/5 border border-gray-100 dark:border-gray-700 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500/20 text-sm font-medium dark:text-gray-300 transition-all resize-none"
               rows={4}
               placeholder="Tell us about the features (comma separated)..."
             />
@@ -303,18 +335,18 @@ export default function InventoryEditPage() {
           <div className="flex gap-3">
             <button
               onClick={handleCancelClick}
-              disabled={saving}
-              className="px-6 py-2.5 rounded-xl font-bold text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-xl font-bold text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 cursor-pointer"
             >
               Discard Changes
             </button>
             <button
               onClick={handleSaveClick}
-              disabled={saving}
-              className="flex items-center gap-2 px-8 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95 disabled:opacity-50"
+              disabled={isSaving}
+              className="flex items-center gap-2 px-8 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              {saving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>

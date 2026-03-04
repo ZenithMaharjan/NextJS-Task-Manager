@@ -32,7 +32,7 @@ export default function NotFound() {
         <div className="pt-4 md:pt-6">
           <Link
             href="/"
-            className="inline-flex items-center justify-center py-3 px-8 md:py-4 md:px-10 text-base md:text-lg font-semibold text-white bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/50 dark:ring-offset-gray-800"
+            className="inline-flex items-center justify-center py-3 px-8 md:py-4 md:px-10 text-base md:text-lg font-semibold text-white bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/50 dark:ring-offset-gray-800 cursor-pointer"
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path

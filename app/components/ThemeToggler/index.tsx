@@ -32,7 +32,7 @@ export default function ThemeToggler() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 shadow-sm flex items-center justify-center"
+      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 shadow-sm flex items-center justify-center cursor-pointer"
       aria-label="Toggle Theme"
       title={buttonTitle}
     >

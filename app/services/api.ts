@@ -143,6 +143,10 @@ class APIService {
     return this.get<Inventory>(`/inventory/${id}`);
   };
 
+  createInventory = (data: Partial<Inventory>): Promise<Inventory> => {
+    return this.post<Partial<Inventory>, Inventory>("/inventory", data);
+  };
+
   patchInventory = (id: string, data: Partial<Inventory>): Promise<Inventory> => {
     return this.patch<Partial<Inventory>, Inventory>(`/inventory/${id}`, data);
   };

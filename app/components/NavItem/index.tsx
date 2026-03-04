@@ -29,7 +29,7 @@ export default function NavItem({
       <Link
         href={href}
         onClick={onClick}
-        className={`py-3 px-4 hover:bg-white/10 rounded-lg transition ${
+        className={`py-3 px-4 hover:bg-white/10 rounded-lg transition cursor-pointer ${
           isActive ? "bg-white/20 font-semibold" : ""
         }`}
         aria-current={isActive ? "page" : undefined}
@@ -42,7 +42,7 @@ export default function NavItem({
   return (
     <Link
       href={href}
-      className={`${linkClassName} ${isActive ? activeClassName : ""}`}
+      className={`${linkClassName} ${isActive ? activeClassName : ""} cursor-pointer`}
       aria-current={isActive ? "page" : undefined}
     >
       {label}
