@@ -6,6 +6,9 @@ export interface UserDocument extends mongoose.Document {
   username: string;
   email: string;
   password: string;
+  fullName: string | null;
+  dob: Date | null;
+  address: string | null;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -36,6 +39,22 @@ const userSchema = new Schema<UserDocument>(
       minlength: [6, "Password must be at least 6 characters"],
       select: false, // Don't include password in queries by default
     },
+    fullName: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: [100, "Full name cannot exceed 100 characters"],
+    },
+    dob: {
+      type: Date,
+      default: null,
+    },
+    address: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: [300, "Address cannot exceed 300 characters"],
+    },
   },
   {
     timestamps: true,
@@ -48,6 +67,10 @@ const userSchema = new Schema<UserDocument>(
         delete ret._id;
         delete ret.__v;
         delete ret.password;
+
+        ret.fullName = ret.fullName ?? null;
+        ret.dob = ret.dob ?? null;
+        ret.address = ret.address ?? null;
 
         return ret;
       },
