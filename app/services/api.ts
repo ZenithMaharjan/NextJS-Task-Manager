@@ -4,6 +4,7 @@ import type { CustomRequestOptions } from "utils/request/types";
 import { APIError } from "../utils/error";
 
 import { store } from "@/store";
+import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
 import { Inventory, InventoryResponse } from "@/types/inventory";
 import { Notification } from "@/types/notification";
@@ -200,6 +201,10 @@ class APIService {
 
   markAllNotificationsAsRead = (): Promise<{ success: boolean; message: string }> => {
     return this.post("/notifications/mark-all-as-read");
+  };
+
+  patchUser = (data: Partial<User>): Promise<AuthResponse> => {
+    return this.patch<Partial<User>, AuthResponse>("/auth/me", data);
   };
 }
 

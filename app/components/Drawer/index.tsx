@@ -211,27 +211,33 @@ export default function Drawer({
                   borderTop: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                <Box
-                  sx={{
-                    px: "16px",
-                    py: "8px",
-                    borderRadius: "8px",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    cursor: "pointer",
-                  }}
+                <Link
+                  href="/profile"
+                  onClick={handleLinkClick}
+                  style={{ width: "100%", textDecoration: "none" }}
                 >
-                  <User size={20} className="text-blue-300" />
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-blue-200 uppercase font-bold opacity-70">
-                      Profile
-                    </span>
-                    <span className="text-sm font-semibold">{currentUser?.name}</span>
-                  </div>
-                </Box>
+                  <Box
+                    sx={{
+                      px: "16px",
+                      py: "8px",
+                      borderRadius: "8px",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      backgroundColor: "rgba(255,255,255,0.05)",
+                      "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                      cursor: "pointer",
+                    }}
+                  >
+                    <User size={20} className="text-white" />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold">
+                        {(currentUser?.fullName || currentUser?.name || "").split(" ")[0]}
+                      </span>
+                    </div>
+                  </Box>
+                </Link>
               </ListItem>
               <ListItem disablePadding sx={{ marginTop: "8px" }}>
                 <ListItemButton
