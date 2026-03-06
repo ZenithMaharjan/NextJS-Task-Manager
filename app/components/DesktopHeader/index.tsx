@@ -92,15 +92,19 @@ export default function DesktopHeader({
 
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 shadow-sm">
-                  <User className="w-4 h-4 text-blue-200" />
-                  <div className="text-left leading-none">
-                    <p className="text-[9px] text-blue-100 uppercase font-black opacity-60">
-                      Profile
-                    </p>
-                    <p className="text-sm font-bold truncate max-w-[80px]">{currentUser?.name}</p>
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 shadow-sm group-hover:bg-white/20 transition-all">
+                    <User className="w-4 h-4 text-white" />
+                    <div className="text-left leading-none">
+                      <p className="text-sm font-bold truncate max-w-[80px]">
+                        {(currentUser?.fullName || currentUser?.name || "").split(" ")[0]}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500 text-white transition-all border border-red-500/20 shadow-sm cursor-pointer"

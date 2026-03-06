@@ -52,33 +52,36 @@ export default function InventoryEditPage() {
     return currentUser?.id === item?.userId;
   }, [currentUser, item?.userId]);
 
-  const fetchItem = useCallback(async (itemId: string) => {
-    try {
-      const data = await apiService.getInventoryById(itemId);
-      setItem(data);
-      setEditedData({
-        brand: data.brand,
-        model: data.model,
-        year: data.year,
-        price: data.price,
-        engineCapacity: data.engineCapacity,
-        color: data.color,
-        condition: data.condition,
-        type: data.type,
-        inStock: data.inStock,
-        quantity: data.quantity,
-        features: data.features.join(", "),
-      });
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        showToast(err.message, "error");
-      } else {
-        showToast("Failed to load inventory item", "error");
+  const fetchItem = useCallback(
+    async (itemId: string) => {
+      try {
+        const data = await apiService.getInventoryById(itemId);
+        setItem(data);
+        setEditedData({
+          brand: data.brand,
+          model: data.model,
+          year: data.year,
+          price: data.price,
+          engineCapacity: data.engineCapacity,
+          color: data.color,
+          condition: data.condition,
+          type: data.type,
+          inStock: data.inStock,
+          quantity: data.quantity,
+          features: data.features.join(", "),
+        });
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          showToast(err.message, "error");
+        } else {
+          showToast("Failed to load inventory item", "error");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [showToast],
+  );
 
   useEffect(() => {
     if (!id) return;
