@@ -51,21 +51,18 @@ export default function LoginPage() {
         const response = await apiService.login({ email, password });
 
         if (response.user && response.token) {
-          // Save user and token to Redux store (persistence handled by redux-persist)
-          dispatch(setUser({ user: response.user, token: response.token }));
-
-          // Fetch user's wishlist
           try {
-            const wishlistResponse = await apiService.getWishlist();
+            const wishlistResponse = await apiService.getWishlist(1, 10, {
+              headers: { Authorization: `Bearer ${response.token}` },
+            });
             if (wishlistResponse.success) {
               dispatch(setWishlist(wishlistResponse.wishlists));
             }
           } catch (wishlistErr) {
-            showToast(
-              `Failed to fetch wishlist: ${wishlistErr instanceof Error ? wishlistErr.message : "Unknown error"}`,
-              "error",
-            );
+            console.error("Failed to fetch wishlist:", wishlistErr);
           }
+
+          dispatch(setUser({ user: response.user, token: response.token }));
         }
 
         showToast("Successfully signed in! Redirecting...", "success");

@@ -2,13 +2,16 @@
 
 import { User as UserIcon, Lock, Save, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import React, { useCallback, useState, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useState, useMemo, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { Form } from "../../components";
 import { FormRef } from "../../components/Form";
 import apiService from "../../services/api";
 
 import { useToast } from "@/hooks/useToast";
+import { RootState } from "@/store";
 
 const getPasswordStrength = (password: string) => {
   if (!password) return 0;
@@ -58,8 +61,17 @@ const PasswordStrengthMeter = ({ strength }: { strength: number }) => {
 };
 
 export default function ChangePasswordPage() {
+  const router = useRouter();
   const { showToast } = useToast();
   const formRef = useRef<FormRef>(null);
+
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/Login");
+    }
+  }, [isAuthenticated, router]);
 
   const [isSaving, setIsSaving] = useState(false);
 

@@ -2,6 +2,7 @@
 
 import { Heart, User, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -12,6 +13,7 @@ import Logo from "../Logo";
 import NavLinks from "../NavLinks";
 import ThemeToggler from "../ThemeToggler";
 
+import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
@@ -27,6 +29,8 @@ export default function DesktopHeader({
   linkClassName = "hover:underline px-2 transition-all",
   containerClassName = "container mx-auto flex justify-between items-center",
 }: HeaderProps) {
+  const router = useRouter();
+  const { showToast } = useToast();
   const dispatch = useDispatch();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
   const { items: notifications, unreadCount } = useSelector(
@@ -37,7 +41,9 @@ export default function DesktopHeader({
   const handleLogout = useCallback(() => {
     dispatch(logout());
     dispatch(clearWishlist());
-  }, [dispatch]);
+    showToast("Successfully logged out", "success");
+    router.replace("/Login");
+  }, [dispatch, showToast, router]);
 
   const handleMarkAsRead = async (id: string) => {
     try {

@@ -163,6 +163,7 @@ class APIService {
   getWishlist = (
     page: number = 1,
     limit: number = 10,
+    options: CustomRequestOptions = {},
   ): Promise<{
     success: boolean;
     count: number;
@@ -171,7 +172,7 @@ class APIService {
     hasMore: boolean;
     wishlists: Inventory[];
   }> => {
-    return this.get(`/wishlist?page=${page}&limit=${limit}`);
+    return this.get(`/wishlist?page=${page}&limit=${limit}`, options);
   };
 
   addToWishlist = (
