@@ -254,7 +254,6 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
       getFormData: () => formData,
       reset: () => {
         formRef.current?.reset();
-        // Clear all entries from the existing FormData object
         const keys = Array.from(formData.keys());
         keys.forEach(key => formData.delete(key));
         setShowRequiredFields(false);

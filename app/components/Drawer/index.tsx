@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { X, Heart, User, LogOut, Bell } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -18,6 +18,7 @@ import { clearWishlist } from "../../store/slices/wishlistSlice";
 import { NavLink } from "../Header/types";
 import Logo from "../Logo";
 
+import { useToast } from "@/hooks/useToast";
 import { RootState } from "@/store";
 import {
   markAsRead as _markAsRead,
@@ -43,6 +44,8 @@ export default function Drawer({
   links,
   className = "bg-[#0a2b5c]",
 }: DrawerProps) {
+  const router = useRouter();
+  const { showToast } = useToast();
   const dispatch = useDispatch();
   const pathname = usePathname();
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
@@ -52,8 +55,10 @@ export default function Drawer({
   const handleLogout = useCallback(() => {
     dispatch(logout());
     dispatch(clearWishlist());
+    showToast("Successfully logged out", "success");
     onClose();
-  }, [dispatch, onClose]);
+    router.replace("/Login");
+  }, [dispatch, onClose, showToast, router]);
 
   const checkActive = useCallback(
     (href: string): boolean => {

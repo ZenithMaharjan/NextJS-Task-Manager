@@ -2,7 +2,8 @@
 
 import { User as UserIcon, Save, Lock } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { Form } from "../components";
@@ -13,9 +14,16 @@ import { useToast } from "@/hooks/useToast";
 import { RootState } from "@/store";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { showToast } = useToast();
-  const { currentUser } = useSelector((state: RootState) => state.user);
+  const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/Login");
+    }
+  }, [isAuthenticated, router]);
 
   const [isSaving, setIsSaving] = useState(false);
 
