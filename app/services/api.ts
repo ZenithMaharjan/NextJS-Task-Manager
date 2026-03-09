@@ -5,7 +5,7 @@ import { APIError } from "../utils/error";
 
 import { store } from "@/store";
 import { User } from "@/store/slices/userSlice";
-import { LoginRequest, SignupRequest, AuthResponse } from "@/types/auth";
+import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse } from "@/types/inventory";
 import { Notification } from "@/types/notification";
 
@@ -205,6 +205,10 @@ class APIService {
 
   patchUser = (data: Partial<User>): Promise<AuthResponse> => {
     return this.patch<Partial<User>, AuthResponse>("/auth/me", data);
+  };
+
+  changePassword = (data: ChangePasswordBody): Promise<AuthResponse> => {
+    return this.post<ChangePasswordBody, AuthResponse>("/auth/me/change-password", data);
   };
 }
 

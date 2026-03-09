@@ -28,3 +28,9 @@ export interface ErrorResponse {
   error: string;
   details?: Record<string, string>;
 }
+
+export interface ChangePasswordBody {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

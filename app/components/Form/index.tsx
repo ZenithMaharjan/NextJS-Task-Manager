@@ -62,8 +62,9 @@ interface FormProps {
   noValidate?: boolean;
 }
 
-interface FormRef {
+export interface FormRef {
   getFormData: () => FormData;
+  reset: () => void;
   nativeForm: HTMLFormElement | null;
 }
 
@@ -251,6 +252,13 @@ const Form = React.forwardRef<FormRef, FormProps>((props, ref) => {
     ref,
     () => ({
       getFormData: () => formData,
+      reset: () => {
+        formRef.current?.reset();
+        // Clear all entries from the existing FormData object
+        const keys = Array.from(formData.keys());
+        keys.forEach(key => formData.delete(key));
+        setShowRequiredFields(false);
+      },
       nativeForm: formRef.current,
     }),
     [formData],
