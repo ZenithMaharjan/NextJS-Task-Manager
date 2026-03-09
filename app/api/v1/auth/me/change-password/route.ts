@@ -54,6 +54,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (newPassword.length < 6) {
+      return NextResponse.json<ErrorResponse>(
+        { success: false, error: "New password must be at least 6 characters." },
+        { status: 400 },
+      );
+    }
+
     if (currentPassword === newPassword) {
       return NextResponse.json<ErrorResponse>(
         { success: false, error: "New password must be different from the current password." },

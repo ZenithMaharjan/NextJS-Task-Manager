@@ -1,6 +1,7 @@
 "use client";
 
-import { User as UserIcon, Save } from "lucide-react";
+import { User as UserIcon, Save, Lock } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -69,10 +70,20 @@ export default function ProfilePage() {
       <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-64 space-y-2">
           <h2 className="text-xl font-bold mb-6 px-4">Profile</h2>
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold transition-all shadow-md cursor-pointer">
+          <Link
+            href="/profile"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold transition-all shadow-md cursor-pointer"
+          >
             <UserIcon className="w-5 h-5" />
             Edit Profile
-          </button>
+          </Link>
+          <Link
+            href="/profile/change-password"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 font-medium transition-all group cursor-pointer"
+          >
+            <Lock className="w-5 h-5 group-hover:text-blue-600 transition-colors" />
+            Change Password
+          </Link>
         </div>
 
         <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
