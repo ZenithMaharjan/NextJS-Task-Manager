@@ -45,11 +45,20 @@ export function extractTokenFromHeader(authHeader: string | null): string | null
   return authHeader.substring(7);
 }
 
-export function extractUserIdFromHeader(authHeader: string | null) {
+export function extractUserIdFromHeader(authHeader: string | null): string | null {
   const token = extractTokenFromHeader(authHeader);
   if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return null;
   }
   const payload = verifyToken(token);
   return payload ? payload.userId : null;
+}
+
+export function extractUserFromHeader(authHeader: string | null): JWTPayload | null {
+  const token = extractTokenFromHeader(authHeader);
+  if (!token) {
+    return null;
+  }
+  const payload = verifyToken(token);
+  return payload;
 }
