@@ -29,3 +29,13 @@ export interface ProcessedInventoryData {
   totalQuantity: number;
   avgEngineCapacity: number;
 }
+
+export interface PurchaseFormValues {
+  quantityPurchased: number;
+}
+
+export interface PurchaseRequest {
+  inventoryId: string;
+  quantityPurchased: number;
+  totalPrice: number;
+}

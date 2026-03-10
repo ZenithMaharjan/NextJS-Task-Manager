@@ -6,7 +6,7 @@ import { APIError } from "../utils/error";
 import { store } from "@/store";
 import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
-import { Inventory, InventoryResponse } from "@/types/inventory";
+import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
 import { Notification } from "@/types/notification";
 
 const apiBaseUrl =
@@ -210,6 +210,10 @@ class APIService {
 
   changePassword = (data: ChangePasswordBody): Promise<AuthResponse> => {
     return this.post<ChangePasswordBody, AuthResponse>("/auth/me/change-password", data);
+  };
+
+  purchaseInventory = (data: PurchaseRequest): Promise<{ success: boolean; message: string }> => {
+    return this.post<PurchaseRequest, { success: boolean; message: string }>("/purchase", data);
   };
 }
 

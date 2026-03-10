@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { PurchaseModel } from "../../../models/Purchase";
-import { createPurchase, confirmPurchase, cancelPurchase } from "./index";
-import NotificationModel from "../../../models/Notification";
-import InventoryModel from "../../../models/Inventory";
 
-import { extractUserFromHeader, extractUserIdFromHeader, JWTPayload } from "@/utils/jwt";
+import { createPurchase, confirmPurchase, cancelPurchase } from "./index";
+import InventoryModel from "../../../models/Inventory";
+import NotificationModel from "../../../models/Notification";
+import { PurchaseModel } from "../../../models/Purchase";
+
 import connectDB from "@/lib/mongodb";
+import { extractUserFromHeader, extractUserIdFromHeader, JWTPayload } from "@/utils/jwt";
 
 export async function POST(request: Request) {
   try {
