@@ -6,6 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import PurchaseOrderDrawer from "./PurchaseOrderDrawer";
+
 import { DeleteConfirmationModal } from "@/components";
 import { InventoryDetailSkeleton } from "@/components";
 import apiService from "@/services/api";
@@ -28,6 +30,7 @@ export default function InventoryItemPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDeletedUI, setShowDeletedUI] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isPurchaseDrawerOpen, setIsPurchaseDrawerOpen] = useState(false);
 
   const activeItem = useMemo(() => {
     if (!item) return null;
@@ -87,6 +90,14 @@ export default function InventoryItemPage() {
       router.push("/Inventory");
     }, 1000);
   }, [activeItem, router, dispatch]);
+
+  const handleOpenPurchaseDrawer = useCallback(() => {
+    setIsPurchaseDrawerOpen(true);
+  }, []);
+
+  const handleClosePurchaseDrawer = useCallback(() => {
+    setIsPurchaseDrawerOpen(false);
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -209,14 +220,14 @@ export default function InventoryItemPage() {
               <div className="flex gap-2">
                 <button
                   onClick={handleEditClick}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 font-bold text-sm transition-all active:scale-95 shadow-lg"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 font-bold text-sm transition-all active:scale-95 shadow-lg cursor-pointer"
                 >
                   <Pencil className="w-4 h-4" />
                   Edit Listing
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-all border border-red-100 dark:border-red-900/30"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-all border border-red-100 dark:border-red-900/30 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete Listing
@@ -226,7 +237,7 @@ export default function InventoryItemPage() {
             <button
               onClick={toggleWishlist}
               className={clsx(
-                "px-8 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 shadow-lg",
+                "px-8 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 shadow-lg cursor-pointer",
                 isInWishlist
                   ? "bg-red-500 text-white shadow-red-500/30 hover:bg-red-600"
                   : "bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90",
@@ -234,9 +245,23 @@ export default function InventoryItemPage() {
             >
               {isInWishlist ? "Unsave Item" : "Save to Wishlist"}
             </button>
+            {currentUser && (
+              <button
+                onClick={handleOpenPurchaseDrawer}
+                className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/30 cursor-pointer"
+              >
+                Purchase
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      <PurchaseOrderDrawer
+        isOpen={isPurchaseDrawerOpen}
+        onClose={handleClosePurchaseDrawer}
+        inventoryItem={activeItem}
+      />
 
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}

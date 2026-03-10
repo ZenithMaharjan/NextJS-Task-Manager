@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
+
 import InventoryModel from "../../../models/Inventory";
-import { PurchaseModel } from "../../../models/Purchase";
 import NotificationModel from "../../../models/Notification";
+import { PurchaseModel } from "../../../models/Purchase";
 
 export const createPurchase = async (purchaseData: any) => {
   const purchase = await PurchaseModel.create(purchaseData);
