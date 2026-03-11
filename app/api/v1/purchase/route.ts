@@ -59,17 +59,30 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page") || "1");
     const limit = Math.min(Number(url.searchParams.get("limit") || "20"), 100);
-
-    const filter: any = { userId };
+    const view = url.searchParams.get("view") || "buyer";
 
     const skip = (Math.max(page, 1) - 1) * limit;
+
+    let filter: any;
+
+    if (view === "seller") {
+      const ownedInventories = await InventoryModel.find({ userId }, { _id: 1 }).lean();
+      const inventoryIds = ownedInventories.map(inv => inv._id);
+      filter = { inventoryId: { $in: inventoryIds } };
+    } else if (view === "all") {
+      const ownedInventories = await InventoryModel.find({ userId }, { _id: 1 }).lean();
+      const inventoryIds = ownedInventories.map(inv => inv._id);
+      filter = { $or: [{ userId }, { inventoryId: { $in: inventoryIds } }] };
+    } else {
+      filter = { userId };
+    }
 
     const [items, total] = await Promise.all([
       PurchaseModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       PurchaseModel.countDocuments(filter),
     ]);
 
-    return NextResponse.json({ success: true, data: items, meta: { total, page, limit } });
+    return NextResponse.json({ success: true, data: items, meta: { total, page, limit, view } });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, message: err?.message || String(err) },
