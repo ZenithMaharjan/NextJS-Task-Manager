@@ -61,6 +61,8 @@ export async function GET(request: Request) {
     const limit = Math.min(Number(url.searchParams.get("limit") || "20"), 100);
     const view = url.searchParams.get("view") || "buyer";
 
+    const expandInventory = url.searchParams.get("expand") === "inventory";
+
     const skip = (Math.max(page, 1) - 1) * limit;
 
     let filter: any;
@@ -77,12 +79,19 @@ export async function GET(request: Request) {
       filter = { userId };
     }
 
-    const [items, total] = await Promise.all([
-      PurchaseModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-      PurchaseModel.countDocuments(filter),
-    ]);
+    let query = PurchaseModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-    return NextResponse.json({ success: true, data: items, meta: { total, page, limit, view } });
+    if (expandInventory) {
+      query = query.populate("inventoryId");
+    }
+
+    const [items, total] = await Promise.all([query.lean(), PurchaseModel.countDocuments(filter)]);
+
+    return NextResponse.json({
+      success: true,
+      data: items,
+      meta: { total, page, limit, view, expanded: expandInventory },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { success: false, message: err?.message || String(err) },
