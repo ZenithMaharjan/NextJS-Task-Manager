@@ -99,19 +99,20 @@ export default function Chatbot() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md">
+        <div className="flex items-center justify-between p-4 border-b border-blue-700 bg-blue-600">
+          {" "}
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 rounded-xl">
               <Bot size={24} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800 dark:text-gray-100">AI Assistant</h3>
-              <p className="text-xs text-green-500 font-medium">Online</p>
+              <h3 className="font-semibold text-white">AI Assistant</h3>
+              <p className="text-xs text-blue-100 font-medium">Online</p>
             </div>
           </div>
           <button
             onClick={closeChatbot}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors cursor-pointer"
+            className="p-2 text-white hover:bg-blue-700 rounded-full transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
