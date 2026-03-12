@@ -8,6 +8,7 @@ import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
 import { Notification } from "@/types/notification";
+import { PurchaseOrderResponse } from "@/types/purchase";
 
 const apiBaseUrl =
   process.env.NODE_ENV === "production"
@@ -214,6 +215,16 @@ class APIService {
 
   purchaseInventory = (data: PurchaseRequest): Promise<{ success: boolean; message: string }> => {
     return this.post<PurchaseRequest, { success: boolean; message: string }>("/purchase", data);
+  };
+
+  getPurchaseOrders = (
+    view: "buyer" | "seller" = "buyer",
+    options: CustomRequestOptions = {},
+  ): Promise<PurchaseOrderResponse> => {
+    return this.get<PurchaseOrderResponse>("/purchase", {
+      ...options,
+      query: { ...options.query, expand: "inventory", view },
+    });
   };
 }
 
