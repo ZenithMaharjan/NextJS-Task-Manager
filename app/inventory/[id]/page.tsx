@@ -132,10 +132,10 @@ export default function InventoryItemPage() {
     <>
       <div className="container mx-auto p-6 max-w-2xl">
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700 transition-all duration-300">
-          <div className="bg-gray-50 dark:bg-gray-900/50 p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start">
-            <div className="flex-1">
+          <div className="bg-gray-50 dark:bg-gray-900/50 p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start gap-4">
+            <div className="flex-1 min-w-0">
               <div>
-                <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight break-words">
                   <span className="text-blue-600 dark:text-blue-400 mr-2">{activeItem.brand}</span>
                   {activeItem.model}
                 </h1>
@@ -146,7 +146,7 @@ export default function InventoryItemPage() {
               </div>
             </div>
             {isOwner && (
-              <span className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-blue-500/30">
+              <span className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-blue-500/30 shrink-0">
                 <User className="w-3.5 h-3.5" />
                 Your Listing
               </span>
@@ -215,9 +215,9 @@ export default function InventoryItemPage() {
             </div>
           </div>
 
-          <div className="p-6 bg-gray-50/80 dark:bg-black/20 backdrop-blur-sm border-t border-gray-50 dark:border-gray-700 flex justify-end items-center gap-4">
+          <div className="p-6 bg-gray-50/80 dark:bg-black/20 backdrop-blur-sm border-t border-gray-50 dark:border-gray-700 flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-3">
             {isOwner && (
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={handleEditClick}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 font-bold text-sm transition-all active:scale-95 shadow-lg cursor-pointer"

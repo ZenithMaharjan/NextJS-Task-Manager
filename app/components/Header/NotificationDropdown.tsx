@@ -41,7 +41,7 @@ export const NotificationDropdown = ({
     [notifications, startIndex],
   );
 
-  const toggleDropdown = useCallback(() => setIsOpen(!isOpen), [isOpen]);
+  const toggleDropdown = useCallback(() => setIsOpen(prevIsOpen => !prevIsOpen), []);
 
   const handleMarkAllAsRead = useCallback(
     (e: React.MouseEvent) => {
@@ -111,7 +111,7 @@ export const NotificationDropdown = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200">
+        <div className="absolute right-[-40px] sm:right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200 max-w-[calc(100vw-2rem)]">
           <div className="flex items-center justify-between px-5 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-gray-900 dark:text-white">Notifications</h3>

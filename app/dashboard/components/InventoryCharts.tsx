@@ -17,6 +17,8 @@ interface InventoryChartsProps {
   processedData: ProcessedData[];
 }
 
+const MIN_CHART_WIDTH = 500;
+
 const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
   return (
     <main className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -25,42 +27,44 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
           Aggregate Price per Model ($)
         </h2>
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#374151"
-                opacity={0.1}
-                vertical={false}
-              />
-              <XAxis
-                dataKey="model"
-                angle={-45}
-                textAnchor="end"
-                interval={0}
-                height={60}
-                fontSize={12}
-                tick={{ fill: "currentColor" }}
-              />
-              <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "#fff",
-                }}
-                itemStyle={{ color: "#818cf8" }}
-              />
-              <Bar dataKey="avgPrice" name="Avg Price">
-                {processedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={"#6366f1"} />
-                ))}
-              </Bar>
-              <Legend />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="h-[350px] overflow-x-auto">
+          <div style={{ minWidth: MIN_CHART_WIDTH }} className="h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#374151"
+                  opacity={0.1}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="model"
+                  angle={-45}
+                  textAnchor="end"
+                  interval={0}
+                  height={60}
+                  fontSize={12}
+                  tick={{ fill: "currentColor" }}
+                />
+                <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  itemStyle={{ color: "#818cf8" }}
+                />
+                <Bar dataKey="avgPrice" name="Avg Price">
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={"#6366f1"} />
+                  ))}
+                </Bar>
+                <Legend />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </section>
 
@@ -69,42 +73,44 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
           Total Quantity per Model
         </h2>
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#374151"
-                opacity={0.1}
-                vertical={false}
-              />
-              <XAxis
-                dataKey="model"
-                angle={-45}
-                textAnchor="end"
-                interval={0}
-                height={60}
-                fontSize={12}
-                tick={{ fill: "currentColor" }}
-              />
-              <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "#fff",
-                }}
-                itemStyle={{ color: "#34d399" }}
-              />
-              <Bar dataKey="totalQuantity" name="Total Quantity">
-                {processedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={"#10b981"} />
-                ))}
-              </Bar>
-              <Legend />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="h-[350px] overflow-x-auto">
+          <div style={{ minWidth: MIN_CHART_WIDTH }} className="h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#374151"
+                  opacity={0.1}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="model"
+                  angle={-45}
+                  textAnchor="end"
+                  interval={0}
+                  height={60}
+                  fontSize={12}
+                  tick={{ fill: "currentColor" }}
+                />
+                <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  itemStyle={{ color: "#34d399" }}
+                />
+                <Bar dataKey="totalQuantity" name="Total Quantity">
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={"#10b981"} />
+                  ))}
+                </Bar>
+                <Legend />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </section>
 
@@ -113,42 +119,44 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-purple-500 rounded-full"></span>
           Average Engine Capacity per Model (cc)
         </h2>
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#374151"
-                opacity={0.1}
-                vertical={false}
-              />
-              <XAxis
-                dataKey="model"
-                angle={-45}
-                textAnchor="end"
-                interval={0}
-                height={60}
-                fontSize={12}
-                tick={{ fill: "currentColor" }}
-              />
-              <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "#fff",
-                }}
-                itemStyle={{ color: "#a78bfa" }}
-              />
-              <Bar dataKey="avgEngineCapacity" name="Avg CC">
-                {processedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={"#8b5cf6"} />
-                ))}
-              </Bar>
-              <Legend />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="h-[350px] overflow-x-auto">
+          <div style={{ minWidth: MIN_CHART_WIDTH }} className="h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#374151"
+                  opacity={0.1}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="model"
+                  angle={-45}
+                  textAnchor="end"
+                  interval={0}
+                  height={60}
+                  fontSize={12}
+                  tick={{ fill: "currentColor" }}
+                />
+                <YAxis fontSize={12} tick={{ fill: "currentColor" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  itemStyle={{ color: "#a78bfa" }}
+                />
+                <Bar dataKey="avgEngineCapacity" name="Avg CC">
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={"#8b5cf6"} />
+                  ))}
+                </Bar>
+                <Legend />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </section>
     </main>

@@ -2,6 +2,7 @@
 
 import { X, Send, MessageSquare, Bot } from "lucide-react";
 import { useState, useRef, useEffect, useCallback, useMemo, type FormEvent } from "react";
+import React from "react";
 
 type Role = "user" | "ai" | "system";
 
@@ -22,6 +23,16 @@ const INITIAL_MESSAGES: Message[] = [
   },
 ];
 
+const CLOSE_ICON_SIZE = 20;
+const SEND_ICON_SIZE = 16;
+const AI_RESPONSE_DELAY_MS = 1000;
+const TYPING_DOT_DELAYS = ["0s", "0.2s", "0.4s"];
+
+const TIME_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  hour: "2-digit",
+  minute: "2-digit",
+};
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
@@ -29,17 +40,21 @@ export default function Chatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = useCallback(() => {
+  const scrollMessagesToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   useEffect(() => {
-    if (isOpen) scrollToBottom();
-  }, [messages, isOpen, scrollToBottom]);
+    if (isOpen) scrollMessagesToBottom();
+  }, [messages, isOpen, scrollMessagesToBottom]);
+
+  const handleInputValueChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  }, []);
 
   const handleSendMessage = useCallback(
-    (e?: FormEvent) => {
-      e?.preventDefault();
+    (event?: FormEvent) => {
+      event?.preventDefault();
       if (!inputValue.trim()) return;
 
       const newMessage: Message = {
@@ -49,7 +64,7 @@ export default function Chatbot() {
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, newMessage]);
+      setMessages(previousMessages => [...previousMessages, newMessage]);
       setInputValue("");
       setIsTyping(true);
 
@@ -60,16 +75,21 @@ export default function Chatbot() {
           content: "what's next?",
           timestamp: new Date(),
         };
-        setMessages(prev => [...prev, aiResponse]);
+        setMessages(previousMessages => [...previousMessages, aiResponse]);
         setIsTyping(false);
-      }, 1000);
+      }, AI_RESPONSE_DELAY_MS);
     },
     [inputValue],
   );
 
   const visibleMessages = useMemo(
-    () => messages.filter(msg => !msg.visibleTo || msg.visibleTo.includes("user")),
+    () => messages.filter(message => !message.visibleTo || message.visibleTo.includes("user")),
     [messages],
+  );
+
+  const sendIconClassName = useMemo(
+    () => (inputValue.trim() ? "translate-x-px" : ""),
+    [inputValue],
   );
 
   const openChatbot = useCallback(() => setIsOpen(true), []);
@@ -99,8 +119,7 @@ export default function Chatbot() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-blue-700 bg-blue-600">
-          {" "}
+        <div className="flex items-center justify-between p-4 bg-blue-600">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 rounded-xl">
               <Bot size={24} className="text-blue-600 dark:text-blue-400" />
@@ -114,49 +133,44 @@ export default function Chatbot() {
             onClick={closeChatbot}
             className="p-2 text-white hover:bg-blue-700 rounded-full transition-colors cursor-pointer"
           >
-            <X size={20} />
+            <X size={CLOSE_ICON_SIZE} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-[#0a0f1c]">
-          {visibleMessages.map(msg => (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-[#0a0f1c]">
+          {visibleMessages.map(message => (
             <div
-              key={msg.id}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              key={message.id}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-                  msg.role === "user"
+                  message.role === "user"
                     ? "bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-br-sm shadow-md"
-                    : "bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-bl-sm border border-gray-100 dark:border-slate-700 shadow-sm"
+                    : "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm"
                 }`}
               >
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                 <p
                   className={`text-[10px] mt-1 text-right opacity-70 ${
-                    msg.role === "user" ? "text-blue-100" : "text-gray-500 dark:text-gray-400"
+                    message.role === "user" ? "text-blue-100" : "text-gray-500 dark:text-gray-400"
                   }`}
                 >
-                  {msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  {message.timestamp.toLocaleTimeString([], TIME_FORMAT_OPTIONS)}
                 </p>
               </div>
             </div>
           ))}
           {isTyping && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-2xl px-4 py-3.5 bg-white dark:bg-slate-800 rounded-bl-sm border border-gray-100 dark:border-slate-700 shadow-sm flex items-center gap-1.5 h-10">
-                <div
-                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
-                  style={{ animationDelay: "0s" }}
-                />
-                <div
-                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
-                  style={{ animationDelay: "0.2s" }}
-                />
-                <div
-                  className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
-                  style={{ animationDelay: "0.4s" }}
-                />
+              <div className="max-w-[85%] rounded-2xl px-4 py-3.5 bg-gray-100 dark:bg-slate-800 rounded-bl-sm shadow-sm flex items-center gap-1.5 h-10">
+                {TYPING_DOT_DELAYS.map(animationDelay => (
+                  <div
+                    key={animationDelay}
+                    className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-500 animate-typing-dot"
+                    style={{ animationDelay }}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -171,7 +185,7 @@ export default function Chatbot() {
             <input
               type="text"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={handleInputValueChange}
               placeholder="Ask me anything..."
               className="flex-1 bg-transparent border-none text-sm focus:outline-none dark:text-gray-100 placeholder-slate-400 dark:placeholder-slate-500 py-2"
               autoComplete="off"
@@ -181,7 +195,7 @@ export default function Chatbot() {
               disabled={!inputValue.trim()}
               className="p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <Send size={16} className={inputValue.trim() ? "translate-x-px" : ""} />
+              <Send size={SEND_ICON_SIZE} className={sendIconClassName} />
             </button>
           </form>
         </div>
