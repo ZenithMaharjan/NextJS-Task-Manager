@@ -31,6 +31,24 @@ const ROWS_PER_PAGE_OPTIONS = [
   { label: "20", value: "20" },
 ];
 
+const MAX_VISIBLE_PAGES = 7;
+
+function getPaginationRange(currentPage: number, totalPages: number): (number | "...")[] {
+  if (totalPages <= MAX_VISIBLE_PAGES) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, "...", totalPages];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+}
+
 interface PaginationButtonProps {
   page: number;
   currentPage: number;
@@ -46,7 +64,7 @@ const PaginationButton = ({ page, currentPage, onPageChange }: PaginationButtonP
     <button
       onClick={handleClick}
       className={clsx(
-        "w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm",
+        "w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm",
         currentPage === page
           ? "bg-blue-600 text-white shadow-blue-200 dark:shadow-none"
           : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700",
@@ -87,6 +105,11 @@ const InventoryList = ({
   }, [items, searchTerm, tempDeletes]);
 
   const totalPages = Math.ceil(filteredItems.length / rowsPerPage);
+
+  const paginationRange = useMemo(
+    () => getPaginationRange(currentPage, totalPages),
+    [currentPage, totalPages],
+  );
 
   const activeItems = useMemo(() => {
     if (infiniteScroll) return filteredItems;
@@ -248,7 +271,7 @@ const InventoryList = ({
       )}
 
       {!infiniteScroll && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-12 pb-8">
+        <div className="flex justify-center items-center gap-1 mt-12 pb-8 px-4">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
@@ -258,14 +281,23 @@ const InventoryList = ({
           </button>
 
           <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <PaginationButton
-                key={i + 1}
-                page={i + 1}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
-            ))}
+            {paginationRange.map((page, index) =>
+              page === "..." ? (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="w-10 h-10 flex items-center justify-center text-gray-400 dark:text-gray-600 font-black text-sm select-none"
+                >
+                  ...
+                </span>
+              ) : (
+                <PaginationButton
+                  key={page}
+                  page={page}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                />
+              ),
+            )}
           </div>
 
           <button

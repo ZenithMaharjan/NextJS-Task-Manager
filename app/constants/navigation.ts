@@ -6,6 +6,5 @@ export interface NavLink {
 export const DEFAULT_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/Inventory", label: "Inventory" },
-  { href: "/Example", label: "Example" },
   { href: "/Dashboard", label: "Dashboard" },
 ];

@@ -1,4 +1,4 @@
-import FAQItem from "./FAQItem/page";
+import FAQItem from "./_components/FAQItem";
 
 const FAQ_DATA = [
   {

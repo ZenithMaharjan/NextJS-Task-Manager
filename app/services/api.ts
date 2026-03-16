@@ -8,7 +8,7 @@ import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
 import { Notification } from "@/types/notification";
-import { PurchaseOrderResponse } from "@/types/purchase";
+import { PurchaseOrderResponse, PurchaseStatus } from "@/types/purchase";
 
 const apiBaseUrl =
   process.env.NODE_ENV === "production"
@@ -225,6 +225,16 @@ class APIService {
       ...options,
       query: { ...options.query, expand: "inventory", view },
     });
+  };
+
+  patchPurchaseOrder = (
+    purchaseId: string,
+    status: PurchaseStatus,
+  ): Promise<{ success: boolean; message: string }> => {
+    return this.put<
+      { purchaseId: string; status: PurchaseStatus },
+      { success: boolean; message: string }
+    >("/purchase", { purchaseId, status });
   };
 }
 

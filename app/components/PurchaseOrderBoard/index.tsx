@@ -33,6 +33,122 @@ const STATUS_STYLES: Record<PurchaseStatus, string> = {
     "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
 };
 
+interface PurchaseOrderRowProps {
+  order: PurchaseOrder;
+  view: "buyer" | "seller";
+  onUpdateStatus: (purchaseId: string, status: PurchaseStatus) => void;
+}
+
+const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = ({ order, view, onUpdateStatus }) => {
+  const handleCancelClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onUpdateStatus(order._id, "cancelled");
+    },
+    [order._id, onUpdateStatus],
+  );
+
+  const handleConfirmClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onUpdateStatus(order._id, "confirmed");
+    },
+    [order._id, onUpdateStatus],
+  );
+
+  return (
+    <tr className="group hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-all duration-500 cursor-pointer">
+      <td className="px-8 py-7">
+        <div className="flex flex-col">
+          <span className="font-black text-blue-600 dark:text-blue-400 text-xs tracking-wider">
+            #{order._id.slice(-ORDER_ID_DISPLAY_LENGTH).toUpperCase()}
+          </span>
+          <span className="text-[10px] text-gray-400 mt-1 font-bold">
+            Full ID: {order._id.slice(0, ORDER_ID_PREVIEW_LENGTH)}...
+          </span>
+        </div>
+      </td>
+      <td className="px-8 py-7">
+        <div className="flex items-center gap-4">
+          {view === "buyer" ? (
+            <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
+              <Package className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
+            </div>
+          ) : (
+            <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
+              <User className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
+            </div>
+          )}
+          <div className="flex flex-col">
+            <span className="font-black text-gray-900 dark:text-gray-100 text-sm tracking-tight leading-tight">
+              {view === "buyer" ? order.itemTitle : order.customerName}
+            </span>
+            {view === "buyer" && (
+              <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">
+                Ref: {order.inventoryId?._id}
+              </span>
+            )}
+          </div>
+        </div>
+      </td>
+      <td className="px-8 py-7">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-gray-300 text-xs">
+          {order.quantityPurchased}
+        </div>
+      </td>
+      <td className="px-8 py-7">
+        <div className="flex items-baseline gap-1">
+          <span className="text-sm font-black text-gray-500 dark:text-gray-400">$</span>
+          <span className="font-black text-gray-900 dark:text-white text-lg tracking-tight">
+            {formatOrderPrice(order.totalPrice)}
+          </span>
+        </div>
+      </td>
+      <td className="px-8 py-7">
+        <span
+          className={clsx(
+            "inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-all duration-500 shadow-sm",
+            STATUS_STYLES[order.status],
+          )}
+        >
+          {order.status}
+        </span>
+      </td>
+      <td className="px-8 py-7">
+        <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400">
+          <Calendar className="w-4 h-4 opacity-50" />
+          <span className="text-[11px] font-black tracking-tight">
+            {formatOrderDate(order.createdAt)}
+          </span>
+        </div>
+      </td>
+      <td className="px-8 py-7 text-right">
+        <div className="flex items-center justify-end gap-3">
+          {view === "buyer" && order.status === "initiated" && (
+            <button
+              onClick={handleCancelClick}
+              className="px-4 py-1.5 text-xs font-black text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 rounded-xl transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+          {view === "seller" && order.status === "initiated" && (
+            <button
+              onClick={handleConfirmClick}
+              className="px-4 py-1.5 text-xs font-black text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-red-900/50 rounded-xl transition-colors"
+            >
+              Confirm
+            </button>
+          )}
+          <div className="inline-flex p-2 rounded-xl bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-600 transition-all duration-500 shadow-sm border border-gray-200 dark:border-gray-700 group-hover:border-blue-500">
+            <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-white transition-colors" />
+          </div>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
 const PurchaseOrderBoard: React.FC = () => {
   const [orders, setOrders] = useState<PurchaseOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +188,22 @@ const PurchaseOrderBoard: React.FC = () => {
   const handleSellerViewSelect = useCallback(() => {
     setView("seller");
   }, []);
+
+  const handleUpdateStatus = useCallback(
+    async (purchaseId: string, status: PurchaseStatus) => {
+      try {
+        const response = await apiService.patchPurchaseOrder(purchaseId, status);
+        if (response.success) {
+          fetchOrders();
+        } else {
+          setError(response.message || "Failed to update status");
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      }
+    },
+    [fetchOrders],
+  );
 
   const filteredOrders = useMemo(() => {
     const normalizedQuery = searchQuery.toLowerCase();
@@ -196,82 +328,12 @@ const PurchaseOrderBoard: React.FC = () => {
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800/50">
                   {filteredOrders.length > 0 ? (
                     filteredOrders.map(order => (
-                      <tr
+                      <PurchaseOrderRow
                         key={order._id}
-                        className="group hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-all duration-500 cursor-pointer"
-                      >
-                        <td className="px-8 py-7">
-                          <div className="flex flex-col">
-                            <span className="font-black text-blue-600 dark:text-blue-400 text-xs tracking-wider">
-                              #{order._id.slice(-ORDER_ID_DISPLAY_LENGTH).toUpperCase()}
-                            </span>
-                            <span className="text-[10px] text-gray-400 mt-1 font-bold">
-                              Full ID: {order._id.slice(0, ORDER_ID_PREVIEW_LENGTH)}...
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-7">
-                          <div className="flex items-center gap-4">
-                            {view === "buyer" ? (
-                              <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
-                                <Package className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
-                              </div>
-                            ) : (
-                              <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
-                                <User className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
-                              </div>
-                            )}
-                            <div className="flex flex-col">
-                              <span className="font-black text-gray-900 dark:text-gray-100 text-sm tracking-tight leading-tight">
-                                {view === "buyer" ? order.itemTitle : order.customerName}
-                              </span>
-                              {view === "buyer" && (
-                                <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">
-                                  Ref: {order.inventoryId?._id}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-8 py-7">
-                          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-gray-300 text-xs">
-                            {order.quantityPurchased}
-                          </div>
-                        </td>
-                        <td className="px-8 py-7">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-sm font-black text-gray-500 dark:text-gray-400">
-                              $
-                            </span>
-                            <span className="font-black text-gray-900 dark:text-white text-lg tracking-tight">
-                              {formatOrderPrice(order.totalPrice)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-7">
-                          <span
-                            className={clsx(
-                              "inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-all duration-500 shadow-sm",
-                              STATUS_STYLES[order.status],
-                            )}
-                          >
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="px-8 py-7">
-                          <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400">
-                            <Calendar className="w-4 h-4 opacity-50" />
-                            <span className="text-[11px] font-black tracking-tight">
-                              {formatOrderDate(order.createdAt)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-7 text-right">
-                          <div className="inline-flex p-2 rounded-xl bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-600 transition-all duration-500 shadow-sm border border-gray-200 dark:border-gray-700 group-hover:border-blue-500">
-                            <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-white transition-colors" />
-                          </div>
-                        </td>
-                      </tr>
+                        order={order}
+                        view={view}
+                        onUpdateStatus={handleUpdateStatus}
+                      />
                     ))
                   ) : (
                     <tr>
