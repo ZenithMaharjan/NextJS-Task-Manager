@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+
 const Localize = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 interface CheckboxInputProps {
@@ -38,6 +39,8 @@ const CheckboxInput = (props: CheckboxInputProps) => {
     ...otherProps
   } = props;
 
+  const [isChecked, setIsChecked] = useState(checked ?? false);
+
   const hasError = !!errorMessage;
   const hasInfo = !!info;
   const hasWarning = !!warning || showRequired;
@@ -53,8 +56,9 @@ const CheckboxInput = (props: CheckboxInputProps) => {
   const checkboxClasses = clsx(
     "relative flex shrink-0 items-center justify-center rounded border transition-all duration-200 ease-in-out",
     {
-      "bg-blue-600 border-blue-600": checked || indeterminate,
-      "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600": !checked && !indeterminate,
+      "bg-blue-600 border-blue-600": isChecked || indeterminate,
+      "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600":
+        !isChecked && !indeterminate,
       "border-red-500": hasError,
       "border-amber-500": hasWarning,
       "bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600": disabled,
@@ -64,6 +68,7 @@ const CheckboxInput = (props: CheckboxInputProps) => {
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      setIsChecked(event.target.checked);
       onChange(event.target);
     },
     [onChange],
@@ -97,16 +102,16 @@ const CheckboxInput = (props: CheckboxInputProps) => {
             disabled={disabled}
             ref={inputRef}
             type="checkbox"
-            checked={checked}
+            checked={isChecked}
             className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
             onChange={handleChange}
             {...inputProps}
           />
           <div className={checkboxClasses} style={{ width: "1em", height: "1em" }}>
-            {(checked || indeterminate) && (
+            {(isChecked || indeterminate) && (
               <div className="flex items-center justify-center text-white">
                 {indeterminate ? (
-                  <svg className="h-0.75em w-0.75em fill-current" viewBox="0 0 20 20">
+                  <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
@@ -114,7 +119,7 @@ const CheckboxInput = (props: CheckboxInputProps) => {
                     />
                   </svg>
                 ) : (
-                  <svg className="h-0.75em w-0.75em fill-current" viewBox="0 0 20 20">
+                  <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
