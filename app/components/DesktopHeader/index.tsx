@@ -83,14 +83,16 @@ export default function DesktopHeader({
               <>
                 <Link
                   href="/PurchaseOrders"
-                  className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
+                  className="flex items-center p-2 rounded-lg hover:bg-white/10 transition-all cursor-pointer"
+                  title="Purchase Orders"
                 >
                   <ShoppingCart className="w-6 h-6" />
                 </Link>
 
                 <Link
                   href="/Wishlist"
-                  className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
+                  className="flex items-center p-2 rounded-lg hover:bg-white/10 transition-all cursor-pointer"
+                  title="Wishlist"
                 >
                   <div className="relative">
                     <Heart className="w-6 h-6" />

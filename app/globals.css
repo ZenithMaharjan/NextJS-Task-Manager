@@ -4,18 +4,20 @@
 
 @layer utilities {
   .premium-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+
     &::-webkit-scrollbar {
-      height: 8px;
-      width: 8px;
+      height: 5px;
+      width: 5px;
     }
     &::-webkit-scrollbar-track {
       background: transparent;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: #e2e8f0;
+      background-color: transparent;
       border-radius: 20px;
-      border: 2px solid transparent;
-      background-clip: content-box;
+      transition: background-color 0.3s;
     }
     &:hover::-webkit-scrollbar-thumb {
       background-color: #cbd5e1;
@@ -23,8 +25,10 @@
   }
 
   .dark .premium-scrollbar {
+    scrollbar-color: #374151 transparent;
+
     &::-webkit-scrollbar-thumb {
-      background-color: #1f2937;
+      background-color: transparent;
     }
     &:hover::-webkit-scrollbar-thumb {
       background-color: #374151;

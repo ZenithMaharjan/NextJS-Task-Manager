@@ -62,36 +62,13 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
               isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
             )}
           >
-            Cancel
-          </button>
-        )}
-        {order.status === "confirmed" && (
-          <button
-            onClick={handleMarkDeliveringClick}
-            disabled={isUpdating}
-            className={clsx(
-              "px-4 py-1.5 text-xs font-black text-indigo-600 bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-xl transition-all",
-              isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-            )}
-          >
-            Mark as Delivering
-          </button>
-        )}
-        {order.status === "delivering" && (
-          <button
-            onClick={handleMarkCompletedClick}
-            disabled={isUpdating}
-            className={clsx(
-              "px-4 py-1.5 text-xs font-black text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded-xl transition-all",
-              isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-            )}
-          >
-            Mark as Completed
+            Cancel Order
           </button>
         )}
       </div>
     );
   }
+
   return (
     <div className="flex items-center gap-2">
       {order.status === "initiated" && (
@@ -103,7 +80,31 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
             isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
           )}
         >
-          Confirm
+          Confirm Order
+        </button>
+      )}
+      {order.status === "confirmed" && (
+        <button
+          onClick={handleMarkDeliveringClick}
+          disabled={isUpdating}
+          className={clsx(
+            "px-4 py-1.5 text-xs font-black text-indigo-600 bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-xl transition-all",
+            isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+          )}
+        >
+          Mark as Delivering
+        </button>
+      )}
+      {order.status === "delivering" && (
+        <button
+          onClick={handleMarkCompletedClick}
+          disabled={isUpdating}
+          className={clsx(
+            "px-4 py-1.5 text-xs font-black text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded-xl transition-all",
+            isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+          )}
+        >
+          Mark as Completed
         </button>
       )}
     </div>

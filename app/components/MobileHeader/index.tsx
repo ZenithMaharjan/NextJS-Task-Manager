@@ -54,21 +54,26 @@ export default function MobileHeader({
 
   return (
     <>
-      <header className={`${className} md:hidden sticky top-0 z-40 shadow-md w-full`}>
-        <div className="w-full flex justify-between items-center px-4 py-2">
+      <header
+        className={`${className.replace("p-4", "py-4")} md:hidden sticky top-0 z-40 shadow-md w-full`}
+      >
+        <div className="w-full flex justify-between items-center px-4">
           <div className="flex-shrink-0 mr-2">
             <Logo title={title} href={logoHref} />
           </div>
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggler />
             {isAuthenticated && (
               <>
-                <Link href="/PurchaseOrders" className="flex items-center">
+                <Link
+                  href="/PurchaseOrders"
+                  className="flex items-center p-2 hover:bg-white/10 rounded-lg transition-all"
+                >
                   <ShoppingCart className="w-6 h-6 text-white" />
                 </Link>
                 <Link
                   href="/Wishlist"
-                  className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
+                  className="flex items-center p-2 hover:bg-white/10 rounded-lg transition-all cursor-pointer"
                 >
                   <div className="relative">
                     <Heart className="w-6 h-6 text-white" />
