@@ -6,23 +6,26 @@ import { SORT_OPTIONS } from "@/utils/inventory";
 
 interface DashboardFiltersProps {
   inStockOnly: boolean;
-  setInStockOnly: (value: boolean) => void;
+  onInStockToggle: (value: boolean) => void;
   sortBy: string;
-  setSortBy: (value: string) => void;
+  onSortChange: (value: string) => void;
 }
 
 const DashboardFilters: FC<DashboardFiltersProps> = ({
   inStockOnly,
-  setInStockOnly,
+  onInStockToggle,
   sortBy,
-  setSortBy,
+  onSortChange,
 }) => {
   const handleStockChange = useCallback(
-    (target: { checked: boolean }) => setInStockOnly(target.checked),
-    [setInStockOnly],
+    (target: { checked: boolean }) => onInStockToggle(target.checked),
+    [onInStockToggle],
   );
 
-  const handleSortChange = useCallback((e: { value: string }) => setSortBy(e.value), [setSortBy]);
+  const handleSortChange = useCallback(
+    (e: { value: string }) => onSortChange(e.value),
+    [onSortChange],
+  );
 
   return (
     <div className="flex flex-col sm:flex-row items-end sm:items-center gap-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-full md:w-auto">
