@@ -137,19 +137,30 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: true, data: res.purchase });
     }
 
-    // other transitions (cancelled, delivering, completed) require purchaser identity
-    if (String(purchase.userId) !== String(authUserId)) {
-      return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
-    }
-
     if (status === "cancelled") {
+      // only purchaser can cancel
+      if (String(purchase.userId) !== String(authUserId)) {
+        return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
+      }
       const res = await cancelPurchase(purchaseId);
       if (!res.success)
         return NextResponse.json({ success: false, message: res.message }, { status: 409 });
       return NextResponse.json({ success: true, data: res.purchase });
     }
 
-    // other transitions: delivering, completed - update and notify both parties
+    if (status === "delivering" || status === "completed") {
+      // only inventory owner can mark as delivering or completed
+      const inv = await InventoryModel.findById(purchase.inventoryId).lean();
+      if (!inv)
+        return NextResponse.json(
+          { success: false, message: "Inventory not found" },
+          { status: 404 },
+        );
+      if (String(inv.userId) !== String(authUserId))
+        return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
+    }
+
+    // remaining transitions: delivering, completed - update and notify both parties
     const updated = await PurchaseModel.findByIdAndUpdate(
       purchaseId,
       { status },
