@@ -11,6 +11,7 @@ import {
   Tag,
   Loader2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 
 import OrderActionButtons from "./OrderActionButtons";
@@ -44,8 +45,17 @@ interface PurchaseOrderRowProps {
 
 const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
   ({ order, view, onUpdateStatus, isUpdating }) => {
+    const router = useRouter();
+
+    const handleRowClick = useCallback(() => {
+      if (!isUpdating) {
+        router.push(`/Inventory/${order.inventoryId?._id}`);
+      }
+    }, [isUpdating, router, order.inventoryId?._id]);
+
     return (
       <tr
+        onClick={handleRowClick}
         className={clsx(
           "group hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-all duration-500",
           isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
