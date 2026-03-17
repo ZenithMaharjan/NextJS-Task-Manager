@@ -77,7 +77,7 @@ export default function DesktopHeader({
               activeClassName={activeClassName}
             />
           </div>
-          <div className="flex items-center md:gap-3 lg:gap-2 pl-3 border-l border-white/20 shrink-0">
+          <div className="flex items-center gap-4 pl-3 border-l border-white/20 shrink-0">
             <ThemeToggler />
             {isAuthenticated && (
               <>
@@ -112,7 +112,7 @@ export default function DesktopHeader({
             )}
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Link
                   href="/profile"
                   className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer group"

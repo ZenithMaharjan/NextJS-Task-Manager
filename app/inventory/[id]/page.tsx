@@ -17,7 +17,7 @@ import { addToWishlist, removeFromWishlist } from "@/store/slices/wishlistSlice"
 import { Inventory } from "@/types/inventory";
 
 export default function InventoryItemPage() {
-  const { id } = useParams();
+  const { id: inventoryId } = useParams();
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -25,94 +25,104 @@ export default function InventoryItemPage() {
   const tempDeletes = useSelector((state: RootState) => state.inventory.tempDeletes);
   const router = useRouter();
 
-  const [item, setItem] = useState<Inventory | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [inventoryItem, setInventoryItem] = useState<Inventory | null>(null);
+  const [isInventoryLoading, setIsInventoryLoading] = useState(true);
+  const [inventoryErrorMessage, setInventoryErrorMessage] = useState<string | null>(null);
   const [showDeletedUI, setShowDeletedUI] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isPurchaseDrawerOpen, setIsPurchaseDrawerOpen] = useState(false);
 
-  const activeItem = useMemo(() => {
-    if (!item) return null;
+  const activeInventoryItem = useMemo(() => {
+    if (!inventoryItem) return null;
     return {
-      ...item,
-      ...(tempEdits[item.id] || {}),
+      ...inventoryItem,
+      ...(tempEdits[inventoryItem.id] || {}),
     };
-  }, [item, tempEdits]);
+  }, [inventoryItem, tempEdits]);
 
   const isDeletedLocally = useMemo(() => {
-    return activeItem ? !!tempDeletes[activeItem.id] : false;
-  }, [activeItem, tempDeletes]);
+    return activeInventoryItem ? !!tempDeletes[activeInventoryItem.id] : false;
+  }, [activeInventoryItem, tempDeletes]);
 
   const isOwner = useMemo(() => {
-    return currentUser?.id === activeItem?.userId;
-  }, [currentUser, activeItem?.userId]);
+    return currentUser?.id === activeInventoryItem?.userId;
+  }, [currentUser, activeInventoryItem?.userId]);
 
   const isInWishlist = useMemo(() => {
-    return activeItem
-      ? wishlistItems.some((wItem: Inventory) => wItem.id === activeItem.id)
+    return activeInventoryItem
+      ? wishlistItems.some((wishlistItem: Inventory) => wishlistItem.id === activeInventoryItem.id)
       : false;
-  }, [activeItem, wishlistItems]);
+  }, [activeInventoryItem, wishlistItems]);
 
-  const fetchItem = useCallback(async (itemId: string) => {
+  const fetchInventoryItem = useCallback(async (itemId: string) => {
     try {
-      const data = await apiService.getInventoryById(itemId);
-      setItem(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Failed to load inventory item");
+      const inventoryData = await apiService.getInventoryById(itemId);
+      setInventoryItem(inventoryData);
+    } catch (fetchError: unknown) {
+      if (fetchError instanceof Error) setInventoryErrorMessage(fetchError.message);
+      else setInventoryErrorMessage("Failed to load inventory item");
     } finally {
-      setLoading(false);
+      setIsInventoryLoading(false);
     }
   }, []);
 
   const handleEditClick = useCallback(() => {
-    if (!activeItem) return;
-    router.push(`/Inventory/${activeItem.id}/edit`);
-  }, [router, activeItem]);
+    if (!activeInventoryItem) return;
+    router.push(`/Inventory/${activeInventoryItem.id}/edit`);
+  }, [router, activeInventoryItem]);
 
   const handleDelete = useCallback(() => {
-    if (!activeItem) return;
+    if (!activeInventoryItem) return;
     setIsDeleteModalOpen(true);
-  }, [activeItem]);
+  }, [activeInventoryItem]);
 
   const handleCloseDeleteModal = useCallback(() => {
     setIsDeleteModalOpen(false);
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
-    if (!activeItem) return;
+    if (!activeInventoryItem) return;
     setIsDeleteModalOpen(false);
-    dispatch(setTempDelete(activeItem.id));
+    dispatch(setTempDelete(activeInventoryItem.id));
 
     setShowDeletedUI(true);
-    setTimeout(() => {
-      router.push("/Inventory");
-    }, 1000);
-  }, [activeItem, router, dispatch]);
+    router.push("/Inventory");
+  }, [activeInventoryItem, router, dispatch]);
 
-  const handleOpenPurchaseDrawer = useCallback(() => {
-    setIsPurchaseDrawerOpen(true);
-  }, []);
+  const handleOpenPurchaseDrawer = useCallback(async () => {
+    if (!activeInventoryItem) return;
+    try {
+      const freshInventoryData = await apiService.getInventoryById(activeInventoryItem.id);
+      setInventoryItem(freshInventoryData);
+      if (freshInventoryData.quantity <= 0 || !freshInventoryData.inStock) {
+        setInventoryErrorMessage("This item just went out of stock.");
+        return;
+      }
+      setIsPurchaseDrawerOpen(true);
+    } catch (reFetchError) {
+      console.error("Failed to re-fetch item before purchase:", reFetchError);
+      setIsPurchaseDrawerOpen(true);
+    }
+  }, [activeInventoryItem]);
 
   const handleClosePurchaseDrawer = useCallback(() => {
     setIsPurchaseDrawerOpen(false);
   }, []);
 
   useEffect(() => {
-    if (!id) return;
-    const itemId = Array.isArray(id) ? id[0] : id;
-    fetchItem(itemId);
-  }, [id, fetchItem]);
+    if (!inventoryId) return;
+    const itemId = Array.isArray(inventoryId) ? inventoryId[0] : inventoryId;
+    fetchInventoryItem(itemId);
+  }, [inventoryId, fetchInventoryItem]);
 
   const toggleWishlist = useCallback(() => {
-    if (!activeItem) return;
+    if (!activeInventoryItem) return;
     if (isInWishlist) {
-      dispatch(removeFromWishlist(activeItem.id));
+      dispatch(removeFromWishlist(activeInventoryItem.id));
     } else {
-      dispatch(addToWishlist(activeItem));
+      dispatch(addToWishlist(activeInventoryItem));
     }
-  }, [dispatch, isInWishlist, activeItem]);
+  }, [dispatch, isInWishlist, activeInventoryItem]);
 
   if (showDeletedUI || isDeletedLocally) {
     return (
@@ -122,11 +132,15 @@ export default function InventoryItemPage() {
       </div>
     );
   }
-  if (loading) {
+  if (isInventoryLoading) {
     return <InventoryDetailSkeleton />;
   }
-  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
-  if (!activeItem) return <div className="p-8 text-center dark:text-gray-300">Item not found</div>;
+  if (inventoryErrorMessage) {
+    return <div className="p-8 text-center text-red-500">Error: {inventoryErrorMessage}</div>;
+  }
+  if (!activeInventoryItem) {
+    return <div className="p-8 text-center dark:text-gray-300">Item not found</div>;
+  }
 
   return (
     <>
@@ -136,12 +150,14 @@ export default function InventoryItemPage() {
             <div className="flex-1 min-w-0">
               <div>
                 <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight break-words">
-                  <span className="text-blue-600 dark:text-blue-400 mr-2">{activeItem.brand}</span>
-                  {activeItem.model}
+                  <span className="text-blue-600 dark:text-blue-400 mr-2">
+                    {activeInventoryItem.brand}
+                  </span>
+                  {activeInventoryItem.model}
                 </h1>
                 <p className="text-gray-500 text-lg mt-2 dark:text-gray-400 font-medium">
-                  {activeItem.year} <span className="mx-2 text-gray-300">•</span>{" "}
-                  <span className="capitalize">{activeItem.condition}</span>
+                  {activeInventoryItem.year} <span className="mx-2 text-gray-300">•</span>{" "}
+                  <span className="capitalize">{activeInventoryItem.condition}</span>
                 </p>
               </div>
             </div>
@@ -159,7 +175,7 @@ export default function InventoryItemPage() {
                 Price
               </span>
               <span className="text-3xl font-black text-green-600 dark:text-green-400">
-                ${activeItem.price.toLocaleString()}
+                ${activeInventoryItem.price.toLocaleString()}
               </span>
             </div>
 
@@ -171,10 +187,12 @@ export default function InventoryItemPage() {
                 <p
                   className={clsx(
                     "text-lg font-bold",
-                    activeItem.inStock ? "text-green-500" : "text-red-500",
+                    activeInventoryItem.inStock ? "text-green-500" : "text-red-500",
                   )}
                 >
-                  {activeItem.inStock ? `In Stock (${activeItem.quantity})` : "Out of Stock"}
+                  {activeInventoryItem.inStock
+                    ? `In Stock (${activeInventoryItem.quantity})`
+                    : "Out of Stock"}
                 </p>
               </div>
 
@@ -183,7 +201,7 @@ export default function InventoryItemPage() {
                   Engine
                 </p>
                 <p className="text-lg font-bold text-gray-800 dark:text-white">
-                  {activeItem.engineCapacity}cc
+                  {activeInventoryItem.engineCapacity}cc
                 </p>
               </div>
 
@@ -192,7 +210,7 @@ export default function InventoryItemPage() {
                   Color
                 </p>
                 <p className="text-lg font-bold text-gray-800 dark:text-white capitalize">
-                  {activeItem.color}
+                  {activeInventoryItem.color}
                 </p>
               </div>
             </div>
@@ -202,7 +220,7 @@ export default function InventoryItemPage() {
                 Features
               </p>
               <ul className="grid grid-cols-2 gap-3">
-                {activeItem.features.map((feature, idx) => (
+                {activeInventoryItem.features.map((feature, idx) => (
                   <li
                     key={idx}
                     className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/40 px-3 py-2 rounded-lg"
@@ -245,14 +263,17 @@ export default function InventoryItemPage() {
             >
               {isInWishlist ? "Unsave Item" : "Save to Wishlist"}
             </button>
-            {currentUser && (
-              <button
-                onClick={handleOpenPurchaseDrawer}
-                className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/30 cursor-pointer"
-              >
-                Purchase
-              </button>
-            )}
+            {currentUser &&
+              !isOwner &&
+              activeInventoryItem.inStock &&
+              activeInventoryItem.quantity > 0 && (
+                <button
+                  onClick={handleOpenPurchaseDrawer}
+                  className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/30 cursor-pointer"
+                >
+                  Purchase
+                </button>
+              )}
           </div>
         </div>
       </div>
@@ -260,14 +281,14 @@ export default function InventoryItemPage() {
       <PurchaseOrderDrawer
         isOpen={isPurchaseDrawerOpen}
         onClose={handleClosePurchaseDrawer}
-        inventoryItem={activeItem}
+        inventoryItem={activeInventoryItem}
       />
 
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
-        itemName={`${activeItem.brand} ${activeItem.model}`}
+        itemName={`${activeInventoryItem.brand} ${activeInventoryItem.model}`}
       />
     </>
   );

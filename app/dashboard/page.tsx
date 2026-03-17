@@ -31,9 +31,9 @@ export default function DashboardPage() {
 
           <DashboardFilters
             inStockOnly={inStockOnly}
-            setInStockOnly={setInStockOnly}
+            onInStockToggle={setInStockOnly}
             sortBy={sortBy}
-            setSortBy={setSortBy}
+            onSortChange={setSortBy}
           />
         </header>
 

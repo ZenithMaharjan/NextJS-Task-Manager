@@ -59,7 +59,7 @@ export default function MobileHeader({
           <div className="flex-shrink-0 mr-2">
             <Logo title={title} href={logoHref} />
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-3 ml-auto">
+          <div className="flex items-center gap-4 ml-auto">
             <ThemeToggler />
             {isAuthenticated && (
               <>
@@ -79,14 +79,12 @@ export default function MobileHeader({
                     )}
                   </div>
                 </Link>
-                <div className="text-white">
-                  <NotificationDropdown
-                    notifications={notifications}
-                    unreadCount={unreadCount}
-                    onMarkAsRead={handleMarkAsRead}
-                    onMarkAllAsRead={handleMarkAllAsRead}
-                  />
-                </div>
+                <NotificationDropdown
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                />
               </>
             )}
             <HamburgerButton onClick={openDrawer} />
