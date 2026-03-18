@@ -62,22 +62,25 @@ export async function GET(request: Request) {
     const view = url.searchParams.get("view") || "buyer";
 
     const expandInventory = url.searchParams.get("expand") === "inventory";
+    const status = url.searchParams.get("status");
 
     const skip = (Math.max(page, 1) - 1) * limit;
 
-    let filter: any;
+    let viewFilter: any;
 
     if (view === "seller") {
       const ownedInventories = await InventoryModel.find({ userId }, { _id: 1 }).lean();
       const inventoryIds = ownedInventories.map(inv => inv._id);
-      filter = { inventoryId: { $in: inventoryIds } };
+      viewFilter = { inventoryId: { $in: inventoryIds } };
     } else if (view === "all") {
       const ownedInventories = await InventoryModel.find({ userId }, { _id: 1 }).lean();
       const inventoryIds = ownedInventories.map(inv => inv._id);
-      filter = { $or: [{ userId }, { inventoryId: { $in: inventoryIds } }] };
+      viewFilter = { $or: [{ userId }, { inventoryId: { $in: inventoryIds } }] };
     } else {
-      filter = { userId };
+      viewFilter = { userId };
     }
+
+    const filter = status ? { $and: [viewFilter, { status }] } : viewFilter;
 
     let query = PurchaseModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
