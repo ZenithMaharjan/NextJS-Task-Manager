@@ -222,7 +222,7 @@ const InventoryList = ({
               options={ROWS_PER_PAGE_OPTIONS}
               value={rowsPerPage.toString()}
               onChange={handleRowsPerPageChange}
-              className="min-w-[120px]"
+              className="min-w-30"
             />
           </div>
         )}

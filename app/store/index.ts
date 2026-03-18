@@ -13,6 +13,7 @@ import storage from "redux-persist/lib/storage";
 
 import inventoryReducer from "./slices/inventorySlice";
 import notificationsReducer from "./slices/notificationsSlice";
+import purchaseReducer from "./slices/purchaseSlice";
 import userReducer from "./slices/userSlice";
 import wishlistReducer from "./slices/wishlistSlice";
 
@@ -30,6 +31,7 @@ export const store = configureStore({
     user: persistedUserReducer,
     inventory: inventoryReducer,
     notifications: notificationsReducer,
+    purchase: purchaseReducer,
   },
 
   middleware: getDefaultMiddleware =>

@@ -58,7 +58,7 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
             onClick={handleCancelClick}
             disabled={isUpdating}
             className={clsx(
-              "px-4 py-1.5 text-xs font-black text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 rounded-xl transition-all",
+              "px-4 py-1.5 text-xs font-black text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 rounded-xl transition-all whitespace-nowrap",
               isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
             )}
           >
@@ -76,7 +76,7 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
           onClick={handleConfirmClick}
           disabled={isUpdating}
           className={clsx(
-            "px-4 py-1.5 text-xs font-black text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-xl transition-all",
+            "px-4 py-1.5 text-xs font-black text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-xl transition-all whitespace-nowrap",
             isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
           )}
         >
@@ -88,7 +88,7 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
           onClick={handleMarkDeliveringClick}
           disabled={isUpdating}
           className={clsx(
-            "px-4 py-1.5 text-xs font-black text-indigo-600 bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-xl transition-all",
+            "px-4 py-1.5 text-xs font-black text-indigo-600 bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-xl transition-all whitespace-nowrap",
             isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
           )}
         >
@@ -100,7 +100,7 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({
           onClick={handleMarkCompletedClick}
           disabled={isUpdating}
           className={clsx(
-            "px-4 py-1.5 text-xs font-black text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded-xl transition-all",
+            "px-4 py-1.5 text-xs font-black text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded-xl transition-all whitespace-nowrap",
             isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
           )}
         >

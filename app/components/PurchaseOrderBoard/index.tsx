@@ -1,157 +1,56 @@
 "use client";
 
-import clsx from "clsx";
-import {
-  Search,
-  Package,
-  Calendar,
-  User,
-  ChevronRight,
-  ShoppingCart,
-  Tag,
-  Loader2,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Loader2, ShoppingCart } from "lucide-react";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import OrderActionButtons from "./OrderActionButtons";
+import BoardToolbar from "./BoardToolbar";
+import PurchaseOrderRow from "./PurchaseOrderRow";
 
+import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
-import { PurchaseOrder, PurchaseStatus } from "@/types/purchase";
-import { formatOrderDate, formatOrderPrice, matchesSearchQuery } from "@/utils/purchaseOrder";
-
-const ORDER_ID_DISPLAY_LENGTH = 8;
-const ORDER_ID_PREVIEW_LENGTH = 12;
-
-const STATUS_STYLES: Record<PurchaseStatus, string> = {
-  initiated:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-  confirmed:
-    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800",
-  delivering:
-    "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
-  completed:
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800",
-  cancelled:
-    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
-};
-
-interface PurchaseOrderRowProps {
-  order: PurchaseOrder;
-  view: "buyer" | "seller";
-  onUpdateStatus: (purchaseId: string, status: PurchaseStatus) => void;
-  isUpdating: boolean;
-}
-
-const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
-  ({ order, view, onUpdateStatus, isUpdating }) => {
-    const router = useRouter();
-
-    const handleRowClick = useCallback(() => {
-      if (!isUpdating) {
-        router.push(`/Inventory/${order.inventoryId?._id}`);
-      }
-    }, [isUpdating, router, order.inventoryId?._id]);
-
-    return (
-      <tr
-        onClick={handleRowClick}
-        className={clsx(
-          "group hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-all duration-500",
-          isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-        )}
-      >
-        <td className="px-8 py-7">
-          <div className="flex flex-col">
-            <span className="font-black text-blue-600 dark:text-blue-400 text-xs tracking-wider">
-              #{order._id.slice(-ORDER_ID_DISPLAY_LENGTH).toUpperCase()}
-            </span>
-            <span className="text-[10px] text-gray-400 mt-1 font-bold">
-              Full ID: {order._id.slice(0, ORDER_ID_PREVIEW_LENGTH)}...
-            </span>
-          </div>
-        </td>
-        <td className="px-8 py-7">
-          <div className="flex items-center gap-4">
-            {view === "buyer" ? (
-              <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
-                <Package className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
-              </div>
-            ) : (
-              <div className="p-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
-                <User className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
-              </div>
-            )}
-            <div className="flex flex-col">
-              <span className="font-black text-gray-900 dark:text-gray-100 text-sm tracking-tight leading-tight">
-                {view === "buyer" ? order.itemTitle : order.customerName}
-              </span>
-              {view === "buyer" && (
-                <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">
-                  Ref: {order.inventoryId?._id}
-                </span>
-              )}
-            </div>
-          </div>
-        </td>
-        <td className="px-8 py-7">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-gray-300 text-xs">
-            {order.quantityPurchased}
-          </div>
-        </td>
-        <td className="px-8 py-7">
-          <div className="flex items-baseline gap-1">
-            <span className="text-sm font-black text-gray-500 dark:text-gray-400">$</span>
-            <span className="font-black text-gray-900 dark:text-white text-lg tracking-tight">
-              {formatOrderPrice(order.totalPrice)}
-            </span>
-          </div>
-        </td>
-        <td className="px-8 py-7">
-          <span
-            className={clsx(
-              "inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-all duration-500 shadow-sm",
-              STATUS_STYLES[order.status],
-            )}
-          >
-            {order.status}
-          </span>
-        </td>
-        <td className="px-8 py-7">
-          <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400">
-            <Calendar className="w-4 h-4 opacity-50" />
-            <span className="text-[11px] font-black tracking-tight">
-              {formatOrderDate(order.createdAt)}
-            </span>
-          </div>
-        </td>
-        <td className="px-8 py-7 text-right">
-          <div className="flex items-center justify-end gap-3">
-            <OrderActionButtons
-              order={order}
-              view={view}
-              onUpdateStatus={onUpdateStatus}
-              isUpdating={isUpdating}
-            />
-            <div className="inline-flex p-2 rounded-xl bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-600 transition-all duration-500 shadow-sm border border-gray-200 dark:border-gray-700 group-hover:border-blue-500">
-              <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-white transition-colors" />
-            </div>
-          </div>
-        </td>
-      </tr>
-    );
-  },
-);
-
-PurchaseOrderRow.displayName = "PurchaseOrderRow";
+import { RootState } from "@/store";
+import { setOrders, removeOrders, setFilterStatus } from "@/store/slices/purchaseSlice";
+import { PurchaseStatus } from "@/types/purchase";
+import { matchesSearchQuery } from "@/utils/purchaseOrder";
 
 const PurchaseOrderBoard: React.FC = () => {
-  const [orders, setOrders] = useState<PurchaseOrder[]>([]);
+  const dispatch = useDispatch();
+  const { items: orders, filterStatus } = useSelector((state: RootState) => state.purchase);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const { showToast } = useToast();
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState<"buyer" | "seller">("buyer");
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const filteredOrders = useMemo(() => {
+    const normalizedQuery = searchQuery.toLowerCase();
+    return orders.filter(order => {
+      const matchesFilter = filterStatus === "All" || order.status === filterStatus;
+      const matchesSearch = matchesSearchQuery(order, normalizedQuery);
+      return matchesFilter && matchesSearch;
+    });
+  }, [orders, searchQuery, filterStatus]);
+
+  const selectedInView = useMemo(() => {
+    return selectedOrderIds.filter(id => filteredOrders.some(o => o._id === id));
+  }, [selectedOrderIds, filteredOrders]);
+
+  const isSelectionAuthorized = useMemo(() => {
+    if (selectedInView.length === 0) return false;
+    return selectedInView.every(id => {
+      const order = orders.find(o => o._id === id);
+      if (!order || !currentUser) return false;
+      const isBuyer = order.userId === currentUser.id;
+      const isOwner = order.inventoryId?.userId === currentUser.id;
+      return isBuyer || isOwner;
+    });
+  }, [selectedInView, orders, currentUser]);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -159,7 +58,7 @@ const PurchaseOrderBoard: React.FC = () => {
       setError(null);
       const response = await apiService.getPurchaseOrders(view);
       if (response.success) {
-        setOrders(response.data || []);
+        dispatch(setOrders(response.data || []));
       } else {
         setError("Failed to fetch purchase orders");
       }
@@ -168,7 +67,7 @@ const PurchaseOrderBoard: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [view]);
+  }, [view, dispatch]);
 
   useEffect(() => {
     fetchOrders();
@@ -176,14 +75,12 @@ const PurchaseOrderBoard: React.FC = () => {
 
   const handleSearchQueryChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    setSelectedOrderIds([]);
   }, []);
 
-  const handleBuyerViewSelect = useCallback(() => {
-    setView("buyer");
-  }, []);
-
-  const handleSellerViewSelect = useCallback(() => {
-    setView("seller");
+  const handleViewSelect = useCallback((newView: "buyer" | "seller") => {
+    setView(newView);
+    setSelectedOrderIds([]);
   }, []);
 
   const handleUpdateStatus = useCallback(
@@ -205,77 +102,95 @@ const PurchaseOrderBoard: React.FC = () => {
     [fetchOrders],
   );
 
-  const filteredOrders = useMemo(() => {
-    const normalizedQuery = searchQuery.toLowerCase();
-    return orders.filter(order => matchesSearchQuery(order, normalizedQuery));
-  }, [orders, searchQuery]);
+  const handleToggleSelect = useCallback((id: string) => {
+    setSelectedOrderIds(prev =>
+      prev.includes(id) ? prev.filter(orderId => orderId !== id) : [...prev, id],
+    );
+  }, []);
+
+  const handleSelectAll = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.checked) {
+        const newlySelected = filteredOrders.map(o => o._id);
+        setSelectedOrderIds(prev => Array.from(new Set([...prev, ...newlySelected])));
+      } else {
+        const filteredIds = filteredOrders.map(o => o._id);
+        setSelectedOrderIds(prev => prev.filter(id => !filteredIds.includes(id)));
+      }
+    },
+    [filteredOrders],
+  );
+
+  const handleDeleteSelected = useCallback(async () => {
+    if (selectedOrderIds.length === 0) return;
+
+    setIsDeleting(true);
+    const successfullyDeleted: string[] = [];
+    const failedDeletes: string[] = [];
+
+    await Promise.all(
+      selectedOrderIds.map(async id => {
+        try {
+          const res = await apiService.deletePurchaseOrder(id);
+          if (res.success) {
+            successfullyDeleted.push(id);
+          } else {
+            failedDeletes.push(id);
+          }
+        } catch (_err) {
+          failedDeletes.push(id);
+        }
+      }),
+    );
+
+    if (successfullyDeleted.length > 0) {
+      dispatch(removeOrders(successfullyDeleted));
+      setSelectedOrderIds(prev => prev.filter(id => !successfullyDeleted.includes(id)));
+    }
+
+    if (failedDeletes.length > 0) {
+      showToast(`Failed to delete ${failedDeletes.length} order(s)`, "error");
+    } else {
+      showToast("Successfully deleted selected order(s)", "success");
+    }
+
+    setIsDeleting(false);
+  }, [selectedOrderIds, dispatch, showToast]);
+
+  const handleFilterStatusChange = useCallback(
+    (value: PurchaseStatus | "All") => {
+      dispatch(setFilterStatus(value));
+      setSelectedOrderIds([]);
+    },
+    [dispatch],
+  );
 
   return (
     <div className="w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
-      <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
-        <div className="relative w-full lg:w-[450px] group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-          <input
-            type="text"
-            placeholder="Search by ID, Item, Customer, or Status..."
-            value={searchQuery}
-            onChange={handleSearchQueryChange}
-            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm font-medium text-gray-900 dark:text-white"
-          />
-        </div>
-
-        <div className="flex items-center gap-4 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0">
-          <div className="flex bg-gray-100 dark:bg-gray-900 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-700">
-            <button
-              onClick={handleBuyerViewSelect}
-              className={clsx(
-                "px-6 py-2 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer",
-                view === "buyer"
-                  ? "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300",
-              )}
-            >
-              Purchaser View
-            </button>
-            <button
-              onClick={handleSellerViewSelect}
-              className={clsx(
-                "px-6 py-2 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer",
-                view === "seller"
-                  ? "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300",
-              )}
-            >
-              Seller View
-            </button>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
-            <Tag className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-xs font-black text-blue-700 dark:text-blue-300 uppercase tracking-widest">
-              {filteredOrders.length} Results
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="lg:hidden flex items-center justify-center gap-2 mb-4 animate-pulse">
-        <div className="h-px w-8 bg-gray-300 dark:bg-gray-700"></div>
-        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-          ← Swipe to view more →
-        </span>
-        <div className="h-px w-8 bg-gray-300 dark:bg-gray-700"></div>
-      </div>
+      <BoardToolbar
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchQueryChange}
+        view={view}
+        onViewChange={handleViewSelect}
+        resultsCount={filteredOrders.length}
+        filterStatus={filterStatus}
+        onFilterStatusChange={handleFilterStatusChange}
+        selectedInViewCount={selectedInView.length}
+        isSelectionAuthorized={isSelectionAuthorized}
+        isDeleting={isDeleting}
+        onDeleteSelected={handleDeleteSelected}
+      />
 
       <div className="relative group">
         {isLoading && orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-[32px] border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md">
+          <div className="flex flex-col items-center justify-center min-h-100 gap-4 rounded-4xl border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md">
             <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
             <p className="text-gray-500 dark:text-gray-400 font-black uppercase tracking-widest text-xs">
               Loading Orders...
             </p>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 text-center rounded-[32px] border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md">
+          <div className="flex flex-col items-center justify-center min-h-100 gap-6 text-center rounded-4xl border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md">
             <div className="p-6 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
               <ShoppingCart className="w-12 h-12 text-red-500" />
             </div>
@@ -293,17 +208,32 @@ const PurchaseOrderBoard: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-[32px] border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="absolute right-0 top-0 bottom-0 w-12 pointer-events-none bg-gradient-to-l from-white dark:from-gray-900 to-transparent z-10 opacity-60 lg:hidden"></div>
-            <div className="min-w-[1000px] lg:min-w-0 relative">
+          <div className="overflow-x-auto rounded-4xl border border-gray-200 dark:border-gray-700 shadow-2xl bg-white dark:bg-gray-900/40 backdrop-blur-md [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="absolute right-0 top-0 bottom-0 w-12 pointer-events-none bg-linear-to-l from-white dark:from-gray-900 to-transparent z-10 opacity-60 lg:hidden"></div>
+            <div className="min-w-250 lg:min-w-0 relative">
               {isLoading && orders.length > 0 && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-[32px]">
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-4xl">
                   <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
                 </div>
               )}
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50/80 dark:bg-gray-800/80 border-b border-gray-200 dark:border-gray-700">
+                    {view === "buyer" && (
+                      <th className="px-4 py-6 w-6">
+                        {filteredOrders.length > 0 && (
+                          <input
+                            type="checkbox"
+                            checked={
+                              filteredOrders.length > 0 &&
+                              selectedInView.length === filteredOrders.length
+                            }
+                            onChange={handleSelectAll}
+                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
+                        )}
+                      </th>
+                    )}
                     <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
                       PO Reference
                     </th>
@@ -334,11 +264,13 @@ const PurchaseOrderBoard: React.FC = () => {
                         view={view}
                         onUpdateStatus={handleUpdateStatus}
                         isUpdating={updatingOrderId === order._id}
+                        isSelected={selectedOrderIds.includes(order._id)}
+                        onToggleSelect={handleToggleSelect}
                       />
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="px-8 py-20 text-center">
+                      <td colSpan={view === "buyer" ? 8 : 7} className="px-8 py-20 text-center">
                         <div className="flex flex-col items-center gap-4">
                           <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-800 border-4 border-white dark:border-gray-900 shadow-inner">
                             <ShoppingCart className="w-8 h-8 text-gray-300 dark:text-gray-700" />

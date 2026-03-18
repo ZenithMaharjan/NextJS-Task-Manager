@@ -88,7 +88,7 @@ export default function InventoryPage() {
                   onClick={handleToggleMyItems}
                   className={`relative w-16 h-8 rounded-full transition-all duration-300 cursor-pointer ${
                     showMyItems
-                      ? "bg-gradient-to-r from-green-400 to-blue-500"
+                      ? "bg-linear-to-r from-green-400 to-blue-500"
                       : "bg-gray-300 dark:bg-gray-700"
                   }`}
                 >

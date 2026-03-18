@@ -8,7 +8,7 @@ import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
 import { Notification } from "@/types/notification";
-import { PurchaseOrderResponse, PurchaseStatus } from "@/types/purchase";
+import { PurchaseOrder, PurchaseOrderResponse, PurchaseStatus } from "@/types/purchase";
 
 const apiBaseUrl =
   process.env.NODE_ENV === "production"
@@ -118,14 +118,15 @@ class APIService {
     return data;
   }
 
-  async delete<B extends BodyInit>(url: string, body?: B): Promise<any> {
+  async delete(url: string, options: CustomRequestOptions = {}): Promise<any> {
     const headers = {
       "content-type": "application/json",
     };
     const { error, data, response } = await request(this.getParsedUrl(url), {
       method: "DELETE",
       headers,
-      body: JSON.stringify(body),
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      query: options.query,
     });
     if (error) {
       throw new APIError(response, data);
@@ -235,6 +236,11 @@ class APIService {
       { purchaseId: string; status: PurchaseStatus },
       { success: boolean; message: string }
     >("/purchase", { purchaseId, status });
+  };
+
+  deletePurchaseOrder = (id: string): Promise<{ success: boolean; data: PurchaseOrder }> => {
+    const query = { id };
+    return this.delete("/purchase", { query });
   };
 }
 

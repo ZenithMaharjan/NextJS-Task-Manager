@@ -104,14 +104,14 @@ export const NotificationDropdown = ({
       >
         <Bell className="w-6 h-6" />
         {unreadCount > 0 && (
-          <span className="absolute top-0.5 right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white ring-1 ring-white shadow-sm animate-bounce-subtle">
+          <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white ring-1 ring-white shadow-sm animate-bounce-subtle">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-[-40px] sm:right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200 max-w-[calc(100vw-2rem)]">
+        <div className="absolute -right-10 sm:right-0 mt-3 w-80 sm:w-96 origin-top-right rounded-2xl bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-5 duration-200 max-w-[calc(100vw-2rem)]">
           <div className="flex items-center justify-between px-5 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-gray-900 dark:text-white">Notifications</h3>
@@ -133,7 +133,7 @@ export const NotificationDropdown = ({
             </div>
           </div>
 
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-100 overflow-y-auto">
             {notifications.length === 0 ? (
               <EmptyDropdownState />
             ) : (
@@ -164,7 +164,7 @@ export const NotificationDropdown = ({
                       : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95 cursor-pointer"
                   }`}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-white dark:bg-blue-700" />
                 </button>
                 <button
                   onClick={handleNextPage}
@@ -175,7 +175,7 @@ export const NotificationDropdown = ({
                       : "text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm active:scale-95 cursor-pointer"
                   }`}
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5 text-gray-600 dark:text-white dark:bg-blue-700" />
                 </button>
               </div>
             </div>
@@ -239,7 +239,7 @@ function DropdownNotificationItem({ notification, onClick }: DropdownNotificatio
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <p className={titleClasses}>{notification.title}</p>
-          {notification.isRead && <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />}
+          {notification.isRead && <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 leading-relaxed">
           {notification.message}
