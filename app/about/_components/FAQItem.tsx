@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -14,20 +15,33 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div
+      className={clsx(
+        "rounded-xl shadow-sm overflow-hidden transition-all duration-300 border",
+        "bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md",
+      )}
+    >
       <button
         onClick={toggle}
-        className="w-full flex justify-between items-center font-semibold text-gray-900 text-lg px-6 py-4 hover:bg-gray-50 transition-colors"
+        className={clsx(
+          "w-full flex justify-between items-center font-semibold text-lg px-6 py-4 transition-colors text-left cursor-pointer",
+          "text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-700/50 ",
+        )}
       >
-        {question}
+        <span>{question}</span>
         <ChevronRight
           size={20}
-          className={`transition-transform duration-200 ${isOpen ? "rotate-90" : "rotate-0"}`}
+          className={clsx(
+            "transition-transform duration-300 shrink-0 p-1 rounded-lg cursor-pointer",
+            isOpen
+              ? "rotate-90 text-white bg-indigo-500 dark:bg-indigo-600"
+              : "rotate-0 text-white bg-blue-600 dark:bg-blue-600",
+          )}
         />
       </button>
       {isOpen && (
-        <div className="px-6 pb-4 pt-2">
-          <p className="text-gray-700 leading-relaxed">{answer}</p>
+        <div className="px-6 pb-5 pt-2 border-t border-gray-50 dark:border-gray-700/50">
+          <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{answer}</p>
         </div>
       )}
     </div>

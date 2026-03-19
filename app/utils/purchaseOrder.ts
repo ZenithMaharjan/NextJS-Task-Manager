@@ -19,10 +19,14 @@ export const formatOrderPrice = (price: number): string => {
 };
 
 export const matchesSearchQuery = (order: PurchaseOrder, query: string): boolean => {
+  const normalizedQuery = query.toLowerCase();
+  const inventory = order.inventoryId;
+
   return (
-    (order._id || "").toLowerCase().includes(query) ||
-    (order.itemTitle || "").toLowerCase().includes(query) ||
-    (order.customerName || "").toLowerCase().includes(query) ||
-    (order.status || "").toLowerCase().includes(query)
+    (order._id || "").toLowerCase().includes(normalizedQuery) ||
+    (inventory?.brand || "").toLowerCase().includes(normalizedQuery) ||
+    (inventory?.model || "").toLowerCase().includes(normalizedQuery) ||
+    (order.customerName || "").toLowerCase().includes(normalizedQuery) ||
+    (order.status || "").toLowerCase().includes(normalizedQuery)
   );
 };

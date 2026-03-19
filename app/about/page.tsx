@@ -1,3 +1,8 @@
+"use client";
+
+import { HelpCircle, Mail } from "lucide-react";
+import Link from "next/link";
+
 import FAQItem from "./_components/FAQItem";
 
 const FAQ_DATA = [
@@ -35,29 +40,49 @@ const FAQ_DATA = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-          <p className="text-lg text-gray-600">
-            Find answers to common questions about our platform
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+      <div className="p-8 max-w-4xl mx-auto space-y-12">
+        <header className="relative flex flex-col items-center text-center space-y-4 pt-8">
+          <div className="absolute top-0 right-0"></div>
+
+          <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl text-indigo-600 dark:text-indigo-400 mb-2">
+            <HelpCircle size={32} />
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-white">
+            Frequently Asked
+            <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              Questions
+            </span>
+          </h1>
+          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl">
+            Everything you need to know about Coccos platform. Can&apos;t find the answer
+            you&apos;re looking for? Reach out to our team.
           </p>
         </header>
 
-        <section className="space-y-4" aria-label="FAQ List">
+        <section className="space-y-4 max-w-3xl mx-auto" aria-label="FAQ List">
           {FAQ_DATA.map((faq, index) => (
             <FAQItem key={`faq-${index}`} question={faq.question} answer={faq.answer} />
           ))}
         </section>
 
-        <footer className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">Still have questions?</p>
-          <a
-            href="mailto:support@coccos.pages.dev"
-            className="inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg"
-          >
-            Contact Support
-          </a>
+        <footer className="pt-12 pb-20 text-center">
+          <div className="inline-flex flex-col items-center p-8 rounded-3xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 w-full max-w-2xl shadow-sm">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Still have questions?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">
+              We&apos;re here to help! Our support team typically responds within a few hours.
+            </p>
+            <Link
+              href="mailto:support@coccos.pages.dev"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-600/20 active:scale-95 group"
+            >
+              <Mail className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              Contact Support
+            </Link>
+          </div>
         </footer>
       </div>
     </div>

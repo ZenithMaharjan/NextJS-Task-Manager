@@ -1,11 +1,12 @@
+import { Inventory } from "./inventory";
+
 export type PurchaseStatus = "initiated" | "confirmed" | "delivering" | "completed" | "cancelled";
 
 export interface PurchaseOrder {
   _id: string;
-  inventoryId: any;
+  inventoryId: Inventory;
   userId: string;
   customerName: string;
-  itemTitle: string;
   quantityPurchased: number;
   totalPrice: number;
   status: PurchaseStatus;

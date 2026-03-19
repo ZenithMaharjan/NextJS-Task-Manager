@@ -38,7 +38,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
           Aggregate Price per Model ($)
         </h2>
-        <div className="h-[350px] overflow-x-auto overflow-y-hidden premium-scrollbar">
+        <div className="h-87.5 overflow-x-auto overflow-y-hidden premium-scrollbar">
           <div style={{ minWidth: dynamicMinWidth }} className="h-full will-change-transform">
             <ResponsiveContainer width="100%" height="100%" debounce={50}>
               <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
@@ -84,7 +84,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
           Total Quantity per Model
         </h2>
-        <div className="h-[350px] overflow-x-auto overflow-y-hidden premium-scrollbar">
+        <div className="h-87.5 overflow-x-auto overflow-y-hidden premium-scrollbar">
           <div style={{ minWidth: dynamicMinWidth }} className="h-full will-change-transform">
             <ResponsiveContainer width="100%" height="100%" debounce={50}>
               <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
@@ -130,7 +130,7 @@ const InventoryCharts: React.FC<InventoryChartsProps> = ({ processedData }) => {
           <span className="w-2 h-6 bg-purple-500 rounded-full"></span>
           Average Engine Capacity per Model (cc)
         </h2>
-        <div className="h-[350px] overflow-x-auto overflow-y-hidden premium-scrollbar">
+        <div className="h-87.5 overflow-x-auto overflow-y-hidden premium-scrollbar">
           <div style={{ minWidth: dynamicMinWidth }} className="h-full will-change-transform">
             <ResponsiveContainer width="100%" height="100%" debounce={50}>
               <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
