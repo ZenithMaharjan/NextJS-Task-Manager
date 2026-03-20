@@ -5,13 +5,14 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import BoardToolbar from "./BoardToolbar";
+import PurchaseOrderDetailDrawer from "./PurchaseOrderDetailDrawer";
 import PurchaseOrderRow from "./PurchaseOrderRow";
 
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { setOrders, removeOrders, setFilterStatus } from "@/store/slices/purchaseSlice";
-import { PurchaseStatus } from "@/types/purchase";
+import { PurchaseOrder, PurchaseStatus } from "@/types/purchase";
 import { matchesSearchQuery } from "@/utils/purchaseOrder";
 
 const PurchaseOrderBoard: React.FC = () => {
@@ -27,6 +28,8 @@ const PurchaseOrderBoard: React.FC = () => {
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedDetailOrder, setSelectedDetailOrder] = useState<PurchaseOrder | null>(null);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const filteredOrders = useMemo(() => {
     const normalizedQuery = searchQuery.toLowerCase();
@@ -165,6 +168,15 @@ const PurchaseOrderBoard: React.FC = () => {
     [dispatch],
   );
 
+  const handleOpenDetail = useCallback((order: PurchaseOrder) => {
+    setSelectedDetailOrder(order);
+    setIsDetailDrawerOpen(true);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setIsDetailDrawerOpen(false);
+  }, []);
+
   return (
     <div className="w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <BoardToolbar
@@ -220,7 +232,7 @@ const PurchaseOrderBoard: React.FC = () => {
                 <thead>
                   <tr className="bg-gray-50/80 dark:bg-gray-800/80 border-b border-gray-200 dark:border-gray-700">
                     {view === "buyer" && (
-                      <th className="px-4 py-6 w-6">
+                      <th className="pl-6 pr-2 py-6 w-6">
                         {filteredOrders.length > 0 && (
                           <input
                             type="checkbox"
@@ -234,25 +246,25 @@ const PurchaseOrderBoard: React.FC = () => {
                         )}
                       </th>
                     )}
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       PO Reference
                     </th>
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       {view === "buyer" ? "Inventory Item" : "Customer"}
                     </th>
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       Quantity
                     </th>
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       Total Amount
                     </th>
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       Status
                     </th>
-                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em]">
+                    <th className="px-8 py-6 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.25em] whitespace-nowrap">
                       Created At
                     </th>
-                    <th className="px-8 py-6"></th>
+                    <th className="px-8 py-6 whitespace-nowrap"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800/50">
@@ -266,6 +278,7 @@ const PurchaseOrderBoard: React.FC = () => {
                         isUpdating={updatingOrderId === order._id}
                         isSelected={selectedOrderIds.includes(order._id)}
                         onToggleSelect={handleToggleSelect}
+                        onViewDetail={handleOpenDetail}
                       />
                     ))
                   ) : (
@@ -293,6 +306,12 @@ const PurchaseOrderBoard: React.FC = () => {
           </div>
         )}
       </div>
+
+      <PurchaseOrderDetailDrawer
+        isOpen={isDetailDrawerOpen}
+        onClose={handleCloseDetail}
+        order={selectedDetailOrder}
+      />
     </div>
   );
 };

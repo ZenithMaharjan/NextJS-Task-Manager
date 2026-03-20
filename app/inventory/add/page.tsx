@@ -2,9 +2,10 @@
 
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
+import { Dropdown } from "@/components";
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
@@ -18,6 +19,15 @@ const INVENTORY_TYPES: InventoryType[] = [
   "adventure",
   "scooter",
 ];
+
+const CONDITION_OPTIONS = ["new", "used"];
+
+const STOCK_OPTIONS = [
+  { label: "In Stock", value: true },
+  { label: "Out of Stock", value: false },
+];
+
+const MIN_VALID_YEAR = 1900;
 
 export default function InventoryAddPage() {
   const router = useRouter();
@@ -41,18 +51,27 @@ export default function InventoryAddPage() {
     features: "",
   });
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  ) => {
-    const { name, value, type } = event.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? (event.target as HTMLInputElement).checked : value,
-    }));
-  };
+  const handleInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value, type } = event.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === "checkbox" ? (event.target as HTMLInputElement).checked : value,
+      }));
+    },
+    [],
+  );
 
-  const handleInStockChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, inStock: e.target.value === "true" }));
+  const handleConditionSelect = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, condition: value }));
+  }, []);
+
+  const handleTypeSelect = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, type: value }));
+  }, []);
+
+  const handleInStockChange = useCallback((value: boolean) => {
+    setFormData(prev => ({ ...prev, inStock: value }));
   }, []);
 
   const handleSaveClick = useCallback(async () => {
@@ -64,7 +83,7 @@ export default function InventoryAddPage() {
       formData.price <= 0 ||
       formData.engineCapacity <= 0 ||
       formData.quantity < 0 ||
-      formData.year <= 1900
+      formData.year <= MIN_VALID_YEAR
     ) {
       showToast(
         "Please enter valid numeric values for price, engine capacity, quantity, and year.",
@@ -92,8 +111,8 @@ export default function InventoryAddPage() {
       await apiService.createInventory(newInventoryData);
       showToast("Inventory created successfully", "success");
       router.push("/Inventory");
-    } catch (err: any) {
-      showToast(err?.message || "Failed to create inventory item", "error");
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Failed to create inventory item", "error");
     } finally {
       setIsSaving(false);
     }
@@ -109,6 +128,16 @@ export default function InventoryAddPage() {
       router.push("/Login");
     }
   }, [currentUser, router, showToast]);
+
+  const conditionOptions = useMemo(
+    () => CONDITION_OPTIONS.map(option => ({ label: option, value: option })),
+    [],
+  );
+
+  const typeOptions = useMemo(
+    () => INVENTORY_TYPES.map(option => ({ label: option, value: option })),
+    [],
+  );
 
   if (!currentUser) return null;
 
@@ -133,7 +162,7 @@ export default function InventoryAddPage() {
                   className="text-2xl font-bold bg-transparent border-b border-blue-500 outline-none w-full text-gray-800 dark:text-white focus:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-600"
                 />
               </div>
-              <div className="flex-[2] flex flex-col gap-1">
+              <div className="flex-2 flex flex-col gap-1">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Model *</span>
                 <input
                   type="text"
@@ -146,47 +175,38 @@ export default function InventoryAddPage() {
               </div>
             </div>
 
-            <div className="flex gap-6 mt-4">
-              <div className="flex flex-col">
+            <div className="grid grid-cols-3 gap-6 mt-4">
+              <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Year *</span>
                 <input
                   type="number"
                   name="year"
                   value={formData.year}
                   onChange={handleInputChange}
-                  className="text-gray-600 dark:text-gray-300 bg-transparent border-b border-gray-300 dark:border-gray-600 outline-none w-24 py-1 font-medium"
+                  className="text-gray-600 dark:text-gray-300 bg-transparent border-b border-gray-300 dark:border-gray-600 outline-none w-full py-1 font-medium"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1.5 min-w-0">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Condition</span>
-                <select
-                  name="condition"
+                <Dropdown
                   value={formData.condition}
-                  onChange={handleInputChange}
-                  className="text-gray-600 dark:text-gray-300 bg-transparent border-b border-gray-300 dark:border-gray-600 outline-none py-1 cursor-pointer font-medium"
-                >
-                  <option value="new">New</option>
-                  <option value="used">Used</option>
-                </select>
+                  options={conditionOptions}
+                  onSelect={handleConditionSelect}
+                />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1.5 min-w-0">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Type</span>
-                <select
-                  name="type"
+                <Dropdown
                   value={formData.type}
-                  onChange={handleInputChange}
-                  className="text-gray-600 dark:text-gray-300 bg-transparent border-b border-gray-300 dark:border-gray-600 outline-none py-1 cursor-pointer font-medium capitalize"
-                >
-                  {INVENTORY_TYPES.map(t => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
+                  options={typeOptions}
+                  onSelect={handleTypeSelect}
+                  maxHeight="max-h-60"
+                />
               </div>
             </div>
           </div>
         </div>
+
         <div className="p-8 space-y-8">
           <div className="flex justify-between items-center border-b border-gray-50 dark:border-gray-700 pb-4">
             <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
@@ -205,40 +225,22 @@ export default function InventoryAddPage() {
               />
             </div>
           </div>
+
           <div className="space-y-3">
             <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
               Stock & Engine
             </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="flex flex-col gap-1.5 min-w-0">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Status</span>
-                <select
-                  name="inStock"
-                  value={formData.inStock.toString()}
-                  onChange={handleInStockChange}
-                  className="text-sm font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 outline-none dark:bg-gray-800 dark:text-white cursor-pointer w-full"
-                >
-                  <option value="true" className="dark:bg-gray-800 dark:text-white">
-                    In Stock
-                  </option>
-                  <option value="false" className="dark:bg-gray-800 dark:text-white">
-                    Out of Stock
-                  </option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase font-bold text-gray-400">Quantity *</span>
-                <input
-                  type="number"
-                  name="quantity"
-                  min="0"
-                  value={formData.quantity}
-                  onChange={handleInputChange}
-                  placeholder="Qty"
-                  className="text-sm font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 outline-none dark:text-white"
+                <Dropdown
+                  value={formData.inStock}
+                  options={STOCK_OPTIONS}
+                  onSelect={handleInStockChange}
                 />
               </div>
-              <div className="flex flex-col gap-1">
+
+              <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase font-bold text-gray-400">
                   Engine Displacement *
                 </span>
@@ -256,8 +258,20 @@ export default function InventoryAddPage() {
                 </div>
               </div>
 
-              {/* Color */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase font-bold text-gray-400">Quantity *</span>
+                <input
+                  type="number"
+                  name="quantity"
+                  min="0"
+                  value={formData.quantity}
+                  onChange={handleInputChange}
+                  placeholder="Qty"
+                  className="text-sm font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 outline-none dark:text-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase font-bold text-gray-400">Color</span>
                 <input
                   type="text"
@@ -269,6 +283,7 @@ export default function InventoryAddPage() {
                 />
               </div>
             </div>
+
             <div className="space-y-3 pt-2">
               <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
                 Features
@@ -284,6 +299,7 @@ export default function InventoryAddPage() {
             </div>
           </div>
         </div>
+
         <div className="p-6 bg-gray-50/80 dark:bg-black/20 backdrop-blur-sm border-t border-gray-100 dark:border-gray-700 flex justify-end items-center gap-4">
           <div className="flex gap-3">
             <button

@@ -1,12 +1,13 @@
 "use client";
 
 import clsx from "clsx";
-import { Search, Tag, Filter, Loader2, Trash2, ChevronDown } from "lucide-react";
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { Search, Tag, Filter, Loader2, Trash2 } from "lucide-react";
+import React, { useCallback } from "react";
 
+import { Dropdown } from "@/components";
 import { PurchaseStatus } from "@/types/purchase";
 
-const FILTER_OPTIONS: { label: string; value: PurchaseStatus | "All" }[] = [
+const STATUS_OPTIONS: { label: string; value: PurchaseStatus | "All" }[] = [
   { label: "All Status", value: "All" },
   { label: "Initiated", value: "initiated" },
   { label: "Confirmed", value: "confirmed" },
@@ -42,19 +43,6 @@ const BoardToolbar: React.FC<BoardToolbarProps> = ({
   isDeleting,
   onDeleteSelected,
 }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const handleBuyerViewClick = useCallback(() => {
     onViewChange("buyer");
   }, [onViewChange]);
@@ -63,21 +51,11 @@ const BoardToolbar: React.FC<BoardToolbarProps> = ({
     onViewChange("seller");
   }, [onViewChange]);
 
-  const handleToggleDropdown = useCallback(() => {
-    setIsDropdownOpen(prev => !prev);
-  }, []);
-
   const handleOptionSelect = useCallback(
     (value: PurchaseStatus | "All") => {
       onFilterStatusChange(value);
-      setIsDropdownOpen(false);
     },
     [onFilterStatusChange],
-  );
-
-  const selectedLabel = useMemo(
-    () => FILTER_OPTIONS.find(option => option.value === filterStatus)?.label ?? "All Status",
-    [filterStatus],
   );
 
   return (
@@ -152,76 +130,28 @@ const BoardToolbar: React.FC<BoardToolbarProps> = ({
               )}
               Delete Selected ({selectedInViewCount})
             </button>
-            <div ref={dropdownRef} className="relative">
-              <button
-                onClick={handleToggleDropdown}
-                className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 text-sm font-black text-blue-600 dark:text-blue-400 transition-all hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer h-10 min-w-0 shrink-0"
-              >
-                <Filter className="w-4 h-4 text-gray-400" />
-                {selectedLabel}
-                <ChevronDown
-                  className={clsx(
-                    "w-4 h-4 text-gray-400 transition-transform duration-200",
-                    isDropdownOpen && "rotate-180",
-                  )}
-                />
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute right-0 z-50 mt-2 w-44 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl shadow-black/10 dark:shadow-none overflow-hidden">
-                  {FILTER_OPTIONS.map(option => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleOptionSelect(option.value)}
-                      className={clsx(
-                        "w-full text-left px-4 py-2.5 text-sm font-bold transition-all",
-                        filterStatus === option.value
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400",
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Dropdown
+              value={filterStatus}
+              options={STATUS_OPTIONS}
+              onSelect={handleOptionSelect}
+              icon={Filter}
+              showCheckmark={false}
+              align="right"
+              buttonClassName="w-auto h-10"
+              dropdownClassName="w-44"
+            />
           </>
         ) : (
-          <div ref={dropdownRef} className="relative">
-            <button
-              onClick={handleToggleDropdown}
-              className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 text-sm font-black text-blue-600 dark:text-blue-400 transition-all hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer h-10 min-w-0 shrink-0"
-            >
-              <Filter className="w-4 h-4 text-gray-400" />
-              {selectedLabel}
-              <ChevronDown
-                className={clsx(
-                  "w-4 h-4 text-gray-400 transition-transform duration-200",
-                  isDropdownOpen && "rotate-180",
-                )}
-              />
-            </button>
-
-            {isDropdownOpen && (
-              <div className="absolute right-0 z-50 mt-2 w-44 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl shadow-black/10 dark:shadow-none overflow-hidden">
-                {FILTER_OPTIONS.map(option => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleOptionSelect(option.value)}
-                    className={clsx(
-                      "w-full text-left px-4 py-2.5 text-sm font-bold transition-all",
-                      filterStatus === option.value
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400",
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <Dropdown
+            value={filterStatus}
+            options={STATUS_OPTIONS}
+            onSelect={handleOptionSelect}
+            icon={Filter}
+            showCheckmark={false}
+            align="right"
+            buttonClassName="w-auto h-10"
+            dropdownClassName="w-44"
+          />
         )}
       </div>
     </div>
