@@ -31,7 +31,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   const mergedItem = useMemo(() => {
     return {
       ...item,
-      ...(tempEdits[item.id] || {}),
+      ...(tempEdits[item._id] || {}),
     };
   }, [item, tempEdits]);
 
@@ -40,20 +40,20 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   }, [currentUser, mergedItem.userId]);
 
   const isInWishlist = useMemo(() => {
-    return wishlistItems.some((wItem: Inventory) => wItem.id === mergedItem.id);
-  }, [wishlistItems, mergedItem.id]);
+    return wishlistItems.some((wItem: Inventory) => wItem._id === mergedItem._id);
+  }, [wishlistItems, mergedItem._id]);
 
   const handleToggleWishlist = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
       try {
         if (isInWishlist) {
-          const response = await apiService.removeFromWishlist(mergedItem.id);
+          const response = await apiService.removeFromWishlist(mergedItem._id);
           if (response.success) {
             dispatch(setWishlist(response.wishlists));
           }
         } else {
-          const response = await apiService.addToWishlist(mergedItem.id);
+          const response = await apiService.addToWishlist(mergedItem._id);
           if (response.success) {
             dispatch(setWishlist(response.wishlists));
           }
@@ -62,7 +62,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
         showToast("Failed to update wishlist", "error");
       }
     },
-    [dispatch, isInWishlist, mergedItem.id, showToast],
+    [dispatch, isInWishlist, mergedItem._id, showToast],
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -79,25 +79,25 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   const handleConfirmDelete = useCallback(() => {
     setIsDeleteModalOpen(false);
 
-    dispatch(setTempDelete(mergedItem.id));
+    dispatch(setTempDelete(mergedItem._id));
 
     setTimeout(() => {
-      dispatch(clearTempDelete(mergedItem.id));
+      dispatch(clearTempDelete(mergedItem._id));
     }, 20000);
 
     showToast("Item deleted temporarily", "info");
-  }, [mergedItem.id, dispatch, showToast]);
+  }, [mergedItem._id, dispatch, showToast]);
 
   const handleNavigate = useCallback(() => {
-    router.push(`/Inventory/${mergedItem.id}`);
-  }, [router, mergedItem.id]);
+    router.push(`/Inventory/${mergedItem._id}`);
+  }, [router, mergedItem._id]);
 
   const handleEditClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      router.push(`/Inventory/${mergedItem.id}/edit`);
+      router.push(`/Inventory/${mergedItem._id}/edit`);
     },
-    [router, mergedItem.id],
+    [router, mergedItem._id],
   );
 
   return (
@@ -107,7 +107,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
         className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer transform hover:-translate-y-1 focus-within:ring-2 focus-within:ring-blue-500"
       >
         <div className="p-5 space-y-4">
-          <div className="flex justify-between items-start gap-2 min-h-[32px]">
+          <div className="flex justify-between items-start gap-2 min-h-8">
             {isOwner ? (
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-600/90 dark:bg-blue-500/90 text-white text-[10px] font-bold shadow-lg backdrop-blur-md border border-white/20 whitespace-nowrap">
                 <User className="w-3 h-3" />
@@ -203,7 +203,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
               <Pencil className="w-3.5 h-3.5" />
               Edit Listing
             </button>
-            <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
+            <div className="w-px h-4 bg-gray-200 dark:bg-gray-700" />
             <button
               onClick={handleDelete}
               className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-blue-300 transition-colors cursor-pointer outline-none focus:text-red-700"

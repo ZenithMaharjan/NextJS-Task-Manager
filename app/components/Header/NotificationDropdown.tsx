@@ -210,7 +210,7 @@ function DropdownNotificationItem({ notification, onClick }: DropdownNotificatio
 
   const itemClasses = useMemo(
     () =>
-      `group relative flex items-start gap-4 px-5 py-4 cursor-pointer transition-all duration-200 ${
+      `group flex items-start gap-3 px-5 py-4 cursor-pointer transition-all duration-200 ${
         !notification.isRead
           ? "bg-blue-50/40 dark:bg-blue-900/10 hover:bg-blue-50 dark:hover:bg-blue-900/20"
           : "hover:bg-gray-50/80 dark:hover:bg-gray-800/40"
@@ -231,10 +231,12 @@ function DropdownNotificationItem({ notification, onClick }: DropdownNotificatio
   const formattedTime = useMemo(() => formatTime(notification.createdAt), [notification.createdAt]);
 
   return (
-    <div key={notification.id} onClick={handleClick} className={itemClasses}>
-      {!notification.isRead && (
-        <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
-      )}
+    <div onClick={handleClick} className={itemClasses}>
+      <div className="mt-1.25 w-1.5 h-1.5 rounded-full shrink-0">
+        {!notification.isRead && (
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
+        )}
+      </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">

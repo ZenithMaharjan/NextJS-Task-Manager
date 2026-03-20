@@ -95,7 +95,7 @@ const InventoryList = ({
   const filteredItems = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
     return items
-      .filter(item => !tempDeletes[item.id])
+      .filter(item => !tempDeletes[item._id])
       .filter(
         item =>
           item.brand.toLowerCase().includes(searchLower) ||
@@ -231,7 +231,7 @@ const InventoryList = ({
       {activeItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {activeItems.map((item: Inventory) => (
-            <InventoryCard key={item.id} item={item} onDelete={onDelete} />
+            <InventoryCard key={item._id} item={item} onDelete={onDelete} />
           ))}
         </div>
       ) : (

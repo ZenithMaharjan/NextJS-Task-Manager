@@ -46,7 +46,7 @@ export default function PurchaseOrderDrawer({
     setIsSubmittingPurchaseOrder(true);
     try {
       const purchaseRequestPayload: PurchaseRequest = {
-        inventoryId: inventoryItem.id,
+        inventoryId: inventoryItem._id,
         quantityPurchased: quantityToPurchase,
         totalPrice,
       };
@@ -67,7 +67,7 @@ export default function PurchaseOrderDrawer({
     } finally {
       setIsSubmittingPurchaseOrder(false);
     }
-  }, [inventoryItem.id, quantityToPurchase, totalPrice, showToast, onClose]);
+  }, [inventoryItem._id, quantityToPurchase, totalPrice, showToast, onClose]);
 
   const handleClose = useCallback(() => {
     if (!isSubmittingPurchaseOrder) {

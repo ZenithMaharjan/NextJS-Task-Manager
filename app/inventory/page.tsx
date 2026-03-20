@@ -47,7 +47,7 @@ export default function InventoryPage() {
   }, [fetchInventory]);
 
   const handleDeleteItem = useCallback((id: string) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
+    setItems(prevItems => prevItems.filter(item => item._id !== id));
   }, []);
 
   const filteredItems = useMemo(() => {
