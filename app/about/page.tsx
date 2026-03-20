@@ -51,7 +51,7 @@ export default function AboutPage() {
 
           <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-white">
             Frequently Asked
-            <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
               Questions
             </span>
           </h1>

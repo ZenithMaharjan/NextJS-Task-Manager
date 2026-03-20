@@ -1,12 +1,11 @@
 "use client";
 
-import clsx from "clsx";
-import { User, Save, ChevronDown, Check } from "lucide-react";
+import { User, Save } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import React, { useState, useEffect, useCallback, useMemo, useRef, memo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { InventoryEditSkeleton } from "@/components";
+import { InventoryEditSkeleton, Dropdown } from "@/components";
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
@@ -28,107 +27,6 @@ const STOCK_OPTIONS = [
   { label: "In Stock", value: true },
   { label: "Out of Stock", value: false },
 ];
-
-interface DropdownOptionProps<T extends string | boolean> {
-  label: string;
-  value: T;
-  isSelected: boolean;
-  onSelect: (value: T) => void;
-}
-
-function DropdownOptionInner<T extends string | boolean>({
-  label,
-  value,
-  isSelected,
-  onSelect,
-}: DropdownOptionProps<T>) {
-  const handleClick = useCallback(() => {
-    onSelect(value);
-  }, [value, onSelect]);
-
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={clsx(
-        "flex items-center justify-between w-full text-left px-4 py-2.5 text-sm font-bold transition-all",
-        isSelected
-          ? "bg-blue-600 text-white"
-          : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400",
-      )}
-    >
-      <span className="capitalize">{label}</span>
-      {isSelected && <Check className="w-4 h-4" />}
-    </button>
-  );
-}
-
-DropdownOptionInner.displayName = "DropdownOption";
-
-const DropdownOption = memo(DropdownOptionInner) as typeof DropdownOptionInner;
-
-interface DropdownSelectProps<T extends string | boolean> {
-  value: T;
-  options: { label: string; value: T }[];
-  onSelect: (value: T) => void;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  isOpen: boolean;
-  onToggle: () => void;
-  maxHeight?: string;
-}
-
-function DropdownSelectInner<T extends string | boolean>({
-  value,
-  options,
-  onSelect,
-  dropdownRef,
-  isOpen,
-  onToggle,
-  maxHeight,
-}: DropdownSelectProps<T>) {
-  const selectedLabel = options.find(option => option.value === value)?.label ?? String(value);
-
-  return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex items-center justify-between w-full px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 text-sm font-black text-blue-600 dark:text-blue-400 transition-all hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer"
-      >
-        <span className="capitalize">{selectedLabel}</span>
-        <ChevronDown
-          className={clsx(
-            "w-4 h-4 text-gray-400 transition-transform duration-200",
-            isOpen && "rotate-180",
-          )}
-        />
-      </button>
-
-      {isOpen && (
-        <div
-          className={clsx(
-            "absolute left-0 z-50 mt-2 w-full rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl shadow-black/10 overflow-hidden",
-            maxHeight && `${maxHeight} overflow-y-auto`,
-          )}
-        >
-          {options.map(option => (
-            <DropdownOption
-              key={String(option.value)}
-              label={option.label}
-              value={option.value}
-              isSelected={value === option.value}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-DropdownSelectInner.displayName = "DropdownSelect";
-
-const DropdownSelect = memo(DropdownSelectInner) as typeof DropdownSelectInner;
 
 export default function InventoryEditPage() {
   const { id } = useParams();
@@ -155,14 +53,6 @@ export default function InventoryEditPage() {
     quantity: 0,
     features: "",
   });
-
-  const [isConditionOpen, setIsConditionOpen] = useState(false);
-  const [isTypeOpen, setIsTypeOpen] = useState(false);
-  const [isStockOpen, setIsStockOpen] = useState(false);
-
-  const conditionRef = useRef<HTMLDivElement>(null);
-  const typeRef = useRef<HTMLDivElement>(null);
-  const stockRef = useRef<HTMLDivElement>(null);
 
   const isOwner = useMemo(() => {
     return currentUser?.id === item?.userId;
@@ -205,22 +95,6 @@ export default function InventoryEditPage() {
     fetchItem(itemId);
   }, [id, fetchItem]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (conditionRef.current && !conditionRef.current.contains(event.target as Node)) {
-        setIsConditionOpen(false);
-      }
-      if (typeRef.current && !typeRef.current.contains(event.target as Node)) {
-        setIsTypeOpen(false);
-      }
-      if (stockRef.current && !stockRef.current.contains(event.target as Node)) {
-        setIsStockOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { name, value, type } = event.target;
@@ -234,29 +108,14 @@ export default function InventoryEditPage() {
 
   const handleConditionSelect = useCallback((value: string) => {
     setEditedData(prev => ({ ...prev, condition: value }));
-    setIsConditionOpen(false);
   }, []);
 
   const handleTypeSelect = useCallback((value: string) => {
     setEditedData(prev => ({ ...prev, type: value }));
-    setIsTypeOpen(false);
   }, []);
 
   const handleInStockChange = useCallback((value: boolean) => {
     setEditedData(prev => ({ ...prev, inStock: value }));
-    setIsStockOpen(false);
-  }, []);
-
-  const handleToggleCondition = useCallback(() => {
-    setIsConditionOpen(prev => !prev);
-  }, []);
-
-  const handleToggleType = useCallback(() => {
-    setIsTypeOpen(prev => !prev);
-  }, []);
-
-  const handleToggleStock = useCallback(() => {
-    setIsStockOpen(prev => !prev);
   }, []);
 
   const handleSaveClick = useCallback(async () => {
@@ -382,13 +241,10 @@ export default function InventoryEditPage() {
                 <span className="tracking-widest text-xs uppercase text-gray-400 font-bold">
                   Condition
                 </span>
-                <DropdownSelect
+                <Dropdown
                   value={editedData.condition}
                   options={conditionOptions}
                   onSelect={handleConditionSelect}
-                  dropdownRef={conditionRef}
-                  isOpen={isConditionOpen}
-                  onToggle={handleToggleCondition}
                 />
               </div>
 
@@ -396,13 +252,10 @@ export default function InventoryEditPage() {
                 <span className="tracking-widest text-xs uppercase text-gray-400 font-bold">
                   Type
                 </span>
-                <DropdownSelect
+                <Dropdown
                   value={editedData.type}
                   options={typeOptions}
                   onSelect={handleTypeSelect}
-                  dropdownRef={typeRef}
-                  isOpen={isTypeOpen}
-                  onToggle={handleToggleType}
                   maxHeight="max-h-60"
                 />
               </div>
@@ -439,13 +292,10 @@ export default function InventoryEditPage() {
               <span className="tracking-widest text-[10px] uppercase text-gray-400 font-bold">
                 Status
               </span>
-              <DropdownSelect
+              <Dropdown
                 value={editedData.inStock}
                 options={STOCK_OPTIONS}
                 onSelect={handleInStockChange}
-                dropdownRef={stockRef}
-                isOpen={isStockOpen}
-                onToggle={handleToggleStock}
               />
             </div>
 

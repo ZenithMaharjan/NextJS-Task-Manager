@@ -2,29 +2,14 @@
 
 import clsx from "clsx";
 import { Package, User, Calendar, ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useCallback } from "react";
 
 import OrderActionButtons from "./OrderActionButtons";
+import OrderReference from "./OrderReference";
+import StatusBadge from "./StatusBadge";
 
 import { PurchaseOrder, PurchaseStatus } from "@/types/purchase";
 import { formatOrderDate, formatOrderPrice } from "@/utils/purchaseOrder";
-
-const ORDER_ID_DISPLAY_LENGTH = 8;
-const ORDER_ID_PREVIEW_LENGTH = 12;
-
-const STATUS_STYLES: Record<PurchaseStatus, string> = {
-  initiated:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-  confirmed:
-    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800",
-  delivering:
-    "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
-  completed:
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800",
-  cancelled:
-    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
-};
 
 const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
@@ -35,18 +20,16 @@ interface PurchaseOrderRowProps {
   isUpdating: boolean;
   isSelected: boolean;
   onToggleSelect: (id: string) => void;
+  onViewDetail: (order: PurchaseOrder) => void;
 }
 
 const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
-  ({ order, view, onUpdateStatus, isUpdating, isSelected, onToggleSelect }) => {
-    const router = useRouter();
-
+  ({ order, view, onUpdateStatus, isUpdating, isSelected, onToggleSelect, onViewDetail }) => {
     const handleRowClick = useCallback(() => {
       if (!isUpdating) {
-        const inventoryId = (order.inventoryId as any)?._id || order.inventoryId?.id;
-        router.push(`/Inventory/${inventoryId}`);
+        onViewDetail(order);
       }
-    }, [isUpdating, router, order.inventoryId]);
+    }, [isUpdating, order, onViewDetail]);
 
     const handleCheckboxChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,14 +59,7 @@ const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
           </td>
         )}
         <td className="px-8 py-7">
-          <div className="flex flex-col">
-            <span className="font-black text-blue-600 dark:text-blue-400 text-xs tracking-wider">
-              #{order._id.slice(-ORDER_ID_DISPLAY_LENGTH).toUpperCase()}
-            </span>
-            <span className="text-[10px] text-gray-400 mt-1 font-bold">
-              Full ID: {order._id.slice(0, ORDER_ID_PREVIEW_LENGTH)}...
-            </span>
-          </div>
+          <OrderReference orderId={order._id} variant="row" />
         </td>
         <td className="px-8 py-7">
           <div className="flex items-center gap-4">
@@ -124,14 +100,7 @@ const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
           </div>
         </td>
         <td className="px-8 py-7">
-          <span
-            className={clsx(
-              "inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-500 shadow-sm",
-              STATUS_STYLES[order.status],
-            )}
-          >
-            {order.status}
-          </span>
+          <StatusBadge status={order.status} />
         </td>
         <td className="px-8 py-7">
           <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400">
