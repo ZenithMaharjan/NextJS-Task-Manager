@@ -15,20 +15,20 @@ const wishlistSlice = createSlice({
   initialState,
   reducers: {
     addToWishlist: (state, action: { payload: Inventory }) => {
-      const exists = state.items.find(item => item.id === action.payload.id);
+      const exists = state.items.find(item => item._id === action.payload._id);
       if (!exists) {
         state.items.push(action.payload);
       }
     },
     removeFromWishlist: (state, action: { payload: string }) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter(item => item._id !== action.payload);
     },
     setWishlist: (state, action: { payload: Inventory[] }) => {
       state.items = action.payload;
     },
     appendWishlist: (state, action: { payload: Inventory[] }) => {
       const newItems = action.payload.filter(
-        newItem => !state.items.some(existingItem => existingItem.id === newItem.id),
+        newItem => !state.items.some(existingItem => existingItem._id === newItem._id),
       );
       state.items = [...state.items, ...newItems];
     },

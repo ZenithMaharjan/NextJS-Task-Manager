@@ -31,7 +31,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   const mergedItem = useMemo(() => {
     return {
       ...item,
-      ...(tempEdits[item.id] || {}),
+      ...(tempEdits[item._id] || {}),
     };
   }, [item, tempEdits]);
 
@@ -40,20 +40,20 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   }, [currentUser, mergedItem.userId]);
 
   const isInWishlist = useMemo(() => {
-    return wishlistItems.some((wItem: Inventory) => wItem.id === mergedItem.id);
-  }, [wishlistItems, mergedItem.id]);
+    return wishlistItems.some((wItem: Inventory) => wItem._id === mergedItem._id);
+  }, [wishlistItems, mergedItem._id]);
 
   const handleToggleWishlist = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
       try {
         if (isInWishlist) {
-          const response = await apiService.removeFromWishlist(mergedItem.id);
+          const response = await apiService.removeFromWishlist(mergedItem._id);
           if (response.success) {
             dispatch(setWishlist(response.wishlists));
           }
         } else {
-          const response = await apiService.addToWishlist(mergedItem.id);
+          const response = await apiService.addToWishlist(mergedItem._id);
           if (response.success) {
             dispatch(setWishlist(response.wishlists));
           }
@@ -62,7 +62,7 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
         showToast("Failed to update wishlist", "error");
       }
     },
-    [dispatch, isInWishlist, mergedItem.id, showToast],
+    [dispatch, isInWishlist, mergedItem._id, showToast],
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -79,25 +79,25 @@ const InventoryCard = ({ item, onDelete: _onDelete }: InventoryCardProps) => {
   const handleConfirmDelete = useCallback(() => {
     setIsDeleteModalOpen(false);
 
-    dispatch(setTempDelete(mergedItem.id));
+    dispatch(setTempDelete(mergedItem._id));
 
     setTimeout(() => {
-      dispatch(clearTempDelete(mergedItem.id));
+      dispatch(clearTempDelete(mergedItem._id));
     }, 20000);
 
     showToast("Item deleted temporarily", "info");
-  }, [mergedItem.id, dispatch, showToast]);
+  }, [mergedItem._id, dispatch, showToast]);
 
   const handleNavigate = useCallback(() => {
-    router.push(`/Inventory/${mergedItem.id}`);
-  }, [router, mergedItem.id]);
+    router.push(`/Inventory/${mergedItem._id}`);
+  }, [router, mergedItem._id]);
 
   const handleEditClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      router.push(`/Inventory/${mergedItem.id}/edit`);
+      router.push(`/Inventory/${mergedItem._id}/edit`);
     },
-    [router, mergedItem.id],
+    [router, mergedItem._id],
   );
 
   return (

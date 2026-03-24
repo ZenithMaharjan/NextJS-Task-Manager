@@ -311,6 +311,7 @@ const PurchaseOrderBoard: React.FC = () => {
         isOpen={isDetailDrawerOpen}
         onClose={handleCloseDetail}
         order={selectedDetailOrder}
+        view={view}
       />
     </div>
   );

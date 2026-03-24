@@ -13,7 +13,18 @@ const purchaseSchema = new Schema(
       default: "initiated",
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (_doc, ret: Record<string, any>) => {
+        if (ret._id) {
+          ret._id = ret._id.toString();
+        }
+        delete ret.__v;
+        return ret;
+      },
+    },
+  },
 );
 
 export const PurchaseModel = mongoose.models.Purchase || mongoose.model("Purchase", purchaseSchema);

@@ -5,9 +5,11 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { X, FileText, Download, Package, User, Calendar, DollarSign, Bike } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
 
 import OrderReference from "./OrderReference";
+import PurchaseOrderStepper from "./PurchaseOrderStepper";
 import StatusBadge from "./StatusBadge";
 
 import { PurchaseOrder } from "@/types/purchase";
@@ -18,14 +20,21 @@ interface PurchaseOrderDetailDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   order: PurchaseOrder | null;
+  view?: "buyer" | "seller";
 }
 
 export default function PurchaseOrderDetailDrawer({
   isOpen,
   onClose,
   order,
+  view = "buyer",
 }: PurchaseOrderDetailDrawerProps) {
+  const router = useRouter();
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+
+  const handleReferenceClick = useCallback(() => {
+    router.push("/inventory");
+  }, [router]);
 
   const handleExportPdf = useCallback(() => {
     if (!order) return;
@@ -62,11 +71,18 @@ export default function PurchaseOrderDetailDrawer({
         </IconButton>
       </Box>
 
-      <Box className="flex-1 overflow-y-auto p-6 space-y-8 !bg-white dark:!bg-gray-950">
+      <Box className="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-8 !bg-white dark:!bg-gray-950 premium-scrollbar">
         <div className="flex justify-between items-start">
-          <OrderReference orderId={order._id} variant="drawer" />
+          <OrderReference
+            orderId={order._id}
+            variant="drawer"
+            isOwner={view === "seller"}
+            onClick={handleReferenceClick}
+          />
           <StatusBadge status={order.status} />
         </div>
+
+        <PurchaseOrderStepper currentStatus={order.status} />
 
         <div className="bg-gray-50 dark:bg-gray-900/50 rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 space-y-6">
           <div className="flex items-center gap-4">

@@ -61,10 +61,9 @@ const userSchema = new Schema<UserDocument>(
     toJSON: {
       transform: (_doc, ret: Record<string, any>) => {
         if (ret._id) {
-          ret.id = ret._id.toString();
+          ret._id = ret._id.toString();
         }
 
-        delete ret._id;
         delete ret.__v;
         delete ret.password;
 

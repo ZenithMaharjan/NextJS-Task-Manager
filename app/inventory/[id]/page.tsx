@@ -36,12 +36,12 @@ export default function InventoryItemPage() {
     if (!inventoryItem) return null;
     return {
       ...inventoryItem,
-      ...(tempEdits[inventoryItem.id] || {}),
+      ...(tempEdits[inventoryItem._id] || {}),
     };
   }, [inventoryItem, tempEdits]);
 
   const isDeletedLocally = useMemo(() => {
-    return activeInventoryItem ? !!tempDeletes[activeInventoryItem.id] : false;
+    return activeInventoryItem ? !!tempDeletes[activeInventoryItem._id] : false;
   }, [activeInventoryItem, tempDeletes]);
 
   const isOwner = useMemo(() => {
@@ -50,7 +50,9 @@ export default function InventoryItemPage() {
 
   const isInWishlist = useMemo(() => {
     return activeInventoryItem
-      ? wishlistItems.some((wishlistItem: Inventory) => wishlistItem.id === activeInventoryItem.id)
+      ? wishlistItems.some(
+          (wishlistItem: Inventory) => wishlistItem._id === activeInventoryItem._id,
+        )
       : false;
   }, [activeInventoryItem, wishlistItems]);
 
@@ -68,7 +70,7 @@ export default function InventoryItemPage() {
 
   const handleEditClick = useCallback(() => {
     if (!activeInventoryItem) return;
-    router.push(`/Inventory/${activeInventoryItem.id}/edit`);
+    router.push(`/Inventory/${activeInventoryItem._id}/edit`);
   }, [router, activeInventoryItem]);
 
   const handleDelete = useCallback(() => {
@@ -83,7 +85,7 @@ export default function InventoryItemPage() {
   const handleConfirmDelete = useCallback(() => {
     if (!activeInventoryItem) return;
     setIsDeleteModalOpen(false);
-    dispatch(setTempDelete(activeInventoryItem.id));
+    dispatch(setTempDelete(activeInventoryItem._id));
 
     setShowDeletedUI(true);
     router.push("/Inventory");
@@ -92,7 +94,7 @@ export default function InventoryItemPage() {
   const handleOpenPurchaseDrawer = useCallback(async () => {
     if (!activeInventoryItem) return;
     try {
-      const freshInventoryData = await apiService.getInventoryById(activeInventoryItem.id);
+      const freshInventoryData = await apiService.getInventoryById(activeInventoryItem._id);
       setInventoryItem(freshInventoryData);
       if (freshInventoryData.quantity <= 0 || !freshInventoryData.inStock) {
         setInventoryErrorMessage("This item just went out of stock.");
@@ -118,7 +120,7 @@ export default function InventoryItemPage() {
   const toggleWishlist = useCallback(() => {
     if (!activeInventoryItem) return;
     if (isInWishlist) {
-      dispatch(removeFromWishlist(activeInventoryItem.id));
+      dispatch(removeFromWishlist(activeInventoryItem._id));
     } else {
       dispatch(addToWishlist(activeInventoryItem));
     }
@@ -149,7 +151,7 @@ export default function InventoryItemPage() {
           <div className="bg-gray-50 dark:bg-gray-900/50 p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-start gap-4">
             <div className="flex-1 min-w-0">
               <div>
-                <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight break-words">
+                <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight wrap-break-word">
                   <span className="text-blue-600 dark:text-blue-400 mr-2">
                     {activeInventoryItem.brand}
                   </span>

@@ -22,6 +22,15 @@ const wishlistSchema = new Schema<WishlistDocument>(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform: (_doc, ret: Record<string, any>) => {
+        if (ret._id) {
+          ret._id = ret._id.toString();
+        }
+        delete ret.__v;
+        return ret;
+      },
+    },
   },
 );
 

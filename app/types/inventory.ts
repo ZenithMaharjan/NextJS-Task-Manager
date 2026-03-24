@@ -2,7 +2,7 @@ export type InventoryType = "sport" | "cruiser" | "touring" | "naked" | "adventu
 export type InventoryCondition = "new" | "used";
 
 export interface Inventory {
-  id: string;
+  _id: string;
   userId: string;
   brand: string;
   model: string;

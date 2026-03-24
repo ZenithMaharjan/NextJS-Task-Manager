@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import { Package, User, Calendar, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useCallback } from "react";
 
 import OrderActionButtons from "./OrderActionButtons";
@@ -25,11 +26,17 @@ interface PurchaseOrderRowProps {
 
 const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
   ({ order, view, onUpdateStatus, isUpdating, isSelected, onToggleSelect, onViewDetail }) => {
+    const router = useRouter();
+
     const handleRowClick = useCallback(() => {
       if (!isUpdating) {
         onViewDetail(order);
       }
     }, [isUpdating, order, onViewDetail]);
+
+    const handleReferenceClick = useCallback(() => {
+      router.push("/Inventory");
+    }, [router]);
 
     const handleCheckboxChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +66,12 @@ const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
           </td>
         )}
         <td className="px-8 py-7">
-          <OrderReference orderId={order._id} variant="row" />
+          <OrderReference
+            orderId={order._id}
+            variant="row"
+            isOwner={view === "seller"}
+            onClick={handleReferenceClick}
+          />
         </td>
         <td className="px-8 py-7">
           <div className="flex items-center gap-4">
@@ -80,7 +92,7 @@ const PurchaseOrderRow: React.FC<PurchaseOrderRowProps> = React.memo(
               </span>
               {view === "buyer" && (
                 <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">
-                  Ref: {(order.inventoryId as any)?._id || order.inventoryId?.id}
+                  Ref: {order.inventoryId?._id}
                 </span>
               )}
             </div>
