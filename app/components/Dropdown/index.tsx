@@ -28,7 +28,7 @@ function DropdownOptionInner<T>({
       type="button"
       onClick={handleClick}
       className={clsx(
-        "flex items-center justify-between w-full text-left px-4 py-2.5 text-sm font-bold transition-all",
+        "flex items-center justify-between w-full text-left px-4 py-2.5 text-sm font-bold transition-all cursor-pointer",
         isSelected
           ? "bg-blue-600 text-white"
           : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400",
