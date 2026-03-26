@@ -25,7 +25,7 @@ export default function DesktopHeader({
   links = DEFAULT_LINKS,
   className = "bg-blue-600 text-white p-4",
   logoHref = "/",
-  activeClassName = "underline font-semibold",
+  activeClassName = "hover:opacity-80 px-1 transition-all text-sm opacity-70",
   linkClassName = "hover:underline px-1 transition-all text-sm",
   containerClassName = "container mx-auto flex justify-between items-center",
 }: HeaderProps) {

@@ -68,20 +68,20 @@ const Modal = ({
     <Portal>
       <div
         className={clsx(
-          "fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300",
+          "fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300",
           overlayClassName,
         )}
       >
         <div
           ref={wrapperRef}
           className={clsx(
-            "bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform animate-in zoom-in-95 duration-200",
+            "relative bg-white dark:bg-gray-900 w-full rounded-2xl shadow-2xl overflow-visible transform animate-in zoom-in-95 duration-200 flex flex-col",
             className,
           )}
           role="dialog"
           aria-modal="true"
         >
-          {children}
+          <div className="flex-1 overflow-y-auto p-1 premium-scrollbar rounded-2xl">{children}</div>
         </div>
       </div>
     </Portal>

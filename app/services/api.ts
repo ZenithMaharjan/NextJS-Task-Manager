@@ -7,6 +7,7 @@ import { store } from "@/store";
 import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
+import { CreateJobCardRequest, JobCard } from "@/types/jobCard";
 import { Notification } from "@/types/notification";
 import { PurchaseOrder, PurchaseOrderResponse, PurchaseStatus } from "@/types/purchase";
 
@@ -241,6 +242,10 @@ class APIService {
   deletePurchaseOrder = (id: string): Promise<{ success: boolean; data: PurchaseOrder }> => {
     const query = { id };
     return this.delete("/purchase", { query });
+  };
+
+  createJobCard = (data: CreateJobCardRequest): Promise<{ success: boolean; data: JobCard }> => {
+    return this.post("/job-card", data);
   };
 }
 
