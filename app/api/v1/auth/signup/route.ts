@@ -70,6 +70,7 @@ export async function POST(request: Request) {
           fullName: user.fullName ?? null,
           dob: user.dob ?? null,
           address: user.address ?? null,
+          isAdmin: user.isAdmin ?? false,
         },
         token,
       },

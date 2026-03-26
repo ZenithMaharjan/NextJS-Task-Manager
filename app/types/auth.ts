@@ -19,6 +19,7 @@ export interface AuthResponse {
     fullName: string | null;
     dob: Date | null;
     address: string | null;
+    isAdmin: boolean;
   };
   token?: string;
 }
