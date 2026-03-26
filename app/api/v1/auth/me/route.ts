@@ -57,6 +57,7 @@ export async function GET(request: Request) {
           fullName: user.fullName ?? null,
           dob: user.dob ?? null,
           address: user.address ?? null,
+          isAdmin: user.isAdmin ?? false,
         },
       },
       { status: 200 },
@@ -90,18 +91,20 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { username, fullName, dob, address } = body as {
+    const { username, fullName, dob, address, isAdmin } = body as {
       username?: string;
       fullName?: string | null;
       dob?: string | null;
       address?: string | null;
+      isAdmin?: boolean;
     };
 
     const hasUpdate =
       username !== undefined ||
       fullName !== undefined ||
       dob !== undefined ||
-      address !== undefined;
+      address !== undefined ||
+      isAdmin !== undefined;
 
     if (!hasUpdate) {
       return NextResponse.json<ErrorResponse>(
@@ -189,6 +192,24 @@ export async function PATCH(request: Request) {
       }
     }
 
+    if (isAdmin !== undefined) {
+      if (!user.isAdmin) {
+        return NextResponse.json<ErrorResponse>(
+          { success: false, error: "Unauthorized: Only admins can change roles." },
+          { status: 403 },
+        );
+      }
+
+      if (typeof isAdmin !== "boolean") {
+        return NextResponse.json<ErrorResponse>(
+          { success: false, error: "isAdmin must be a boolean." },
+          { status: 400 },
+        );
+      }
+
+      user.isAdmin = isAdmin;
+    }
+
     await user.save();
 
     return NextResponse.json<AuthResponse>(
@@ -202,6 +223,7 @@ export async function PATCH(request: Request) {
           fullName: user.fullName ?? null,
           dob: user.dob ?? null,
           address: user.address ?? null,
+          isAdmin: user.isAdmin ?? false,
         },
       },
       { status: 200 },

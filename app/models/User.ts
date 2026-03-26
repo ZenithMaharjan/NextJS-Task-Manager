@@ -11,6 +11,7 @@ export interface UserDocument extends mongoose.Document {
   address: string | null;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -55,6 +56,10 @@ const userSchema = new Schema<UserDocument>(
       trim: true,
       maxlength: [300, "Address cannot exceed 300 characters"],
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -70,6 +75,7 @@ const userSchema = new Schema<UserDocument>(
         ret.fullName = ret.fullName ?? null;
         ret.dob = ret.dob ?? null;
         ret.address = ret.address ?? null;
+        ret.isAdmin = ret.isAdmin ?? false;
 
         return ret;
       },
