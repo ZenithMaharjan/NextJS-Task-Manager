@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import connectDB from "../../../lib/mongodb";
 import JobCardModel from "../../../models/JobCard";
+import UserModel from "../../../models/User";
 
 import { extractUserIdFromHeader } from "@/utils/jwt";
 
@@ -11,6 +12,9 @@ export async function GET(request: Request) {
 
     const userId = extractUserIdFromHeader(request.headers.get("Authorization"));
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const user = await UserModel.findById(userId).lean();
+    if (!user?.isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
 
