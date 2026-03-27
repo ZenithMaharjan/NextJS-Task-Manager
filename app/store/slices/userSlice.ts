@@ -6,6 +6,7 @@ export interface User {
   name: string;
   email: string;
   fullName: string | null;
+  isAdmin: boolean;
 }
 
 interface UserState {

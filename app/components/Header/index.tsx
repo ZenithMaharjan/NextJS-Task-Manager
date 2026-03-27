@@ -1,10 +1,15 @@
 "use client";
-import { DEFAULT_LINKS } from "../../constants/navigation";
+
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
+
+import { ADMIN_LINKS, DEFAULT_LINKS } from "../../constants/navigation";
 import DesktopHeader from "../DesktopHeader";
 import MobileHeader from "../MobileHeader";
 import { HeaderProps, NavLink } from "./types";
 
 import { useNotificationsPolling } from "@/hooks/useNotificationsPolling";
+import { RootState } from "@/store";
 
 export default function Header({
   title = "My Website",
@@ -16,18 +21,28 @@ export default function Header({
   containerClassName = "container mx-auto flex justify-between items-center",
 }: HeaderProps) {
   useNotificationsPolling();
+
+  const { currentUser } = useSelector((state: RootState) => state.user);
+
+  const allLinks = useMemo(() => {
+    if (currentUser?.isAdmin) {
+      return [...links, ...ADMIN_LINKS];
+    }
+    return links;
+  }, [links, currentUser]);
+
   return (
     <>
       <DesktopHeader
         title={title}
-        links={links}
+        links={allLinks}
         className={className}
         logoHref={logoHref}
         activeClassName={activeClassName}
         linkClassName={linkClassName}
         containerClassName={containerClassName}
       />
-      <MobileHeader title={title} links={links} className={className} logoHref={logoHref} />
+      <MobileHeader title={title} links={allLinks} className={className} logoHref={logoHref} />
     </>
   );
 }

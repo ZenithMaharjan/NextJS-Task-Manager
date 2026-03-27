@@ -2,7 +2,7 @@ import mongoose, { Schema, Model } from "mongoose";
 
 import { JobCard } from "../types/jobCard";
 
-export interface JobCardDocument extends Omit<JobCard, "id" | "date"> {
+export interface JobCardDocument extends Omit<JobCard, "_id" | "date"> {
   _id: mongoose.Types.ObjectId;
   date: Date;
 }
@@ -84,16 +84,6 @@ const jobCardSchema = new Schema<JobCardDocument>(
   },
   {
     timestamps: true,
-    toJSON: {
-      transform: (_doc, ret: Record<string, any>) => {
-        if (ret._id) {
-          ret.id = ret._id.toString();
-        }
-        delete ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
   },
 );
 

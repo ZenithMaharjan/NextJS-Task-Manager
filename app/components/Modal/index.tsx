@@ -75,7 +75,7 @@ const Modal = ({
         <div
           ref={wrapperRef}
           className={clsx(
-            "relative bg-white dark:bg-gray-900 w-full rounded-2xl shadow-2xl overflow-visible transform animate-in zoom-in-95 duration-200 flex flex-col",
+            "relative bg-white dark:bg-gray-900 w-full max-h-full rounded-2xl shadow-2xl overflow-visible transform animate-in zoom-in-95 duration-200 flex flex-col",
             className,
           )}
           role="dialog"

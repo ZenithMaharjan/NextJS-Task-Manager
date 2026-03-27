@@ -30,7 +30,7 @@ const notificationsSlice = createSlice({
       }
     },
     markAsRead: (state, action: PayloadAction<string>) => {
-      const notification = state.items.find(n => n.id === action.payload);
+      const notification = state.items.find(n => n._id === action.payload);
       if (notification && !notification.isRead) {
         notification.isRead = true;
         state.unreadCount = Math.max(0, state.unreadCount - 1);

@@ -4,7 +4,7 @@ import { Bell, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 interface Notification {
-  id: string;
+  _id: string;
   title: string;
   message: string;
   createdAt: string;
@@ -138,9 +138,9 @@ export const NotificationDropdown = ({
               <EmptyDropdownState />
             ) : (
               <div className="divide-y divide-gray-50 dark:divide-gray-800">
-                {currentItems.map(notification => (
+                {currentItems.map((notification, index) => (
                   <DropdownNotificationItem
-                    key={notification.id}
+                    key={notification._id || index}
                     notification={notification}
                     onClick={handleNotificationClick}
                   />
@@ -206,7 +206,7 @@ interface DropdownNotificationItemProps {
 }
 
 function DropdownNotificationItem({ notification, onClick }: DropdownNotificationItemProps) {
-  const handleClick = useCallback(() => onClick(notification.id), [notification.id, onClick]);
+  const handleClick = useCallback(() => onClick(notification._id), [notification._id, onClick]);
 
   const itemClasses = useMemo(
     () =>

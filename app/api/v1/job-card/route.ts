@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     const regdNo = searchParams.get("regdNo");
     const jobCardNo = searchParams.get("jobCardNo");
 
-    const filter: Record<string, any> = { userId };
+    const filter: Record<string, any> = user?.isAdmin ? {} : { userId };
 
     if (serviceTypeParam) {
       const types = serviceTypeParam

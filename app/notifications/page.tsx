@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
 import { RootState } from "@/store";
 import { markAsRead, markAllRead } from "@/store/slices/notificationsSlice";
+import { Notification } from "@/types/notification";
 
 export default function NotificationsPage() {
   const dispatch = useDispatch();
@@ -80,9 +81,9 @@ export default function NotificationsPage() {
           <EmptyNotifications />
         ) : (
           <div className="space-y-3">
-            {notifications.map(notification => (
+            {notifications.map((notification, index) => (
               <NotificationItem
-                key={notification.id}
+                key={notification._id || index}
                 notification={notification}
                 onRead={handleMarkAsRead}
               />
@@ -115,12 +116,12 @@ function EmptyNotifications() {
 }
 
 interface NotificationItemProps {
-  notification: any;
+  notification: Notification;
   onRead: (id: string) => void;
 }
 
 function NotificationItem({ notification, onRead }: NotificationItemProps) {
-  const handleClick = useCallback(() => onRead(notification.id), [notification.id, onRead]);
+  const handleClick = useCallback(() => onRead(notification._id), [notification._id, onRead]);
 
   const containerClasses = useMemo(
     () =>
@@ -145,7 +146,7 @@ function NotificationItem({ notification, onRead }: NotificationItemProps) {
   const formattedTime = useMemo(() => formatTime(notification.createdAt), [notification.createdAt]);
 
   return (
-    <div key={notification.id} onClick={handleClick} className={containerClasses}>
+    <div onClick={handleClick} className={containerClasses}>
       {!notification.isRead && (
         <div className="absolute left-0 top-0 bottom-0 w-1.25 bg-blue-600 rounded-l-2xl" />
       )}

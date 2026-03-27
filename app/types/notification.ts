@@ -10,7 +10,7 @@ export type NotificationType =
 export type NotificationPriority = "low" | "medium" | "high" | "urgent";
 
 export interface Notification {
-  id: string;
+  _id: string;
   userId: string;
   type: NotificationType;
   title: string;

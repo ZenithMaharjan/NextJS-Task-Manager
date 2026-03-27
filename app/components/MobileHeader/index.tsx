@@ -31,10 +31,10 @@ export default function MobileHeader({
     (state: RootState) => state.notifications,
   );
 
-  const handleMarkAsRead = async (id: string) => {
+  const handleMarkAsRead = async (notificationId: string) => {
     try {
-      await apiService.markNotificationAsRead(id);
-      dispatch(markAsRead(id));
+      await apiService.markNotificationAsRead(notificationId);
+      dispatch(markAsRead(notificationId));
     } catch (error) {
       console.error("Failed to mark notification as read:", error);
     }
@@ -55,13 +55,13 @@ export default function MobileHeader({
   return (
     <>
       <header
-        className={`${className.replace("p-4", "py-4")} md:hidden sticky top-0 z-40 shadow-md w-full`}
+        className={`${className.replace("p-4", "py-4")} lg:hidden sticky top-0 z-40 shadow-md w-full`}
       >
-        <div className="w-full flex justify-between items-center px-4">
-          <div className="flex-shrink-0 mr-2">
-            <Logo title={title} href={logoHref} />
+        <div className="w-full flex justify-between items-center px-4 gap-1">
+          <div className="flex-shrink-0">
+            <Logo title={title} href={logoHref} className="text-lg sm:text-xl" />
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-4 ml-auto">
             <ThemeToggler />
             {isAuthenticated && (
               <>
