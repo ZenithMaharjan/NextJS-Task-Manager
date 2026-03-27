@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import connectDB from "../../../../lib/mongodb";
 import JobCardModel from "../../../../models/JobCard";
+import UserModel from "../../../../models/User";
 
 import { extractUserIdFromHeader } from "@/utils/jwt";
 
@@ -16,10 +17,13 @@ export async function GET(request: Request, { params }: Params) {
 
     const { id } = await params;
 
-    const jobCard = await JobCardModel.findById(id).lean();
+    const [jobCard, user] = await Promise.all([
+      JobCardModel.findById(id).lean(),
+      UserModel.findById(userId).lean(),
+    ]);
     if (!jobCard) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
 
-    if (String(jobCard.userId) !== String(userId)) {
+    if (!user?.isAdmin && String(jobCard.userId) !== String(userId)) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
@@ -43,10 +47,13 @@ export async function PUT(request: Request, { params }: Params) {
     const { id } = await params;
     const body = await request.json();
 
-    const jobCard = await JobCardModel.findById(id);
+    const [jobCard, user] = await Promise.all([
+      JobCardModel.findById(id),
+      UserModel.findById(userId).lean(),
+    ]);
     if (!jobCard) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
 
-    if (String(jobCard.userId) !== String(userId)) {
+    if (!user?.isAdmin && String(jobCard.userId) !== String(userId)) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
@@ -74,10 +81,13 @@ export async function DELETE(request: Request, { params }: Params) {
 
     const { id } = await params;
 
-    const jobCard = await JobCardModel.findById(id).lean();
+    const [jobCard, user] = await Promise.all([
+      JobCardModel.findById(id).lean(),
+      UserModel.findById(userId).lean(),
+    ]);
     if (!jobCard) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
 
-    if (String(jobCard.userId) !== String(userId)) {
+    if (!user?.isAdmin && String(jobCard.userId) !== String(userId)) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
