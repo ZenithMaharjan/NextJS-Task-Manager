@@ -247,6 +247,25 @@ class APIService {
   createJobCard = (data: CreateJobCardRequest): Promise<{ success: boolean; data: JobCard }> => {
     return this.post("/job-card", data);
   };
+
+  getJobCards = (params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  }): Promise<{ success: boolean; data: JobCard[]; meta: any }> => {
+    const query: Record<string, string> = {};
+    if (params.page) query.page = String(params.page);
+    if (params.limit) query.limit = String(params.limit);
+    if (params.status) query.status = params.status;
+    return this.get("/job-card", { query });
+  };
+
+  updateJobCard = (
+    id: string,
+    data: Partial<CreateJobCardRequest>,
+  ): Promise<{ success: boolean; data: JobCard }> => {
+    return this.put(`/job-card/${id}`, data);
+  };
 }
 
 const apiService = new APIService({

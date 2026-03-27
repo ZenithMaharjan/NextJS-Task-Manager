@@ -16,7 +16,7 @@ export interface JobCardVehicleDetails {
 }
 
 export interface JobCard {
-  id: string;
+  _id: string;
   jobCardNo: string;
   userId: string;
   date: string;

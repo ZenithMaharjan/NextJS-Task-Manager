@@ -54,6 +54,7 @@ interface DropdownProps<T> {
   buttonClassName?: string;
   dropdownClassName?: string;
   align?: "left" | "right";
+  disabled?: boolean;
 }
 
 const Dropdown = <T,>({
@@ -68,6 +69,7 @@ const Dropdown = <T,>({
   buttonClassName,
   dropdownClassName,
   align = "left",
+  disabled = false,
 }: DropdownProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -107,9 +109,11 @@ const Dropdown = <T,>({
     <div className={clsx("relative", className)} ref={dropdownRef}>
       <button
         type="button"
+        disabled={disabled}
         onClick={toggleDropdown}
         className={clsx(
           "flex items-center justify-between w-full px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 text-sm font-black text-blue-600 dark:text-blue-400 transition-all hover:border-blue-300 dark:hover:border-blue-700 cursor-pointer h-10 min-w-0 shrink-0",
+          disabled && "opacity-60 cursor-not-allowed pointer-events-none",
           buttonClassName,
         )}
       >

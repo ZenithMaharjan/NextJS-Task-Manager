@@ -64,7 +64,7 @@ export default function DesktopHeader({
   };
 
   return (
-    <header className={`${className} hidden md:block shadow-md`}>
+    <header className={`${className} hidden lg:block shadow-md`}>
       <nav className={`${containerClassName} md:gap-2 lg:gap-6`}>
         <div className="shrink-0 min-w-fit">
           <Logo title={title} href={logoHref} />

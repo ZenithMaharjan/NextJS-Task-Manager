@@ -115,7 +115,7 @@ export default function Drawer({
 
         <List sx={{ padding: "16px" }}>
           {links.map(link => {
-            const active = checkActive(link.href);
+            const isActive = checkActive(link.href);
             return (
               <ListItem key={link.href} disablePadding sx={{ marginBottom: "8px" }}>
                 <Link
@@ -127,8 +127,8 @@ export default function Drawer({
                     sx={{
                       borderRadius: "8px",
                       color: "white",
-                      backgroundColor: active ? "rgba(255, 255, 255, 0.2)" : "transparent",
-                      fontWeight: active ? 600 : 400,
+                      backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                      fontWeight: isActive ? 600 : 400,
                       "&:hover": {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
@@ -320,7 +320,7 @@ export default function Drawer({
       onClose={onClose}
       onOpen={onOpen}
       sx={{
-        display: { xs: "block", md: "none" },
+        display: { xs: "block", lg: "none" },
         "& .MuiDrawer-paper": { boxSizing: "border-box" },
       }}
     >
