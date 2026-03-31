@@ -266,6 +266,10 @@ class APIService {
   ): Promise<{ success: boolean; data: JobCard }> => {
     return this.put(`/job-card/${id}`, data);
   };
+
+  deleteJobCard = (id: string): Promise<{ success: boolean; data: JobCard }> => {
+    return this.delete(`/job-card/${id}`);
+  };
 }
 
 const apiService = new APIService({
