@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const origin =
   process.env.NODE_ENV === "production"
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`
     : process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 const nextConfig: NextConfig = {

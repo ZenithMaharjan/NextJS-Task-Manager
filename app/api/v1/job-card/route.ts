@@ -26,6 +26,9 @@ export async function GET(request: Request) {
     const serviceTypeParam = searchParams.get("serviceType");
     const regdNo = searchParams.get("regdNo");
     const jobCardNo = searchParams.get("jobCardNo");
+    const customerName = searchParams.get("customerName");
+    const createdFrom = searchParams.get("created_at__gte");
+    const createdTo = searchParams.get("created_at__lte");
 
     const filter: Record<string, any> = user?.isAdmin ? {} : { userId };
 
@@ -39,12 +42,8 @@ export async function GET(request: Request) {
 
     if (regdNo) filter["vehicle.regdNo"] = new RegExp(regdNo, "i");
     if (jobCardNo) filter.jobCardNo = new RegExp(jobCardNo, "i");
-
-    const customerName = searchParams.get("customerName");
     if (customerName) filter["customer.name"] = new RegExp(customerName, "i");
 
-    const createdFrom = searchParams.get("createdFrom");
-    const createdTo = searchParams.get("createdTo");
     if (createdFrom || createdTo) {
       filter.createdAt = {};
       if (createdFrom) filter.createdAt.$gte = new Date(createdFrom);
