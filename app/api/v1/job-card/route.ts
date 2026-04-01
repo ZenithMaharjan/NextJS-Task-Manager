@@ -40,6 +40,17 @@ export async function GET(request: Request) {
     if (regdNo) filter["vehicle.regdNo"] = new RegExp(regdNo, "i");
     if (jobCardNo) filter.jobCardNo = new RegExp(jobCardNo, "i");
 
+    const customerName = searchParams.get("customerName");
+    if (customerName) filter["customer.name"] = new RegExp(customerName, "i");
+
+    const createdFrom = searchParams.get("createdFrom");
+    const createdTo = searchParams.get("createdTo");
+    if (createdFrom || createdTo) {
+      filter.createdAt = {};
+      if (createdFrom) filter.createdAt.$gte = new Date(createdFrom);
+      if (createdTo) filter.createdAt.$lte = new Date(createdTo);
+    }
+
     const [data, total] = await Promise.all([
       JobCardModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       JobCardModel.countDocuments(filter),
