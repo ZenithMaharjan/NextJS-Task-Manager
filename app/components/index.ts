@@ -20,3 +20,4 @@ export { default as Dropdown } from "./Dropdown";
 export { default as Modal } from "./Modal";
 export { default as JobCardForm } from "./job-card/JobCardForm";
 export { default as JobCardTable } from "./Admin/JobCardTable";
+export { DateInput } from "./Admin/DateInput";

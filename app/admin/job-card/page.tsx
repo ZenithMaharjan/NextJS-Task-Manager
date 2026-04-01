@@ -2,16 +2,34 @@
 
 import clsx from "clsx";
 import { Trash2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, X, FilterX } from "lucide-react";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 
-import { JobCardTable, Modal, JobCardForm, DeleteConfirmationModal } from "@/components";
+import {
+  JobCardTable,
+  Modal,
+  JobCardForm,
+  DeleteConfirmationModal,
+  Input,
+  Dropdown,
+  DateInput,
+} from "@/components";
 import { useToast } from "@/hooks/useToast";
 import apiService from "@/services/api";
-import { JobCard } from "@/types/jobCard";
+import { JobCard, JobCardServiceType, JobCardQuery } from "@/types/jobCard";
+import { debounce } from "@/utils";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const PAGE_SIZE = 10;
 const MAX_VISIBLE_PAGES = 7;
 const PAGINATION_ELLIPSIS = "..." as const;
+
+const SERVICE_TYPE_OPTIONS: { label: string; value: JobCardServiceType | "all" }[] = [
+  { label: "All Services", value: "all" },
+  { label: "First Service", value: "first_service" },
+  { label: "Normal Service", value: "normal_service" },
+];
 
 function getPaginationRange(
   currentPage: number,
@@ -44,6 +62,13 @@ function getPaginationRange(
     totalPages,
   ];
 }
+
+const getEndOfDayISO = (date: Date | null): string | undefined => {
+  if (!date) return undefined;
+  const end = new Date(date);
+  end.setHours(23, 59, 59, 999);
+  return end.toISOString();
+};
 
 interface PaginationButtonProps {
   page: number;
@@ -83,24 +108,55 @@ export default function AdminJobCardPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const fetchJobCards = useCallback(async (pageNumber: number) => {
-    setIsLoading(true);
-    try {
-      const response = await apiService.getJobCards({ page: pageNumber, limit: PAGE_SIZE });
-      if (response.success) {
-        setJobCards(response.data);
-        if (response.meta?.total) {
-          setTotalPages(Math.ceil(response.meta.total / PAGE_SIZE) || 1);
-        } else {
-          setTotalPages(Math.ceil(response.data.length / PAGE_SIZE) || 1);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [debouncedCustomerSearch, setDebouncedCustomerSearch] = useState("");
+  const [serviceType, setServiceType] = useState<JobCardServiceType | "all">("all");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const debouncedSetSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedCustomerSearch(value);
+        setCurrentPage(1);
+      }, 500),
+    [],
+  );
+
+  useEffect(() => {
+    debouncedSetSearch(customerSearch);
+  }, [customerSearch, debouncedSetSearch]);
+
+  const fetchJobCards = useCallback(
+    async (pageNumber: number) => {
+      const params: JobCardQuery = {
+        page: pageNumber,
+        limit: PAGE_SIZE,
+        customerName: debouncedCustomerSearch || undefined,
+        serviceType: serviceType === "all" ? undefined : serviceType,
+        created_at__gte: startDate?.toISOString(),
+        created_at__lte: getEndOfDayISO(endDate),
+      };
+
+      try {
+        setIsLoading(true);
+        const response = await apiService.getJobCards(params);
+        if (response.success) {
+          setJobCards(response.data);
+          if (response.meta?.total) {
+            setTotalPages(Math.ceil(response.meta.total / PAGE_SIZE) || 1);
+          } else {
+            setTotalPages(Math.ceil(response.data.length / PAGE_SIZE) || 1);
+          }
         }
+      } catch (error) {
+        console.error("Failed to fetch job cards:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch job cards:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [debouncedCustomerSearch, serviceType, startDate, endDate],
+  );
 
   useEffect(() => {
     fetchJobCards(currentPage);
@@ -198,6 +254,33 @@ export default function AdminJobCardPage() {
     handlePageChange(currentPage + 1);
   }, [currentPage, handlePageChange]);
 
+  const handleCustomerSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerSearch(e.target.value);
+  }, []);
+
+  const handleClearCustomerSearch = useCallback(() => {
+    setCustomerSearch("");
+  }, []);
+
+  const handleServiceTypeChange = useCallback((val: string) => {
+    setServiceType(val as JobCardServiceType | "all");
+  }, []);
+
+  const handleStartDateChange = useCallback((date: Date | null) => {
+    setStartDate(date);
+  }, []);
+
+  const handleEndDateChange = useCallback((date: Date | null) => {
+    setEndDate(date);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setCustomerSearch("");
+    setServiceType("all");
+    setStartDate(null);
+    setEndDate(null);
+  }, []);
+
   const paginationRange = useMemo(
     () => getPaginationRange(currentPage, totalPages),
     [currentPage, totalPages],
@@ -222,20 +305,95 @@ export default function AdminJobCardPage() {
             Manage and update workshop job cards.
           </p>
         </div>
-
-        {hasSelectedItems && (
-          <div className="flex justify-start sm:justify-end animate-in fade-in slide-in-from-right-4 duration-300">
-            <button
-              onClick={handleDeleteSelected}
-              disabled={isDeleting}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl border border-red-500 text-sm font-black text-white shadow-lg shadow-red-200 dark:shadow-none transition-all active:scale-95 cursor-pointer disabled:opacity-50 whitespace-nowrap h-10 min-w-0 shrink-0"
-            >
-              {deleteButtonIcon}
-              Delete Selected ({selectedIds.length})
-            </button>
-          </div>
-        )}
       </div>
+
+      <div className="mb-8 p-6 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-end gap-6">
+          <div className="flex-1 space-y-2">
+            <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">
+              Customer Name
+            </label>
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                <Search className="w-4 h-4" />
+              </div>
+              <Input
+                placeholder="Search by customer name..."
+                value={customerSearch}
+                onChange={handleCustomerSearchChange}
+                className="pl-11 h-11 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-blue-500/20"
+              />
+              {customerSearch && (
+                <button
+                  onClick={handleClearCustomerSearch}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-2">
+            <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">
+              Service Type
+            </label>
+            <Dropdown
+              value={serviceType}
+              options={SERVICE_TYPE_OPTIONS}
+              onSelect={handleServiceTypeChange}
+              className="w-full"
+              buttonClassName="h-11 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 rounded-2xl text-gray-700 dark:text-gray-300 font-bold hover:border-blue-300 dark:hover:border-blue-700"
+            />
+          </div>
+
+          <div className="flex-[1.5] space-y-2">
+            <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">
+              Date Range
+            </label>
+            <div className="flex items-center gap-2">
+              <DateInput
+                selected={startDate}
+                onChange={handleStartDateChange}
+                placeholderText="Start Date"
+              />
+              <span className="text-gray-300 dark:text-gray-700 font-black">~</span>
+              <DateInput
+                selected={endDate}
+                onChange={handleEndDateChange}
+                placeholderText="End Date"
+                minDate={startDate || undefined}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-end h-11">
+            {(customerSearch || serviceType !== "all" || startDate || endDate) && (
+              <button
+                onClick={handleClearFilters}
+                className="flex items-center justify-center gap-2 px-4 h-11 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                title="Clear all filters"
+              >
+                <FilterX className="w-4 h-4" />
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {hasSelectedItems && (
+        <div className="mb-4 flex justify-end animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <button
+            onClick={handleDeleteSelected}
+            disabled={isDeleting}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl border border-red-500 text-sm font-black text-white shadow-lg shadow-red-200 dark:shadow-none transition-all active:scale-95 cursor-pointer disabled:opacity-50 whitespace-nowrap h-10 min-w-0 shrink-0"
+          >
+            {deleteButtonIcon}
+            Delete Selected ({selectedIds.length})
+          </button>
+        </div>
+      )}
 
       <JobCardTable
         jobCards={jobCards}
@@ -244,6 +402,8 @@ export default function AdminJobCardPage() {
         selectedIds={selectedIds}
         onToggleSelect={handleToggleSelect}
         onSelectAll={handleSelectAll}
+        currentPage={currentPage}
+        pageSize={PAGE_SIZE}
       />
 
       {totalPages >= 1 && (

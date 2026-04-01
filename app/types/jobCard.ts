@@ -53,3 +53,13 @@ export interface CreateJobCardRequest {
   observations?: string[];
   data?: Record<string, any>;
 }
+
+export interface JobCardQuery {
+  page?: number;
+  limit?: number;
+  status?: string;
+  customerName?: string;
+  created_at__gte?: string;
+  created_at__lte?: string;
+  serviceType?: string;
+}

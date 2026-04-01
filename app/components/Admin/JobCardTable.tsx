@@ -7,7 +7,7 @@ import React, { useMemo, useCallback } from "react";
 import { JobCard } from "@/types/jobCard";
 
 const SKELETON_ROW_COUNT = 5;
-const TABLE_HEADERS = ["Job Card No", "Customer Name", "Vehicle", "Service Type", "Date"];
+const TABLE_HEADERS = ["SN", "Customer Name", "Vehicle", "Service Type", "Date"];
 
 interface JobCardTableProps {
   jobCards: JobCard[];
@@ -16,6 +16,8 @@ interface JobCardTableProps {
   selectedIds?: string[];
   onToggleSelect?: (jobCardId: string) => void;
   onSelectAll?: (isChecked: boolean) => void;
+  currentPage?: number;
+  pageSize?: number;
 }
 
 export default function JobCardTable({
@@ -25,6 +27,8 @@ export default function JobCardTable({
   selectedIds = [],
   onToggleSelect,
   onSelectAll,
+  currentPage = 1,
+  pageSize = 10,
 }: JobCardTableProps) {
   const handleSelectAllChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,13 +93,14 @@ export default function JobCardTable({
               </tr>
             </thead>
             <tbody>
-              {jobCards.map(jobCard => (
+              {jobCards.map((jobCard, index) => (
                 <JobCardRow
                   key={jobCard._id}
                   jobCard={jobCard}
                   onClick={onRowClick}
                   isSelected={selectedIds.includes(jobCard._id)}
                   onToggleSelect={onToggleSelect}
+                  sn={(currentPage - 1) * pageSize + index + 1}
                 />
               ))}
             </tbody>
@@ -111,9 +116,10 @@ interface JobCardRowProps {
   onClick: (jobCard: JobCard) => void;
   isSelected?: boolean;
   onToggleSelect?: (jobCardId: string) => void;
+  sn: number;
 }
 
-const JobCardRow = ({ jobCard, onClick, isSelected, onToggleSelect }: JobCardRowProps) => {
+const JobCardRow = ({ jobCard, onClick, isSelected, onToggleSelect, sn }: JobCardRowProps) => {
   const handleRowClick = useCallback(() => {
     onClick(jobCard);
   }, [onClick, jobCard]);
@@ -164,12 +170,9 @@ const JobCardRow = ({ jobCard, onClick, isSelected, onToggleSelect }: JobCardRow
         )}
       </td>
       <td className="px-6 py-5 border-y border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
-            <FileText className="w-4 h-4" />
-          </div>
-          <span className="font-bold text-gray-900 dark:text-white">{jobCard.jobCardNo}</span>
-        </div>
+        <span className="font-bold text-gray-900 dark:text-white">
+          {String(sn).padStart(2, "0")}
+        </span>
       </td>
       <td className="px-6 py-5 border-y border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-2 whitespace-nowrap">

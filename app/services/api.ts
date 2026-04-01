@@ -7,7 +7,7 @@ import { store } from "@/store";
 import { User } from "@/store/slices/userSlice";
 import { LoginRequest, SignupRequest, AuthResponse, ChangePasswordBody } from "@/types/auth";
 import { Inventory, InventoryResponse, PurchaseRequest } from "@/types/inventory";
-import { CreateJobCardRequest, JobCard } from "@/types/jobCard";
+import { CreateJobCardRequest, JobCard, JobCardQuery } from "@/types/jobCard";
 import { Notification } from "@/types/notification";
 import { PurchaseOrder, PurchaseOrderResponse, PurchaseStatus } from "@/types/purchase";
 
@@ -248,15 +248,17 @@ class APIService {
     return this.post("/job-card", data);
   };
 
-  getJobCards = (params: {
-    page?: number;
-    limit?: number;
-    status?: string;
-  }): Promise<{ success: boolean; data: JobCard[]; meta: any }> => {
+  getJobCards = (
+    params: JobCardQuery,
+  ): Promise<{ success: boolean; data: JobCard[]; meta: any }> => {
     const query: Record<string, string> = {};
     if (params.page) query.page = String(params.page);
     if (params.limit) query.limit = String(params.limit);
     if (params.status) query.status = params.status;
+    if (params.customerName) query.customerName = params.customerName;
+    if (params.created_at__gte) query.created_at__gte = params.created_at__gte;
+    if (params.created_at__lte) query.created_at__lte = params.created_at__lte;
+    if (params.serviceType) query.serviceType = params.serviceType;
     return this.get("/job-card", { query });
   };
 
