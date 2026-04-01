@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import { PlusCircle, X, XCircle, FileText } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import Dropdown from "@/components/Dropdown";
 import { useToast } from "@/hooks/useToast";
@@ -195,6 +195,9 @@ export default function JobCardForm({ initialData, onSuccess, onCancel }: JobCar
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const complaintsScrollRef = useRef<HTMLDivElement>(null);
+  const newComplaintInputRef = useRef<HTMLInputElement>(null);
+
   const totalAmount = useMemo(() => {
     const {
       partsAmount,
@@ -271,6 +274,22 @@ export default function JobCardForm({ initialData, onSuccess, onCancel }: JobCar
 
   const handleReset = useCallback(() => {
     setFormState(getDefaultFormState());
+  }, []);
+
+  const handleAddComplaintRow = useCallback(() => {
+    setFormState(prev => ({
+      ...prev,
+      customerComplaints: [...prev.customerComplaints, ""],
+      observations: [...prev.observations, ""],
+    }));
+
+    requestAnimationFrame(() => {
+      complaintsScrollRef.current?.scrollTo({
+        top: complaintsScrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+      newComplaintInputRef.current?.focus();
+    });
   }, []);
 
   const handleSubmit = useCallback(
@@ -511,29 +530,46 @@ export default function JobCardForm({ initialData, onSuccess, onCancel }: JobCar
                 Observation
               </p>
             </div>
-            <div className="space-y-3 max-h-72 overflow-y-auto pt-2 pb-2 px-1 pr-2 premium-scrollbar">
-              {Array.from({ length: COMPLAINT_ROW_COUNT }).map((_, i) => (
-                <div key={i} className="grid grid-cols-2 gap-6">
-                  <input
-                    type="text"
-                    name="customerComplaints"
-                    data-index={i}
-                    value={formState.customerComplaints[i]}
-                    onChange={handleArrayChange}
-                    placeholder={`Complaint ${i + 1}`}
-                    className={INPUT_CLS}
-                  />
-                  <input
-                    type="text"
-                    name="observations"
-                    data-index={i}
-                    value={formState.observations[i]}
-                    onChange={handleArrayChange}
-                    placeholder={`Observation ${i + 1}`}
-                    className={INPUT_CLS}
-                  />
-                </div>
-              ))}
+            <div
+              ref={complaintsScrollRef}
+              className="space-y-3 max-h-72 overflow-y-auto pt-2 pb-2 px-1 pr-2 premium-scrollbar"
+            >
+              {formState.customerComplaints.map((_, i) => {
+                const isLastRow = i === formState.customerComplaints.length - 1;
+                return (
+                  <div key={i} className="grid grid-cols-2 gap-6">
+                    <input
+                      ref={isLastRow ? newComplaintInputRef : null}
+                      type="text"
+                      name="customerComplaints"
+                      data-index={i}
+                      value={formState.customerComplaints[i]}
+                      onChange={handleArrayChange}
+                      placeholder={`Complaint ${i + 1}`}
+                      className={INPUT_CLS}
+                    />
+                    <input
+                      type="text"
+                      name="observations"
+                      data-index={i}
+                      value={formState.observations[i]}
+                      onChange={handleArrayChange}
+                      placeholder={`Observation ${i + 1}`}
+                      className={INPUT_CLS}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-end mt-3 pr-2">
+              <button
+                type="button"
+                onClick={handleAddComplaintRow}
+                className="flex items-center gap-2 px-4 py-2 mt-4 rounded-xl text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/50 transition-colors shadow-sm cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4" />
+                Add Row
+              </button>
             </div>
           </div>
 
